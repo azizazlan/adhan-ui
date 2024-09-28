@@ -1,4 +1,3 @@
-// PrayerTimeItem.tsx
 import { Prayer } from './types';
 import styles from './PrayerTimeItem.module.css';
 import FlipClock from './FlipClock';
@@ -23,7 +22,11 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
 
   return (
     <div class={`${styles.prayerTimeItem} ${getItemClass()}`}>
-      <span class={styles.prayerName}>{props.prayer.name}</span>
+      <div class={styles.prayerName}>
+        {props.prayer.name.split('').map((letter, index) => (
+          <span class={styles.letterBox} key={index}>{letter}</span>
+        ))}
+      </div>
       <FlipClock
         time={props.formatPrayerTime(props.prayer.time)}
         isCurrentPrayer={isCurrentPrayer()}
