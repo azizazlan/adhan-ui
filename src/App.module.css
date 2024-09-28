@@ -1,0 +1,113 @@
+.App {
+  text-align: center;
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: white;
+  padding: 1rem;
+}
+
+.header {
+  width: 100%;
+  max-width: 1000px; /* Slightly increased to accommodate larger countdown */
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.headerImage {
+  width: 115px;
+  height: 115px;
+  object-fit: contain;
+}
+
+.dateTimeDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.locationDateRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.location {
+  font-size: 1.8rem;
+  color: #4CAF50;
+  margin-left: 1rem; /* Add some space between location and date */
+  margin-right: 1rem; /* Add some space between location and date */
+}
+
+.date {
+  font-size: 1.8rem; /* Adjusted to match location size */
+  color: #4CAF50;
+}
+
+.time {
+  font-size: 2.8rem;
+  color: gold;
+}
+
+.prayerTimes {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.prayerTime {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.9rem 1.3rem; /* Slightly reduced padding */
+  margin: 0.7rem 0; /* Slightly increased to accommodate larger countdown */
+  border-radius: 5px;
+}
+
+.prayerInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prayerName, .prayerTimeValue {
+  font-size: 3.1rem; /* Changed from 3.5rem to 3.1rem */
+  font-weight: bold;
+  color: #4CAF50; /* Default color for upcoming prayers (green) */
+}
+
+.currentPrayer .prayerName,
+.currentPrayer .prayerTimeValue {
+  color: gold; /* Gold color for the current prayer */
+}
+
+.pastPrayer .prayerName,
+.pastPrayer .prayerTimeValue {
+  color: #808080; /* Grey color for past prayers */
+}
+
+.countdown {
+  font-size: 2.5rem; /* Increased from 1.1rem to 2.5rem */
+  color: gold;
+  margin-top: 0.8rem; /* Increased to give more space between prayer time and countdown */
+  text-align: right;
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
