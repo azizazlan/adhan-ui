@@ -16,6 +16,8 @@
     "vite-plugin-solid": "^2.8.2"
   },
   "dependencies": {
+    "bootstrap": "^5.3.3",
+    "solid-bootstrap": "^1.0.20",
     "solid-js": "^1.8.11"
   }
 }

@@ -1,5 +1,7 @@
 import { Component, createSignal, createEffect } from 'solid-js';
+import { ProgressBar } from 'solid-bootstrap';
 import styles from './App.module.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import allahImage from './assets/allah.png';
 import muhammadImage from './assets/muhammad.png';
 
@@ -7,6 +9,8 @@ const API_URL = 'http://api.aladhan.com/v1/timings/today?latitude=3.1579&longitu
 
 const App: Component = () => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
+  const [currentPrayerProgress, setCurrentPrayerProgress] = createSignal(0);
+  const [currentPrayerRemaining, setCurrentPrayerRemaining] = createSignal('');
   const [prayerTimes, setPrayerTimes] = createSignal([]);
   const [currentPrayer, setCurrentPrayer] = createSignal('');
   const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
@@ -31,6 +35,14 @@ const App: Component = () => {
       minute: '2-digit',
       hour12: true
     }).replace(/\s(AM|PM)/, (match) => match.toUpperCase());
+  };
+
+  const formatCountdown = (milliseconds: number) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const isPrayerTimePast = (prayerTime: string) => {
@@ -72,6 +84,34 @@ const App: Component = () => {
     }
   };
 
+  const updateCurrentPrayerProgress = () => {
+    if (currentPrayer()) {
+      const currentTime = currentDateTime();
+      const currentPrayerTime = prayerTimes().find(prayer => prayer.name === currentPrayer());
+      const nextPrayerTime = prayerTimes().find(prayer => prayer.name === nextPrayer().name);
+
+      if (currentPrayerTime && nextPrayerTime) {
+        const [currentHours, currentMinutes] = currentPrayerTime.time.split(':').map(Number);
+        const [nextHours, nextMinutes] = nextPrayerTime.time.split(':').map(Number);
+
+        const currentPrayerDate = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), currentHours, currentMinutes);
+        const nextPrayerDate = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), nextHours, nextMinutes);
+
+        if (nextPrayerDate < currentPrayerDate) {
+          nextPrayerDate.setDate(nextPrayerDate.getDate() + 1);
+        }
+
+        const totalDuration = nextPrayerDate.getTime() - currentPrayerDate.getTime();
+        const elapsedDuration = currentTime.getTime() - currentPrayerDate.getTime();
+        const remainingDuration = totalDuration - elapsedDuration;
+        const progress = (elapsedDuration / totalDuration) * 100;
+
+        setCurrentPrayerProgress(Math.min(progress, 100));
+        setCurrentPrayerRemaining(formatCountdown(remainingDuration));
+      }
+    }
+  };
+
   const fetchPrayerTimes = async () => {
     try {
       const response = await fetch(API_URL);
@@ -95,6 +135,7 @@ const App: Component = () => {
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
       updateCurrentAndNextPrayer();
+      updateCurrentPrayerProgress();
     }, 1000);
     return () => clearInterval(timer);
   });

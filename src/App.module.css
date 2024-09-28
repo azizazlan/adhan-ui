@@ -68,10 +68,10 @@
 .prayerTime {
   display: flex;
   flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.9rem 1.3rem; /* Slightly reduced padding */
+  padding: 0.5rem 1.0rem; /* Slightly reduced padding */
   margin: 0.7rem 0; /* Slightly increased to accommodate larger countdown */
   border-radius: 5px;
+  border-bottom: 0.5px solid #5b5b5b;
 }
 
 .prayerInfo {
@@ -80,7 +80,12 @@
   align-items: center;
 }
 
-.prayerName, .prayerTimeValue {
+.prayerName {
+  font-size: 3.1rem; /* Changed from 3.5rem to 3.1rem */
+  color: #4CAF50; /* Default color for upcoming prayers (green) */
+}
+
+.prayerTimeValue {
   font-size: 3.1rem; /* Changed from 3.5rem to 3.1rem */
   font-weight: bold;
   color: #4CAF50; /* Default color for upcoming prayers (green) */
@@ -93,13 +98,13 @@
 
 .pastPrayer .prayerName,
 .pastPrayer .prayerTimeValue {
-  color: #808080; /* Grey color for past prayers */
+  color: #484848; /* Grey color for past prayers */
 }
 
 .countdown {
   font-size: 2.5rem; /* Increased from 1.1rem to 2.5rem */
   color: gold;
-  margin-top: 0.8rem; /* Increased to give more space between prayer time and countdown */
+  margin-top: 0.1rem; /* Increased to give more space between prayer time and countdown */
   text-align: right;
 }
 
