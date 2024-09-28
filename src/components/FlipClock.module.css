@@ -1,27 +1,109 @@
-/* FlipClock.module.css */
 .flipClock {
   display: flex;
   align-items: center;
 }
 
 .digitBox {
-  width: 60px;
-  height: 90px;
+  width: 80px;  /* Increased from 60px */
+  height: 120px;  /* Increased from 90px */
   background-color: #333;
   color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  margin: 0 3px;
+  font-size: 5rem;  /* Increased from 3.5rem */
+  font-weight: bold;
+  font-family: monospace;
+  border-radius: 12px;  /* Increased from 8px */
+  margin: 0 3px;  /* Increased from 2px */
   position: relative;
   overflow: hidden;
 }
 
-.digit {
-  font-size: 3.5rem;
-  font-weight: bold;
-  font-family: monospace;
+.upperHalf,
+.lowerHalf,
+.flipCard,
+.flipCardFront,
+.flipCardBack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.upperHalf,
+.flipCardFront {
+  top: 0;
+  align-items: flex-start;
+  background-color: #444;
+}
+
+.lowerHalf,
+.flipCardBack {
+  bottom: 0;
+  align-items: flex-end;
+  background-color: #333;
+}
+
+.upperHalf::after,
+.lowerHalf::after,
+.flipCardFront::after,
+.flipCardBack::after {
+  content: attr(data-digit);
+  position: absolute;
+  font-size: 5rem;  /* Explicitly set font size */
+}
+
+.upperHalf::after,
+.flipCardFront::after {
+  top: 0;
+}
+
+.lowerHalf::after,
+.flipCardBack::after {
+  bottom: 0;
+}
+
+.flipCard {
+  top: 0;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  transform-origin: center right;
+}
+
+.flipCardFront,
+.flipCardBack {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.flipCardBack {
+  transform: rotateY(180deg);
+}
+
+.digitBox.animate .flipCard {
+  animation: flip 0.6s ease-in-out;
+  animation-delay: calc(var(--index) * 0.1s);
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateY(0);
+  }
+  100% {
+    transform: rotateY(-180deg);
+  }
+}
+
+.separator {
+  margin: 0 8px;  /* Increased from 5px */
+  color: #666;
+  font-size: 5rem;  /* Increased from 3.5rem */
 }
 
 .digitBox::after {
@@ -30,21 +112,8 @@
   left: 0;
   right: 0;
   top: 50%;
-  height: 2px;
+  height: 3px;  /* Increased from 2px */
   background-color: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1);
-}
-
-.separator {
-  margin: 0 8px;
-  color: #666;
-  font-size: 3.5rem;
-}
-
-.digitBox.current {
-  background-color: #333; /* Keep the background dark */
-}
-
-.digitBox.current .digit {
-  color: gold; /* Set the digit color to gold for current prayer time */
+  box-shadow: 0 3px 0 rgba(255, 255, 255, 0.1);  /* Increased from 2px */
+  z-index: 3;
 }

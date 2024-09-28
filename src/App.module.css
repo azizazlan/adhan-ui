@@ -7,12 +7,12 @@
   align-items: center;
   justify-content: flex-start;
   color: white;
-  padding: 1rem;
+  padding: 0rem;
 }
 
 .header {
   width: 100%;
-  max-width: 1000px; /* Slightly increased to accommodate larger countdown */
+  max-width: 1100px; /* Slightly increased to accommodate larger countdown */
 }
 
 .headerRow {
@@ -49,8 +49,8 @@
   display: flex;
   flex-direction: column;
   background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.9rem 1.3rem; /* Slightly reduced padding */
-  margin: 0.7rem 0; /* Slightly increased to accommodate larger countdown */
+  padding: 0.3rem 1.0rem; /* Slightly reduced padding */
+  margin: 0.5rem 0; /* Slightly increased to accommodate larger countdown */
   border-radius: 5px;
 }
 

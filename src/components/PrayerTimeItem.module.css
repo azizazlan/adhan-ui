@@ -2,8 +2,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  border-bottom: 1px solid #595959;
 }
 
 .prayerName {
@@ -22,8 +22,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  margin: 0 2px;
+  border-radius: 7px;
+  margin: 0 1px;
   text-transform: uppercase;
   position: relative;
   overflow: hidden;
