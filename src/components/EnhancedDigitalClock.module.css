@@ -1,0 +1,81 @@
+.clock {
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.segment {
+  display: flex;
+}
+
+.digitWrapper {
+  height: 60px;
+  width: 40px;
+  margin: 0 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.digit {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.front, .back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #2c2c2c, #3a3a3a);
+  color: #fff;
+  border-radius: 5px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.front {
+  z-index: 2;
+}
+
+.back {
+  z-index: 1;
+  opacity: 0;
+}
+
+.digit.change .front {
+  opacity: 0;
+}
+
+.digit.change .back {
+  opacity: 1;
+}
+
+.separator {
+  margin: 0 0.5rem;
+  color: #666;
+}
+
+/* Horizontal line effect */
+.front::after, .back::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ampm {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-left: 10px;
+  align-self: center;
+}

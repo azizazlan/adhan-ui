@@ -1,0 +1,50 @@
+/* FlipClock.module.css */
+.flipClock {
+  display: flex;
+  align-items: center;
+}
+
+.digitBox {
+  width: 60px;
+  height: 90px;
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin: 0 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.digit {
+  font-size: 3.5rem;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.digitBox::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1);
+}
+
+.separator {
+  margin: 0 8px;
+  color: #666;
+  font-size: 3.5rem;
+}
+
+.digitBox.current {
+  background-color: #333; /* Keep the background dark */
+}
+
+.digitBox.current .digit {
+  color: gold; /* Set the digit color to gold for current prayer time */
+}

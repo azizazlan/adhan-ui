@@ -4,6 +4,8 @@ import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import allahImage from './assets/allah.png';
 import muhammadImage from './assets/muhammad.png';
+import PrayerTimeItem from './components/PrayerTimeItem';
+import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 
 const API_URL = 'http://api.aladhan.com/v1/timings/today?latitude=3.1579&longitude=101.5956&method=17&timezonestring=Asia/Kuala_Lumpur&tune=0,10,0,1,0,1,0,1,0';
 
@@ -162,26 +164,19 @@ const App: Component = () => {
               <span class={styles.location}>{location()}</span>
               <span class={styles.date}>{currentDateTime().toDateString()}</span>
             </div>
-            <div class={styles.time}>{formatTime(currentDateTime())}</div>
+            <EnhancedDigitalClock />
           </div>
           <img src={allahImage} alt="Allah" class={styles.headerImage} />
         </div>
         <div class={styles.prayerTimes}>
           {prayerTimes().map((prayer) => (
-            <div class={`${styles.prayerTime} 
-                         ${prayer.name === currentPrayer() ? styles.currentPrayer :
-                (isPrayerTimePast(prayer.time) ? styles.pastPrayer : '')}`}>
-              <div class={styles.prayerInfo}>
-                <span class={styles.prayerName}>{prayer.name}</span>
-                <span class={`${styles.prayerTimeValue} 
-                              ${prayer.name === currentPrayer() ? styles.currentPrayerTime : ''}`}>
-                  {formatPrayerTime(prayer.time)}
-                </span>
-              </div>
-              {prayer.name === nextPrayer().name && (
-                <div class={styles.countdown}>{nextPrayer().countdown}</div>
-              )}
-            </div>
+            <PrayerTimeItem
+              prayer={prayer}
+              currentPrayer={currentPrayer()}
+              nextPrayer={nextPrayer()}
+              isPrayerTimePast={isPrayerTimePast}
+              formatPrayerTime={formatPrayerTime}
+            />
           ))}
         </div>
       </header>
