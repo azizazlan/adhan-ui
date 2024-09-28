@@ -1,25 +1,33 @@
 .App {
   text-align: center;
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   color: white;
   padding: 1rem;
+  padding-left: 7rem;
+  padding-right: 7rem;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .header {
   width: 100%;
-  max-width: 1000px; /* Slightly increased to accommodate larger countdown */
+  max-width: 100vw; /* Use viewport width */
+  height: 96.45vh; /* Use viewport height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .headerRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
 }
 
 .headerImage {
@@ -32,46 +40,32 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+  font-size: 2.7rem;
+  margin-bottom: 1.0rem; /* Slightly increased margin */
 }
 
-.locationDateRow {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0.6rem;
+.date, .time {
+  margin-bottom: 0.0rem; /* Slightly reduced margin */
+  margin-left: 0.5rem;
 }
 
 .location {
-  font-size: 1.8rem;
-  color: #4CAF50;
-  margin-left: 1rem; /* Add some space between location and date */
-  margin-right: 1rem; /* Add some space between location and date */
-}
-
-.date {
-  font-size: 1.8rem; /* Adjusted to match location size */
-  color: #4CAF50;
-}
-
-.time {
-  font-size: 2.8rem;
-  color: gold;
+  margin-bottom: 0.0rem; /* Slightly reduced margin */
+  margin-left: 1.5rem;
 }
 
 .prayerTimes {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  height: 80vh; /* Adjust as needed */
 }
 
 .prayerTime {
   display: flex;
   flex-direction: column;
-  padding: 0.5rem 1.0rem; /* Slightly reduced padding */
-  margin: 0.7rem 0; /* Slightly increased to accommodate larger countdown */
+  padding: 0.9rem 1.3rem; /* Slightly reduced padding */
+  margin: 0.5rem 0;
   border-radius: 5px;
-  border-bottom: 0.5px solid #5b5b5b;
 }
 
 .prayerInfo {
@@ -98,13 +92,13 @@
 
 .pastPrayer .prayerName,
 .pastPrayer .prayerTimeValue {
-  color: #484848; /* Grey color for past prayers */
+  color: #808080; /* Grey color for past prayers */
 }
 
 .countdown {
   font-size: 2.5rem; /* Increased from 1.1rem to 2.5rem */
   color: gold;
-  margin-top: 0.1rem; /* Increased to give more space between prayer time and countdown */
+  margin-top: 0.8rem; /* Increased to give more space between prayer time and countdown */
   text-align: right;
 }
 

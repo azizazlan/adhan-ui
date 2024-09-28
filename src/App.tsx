@@ -140,8 +140,20 @@ const App: Component = () => {
     return () => clearInterval(timer);
   });
 
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((e) => {
+        console.log(`Error attempting to enable full-screen mode: ${e.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
+
   return (
-    <div class={styles.App}>
+    <div class={styles.App} onClick={toggleFullScreen}>
       <header class={styles.header}>
         <div class={styles.headerRow}>
           <img src={muhammadImage} alt="Muhammad" class={styles.headerImage} />
