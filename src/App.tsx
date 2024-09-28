@@ -79,7 +79,7 @@ const App: Component = () => {
       setNextPrayer({
         name: nextPrayerInfo.name,
         time: formatPrayerTime(nextPrayerInfo.date.toTimeString()),
-        countdown: `${hours}h ${minutes}m ${seconds}s`
+        countdown: `${hours.toString().padStart(2, '0')}h: ${minutes.toString().padStart(2, '0')}m :${seconds.toString().padStart(2, '0')}s`
       });
     }
   };
