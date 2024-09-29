@@ -40,6 +40,31 @@ const FlipClock = (props: { time: string; isCurrentPrayer: boolean, isCountdown:
 
   onCleanup(() => clearInterval(animationInterval));
 
+  if (props.isCountdown) {
+    return (
+      <div class={styles.countdownContainer}>
+        <div class={styles.countdownText}>LEFT</div>
+        <div class={styles.flipClock}>
+          <For each={digits()}>
+            {(digit, index) => {
+              return (
+                <>
+                  <CountdownDigitBox
+                    digit={digit}
+                    animate={animate()}
+                    index={index()}
+                    isCurrentPrayer={props.isCurrentPrayer}
+                    isCountdown={props.isCountdown}
+                  />
+                </>
+              )
+            }}
+          </For>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div class={styles.flipClock}>
       <For each={digits()}>
@@ -54,17 +79,6 @@ const FlipClock = (props: { time: string; isCurrentPrayer: boolean, isCountdown:
                 isCountdown={props.isCountdown}
               />
               {(index() === 1) && <div class={`${styles.separator} ${props.isCurrentPrayer ? styles.currentPrayer : ''}`}>:</div>}
-            </>
-          )
-          if (props.isCountdown) return (
-            <>
-              <CountdownDigitBox
-                digit={digit}
-                animate={animate()}
-                index={index()}
-                isCurrentPrayer={props.isCurrentPrayer}
-                isCountdown={props.isCountdown}
-              />
             </>
           )
         }}

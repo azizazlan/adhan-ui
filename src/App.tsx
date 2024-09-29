@@ -156,17 +156,10 @@ const App: Component = () => {
   return (
     <div class={styles.App} onClick={toggleFullScreen}>
       <header class={styles.header}>
-        <ClockHeader location={location()} />
+        <ClockHeader location={location()} formatDate={currentDateTime().toDateString()} />
         <div class={styles.prayerTimes}>
           {prayerTimes().map((prayer) => (
             <div>
-              <PrayerTimeItem
-                prayer={prayer}
-                currentPrayer={currentPrayer()}
-                nextPrayer={nextPrayer()}
-                isPrayerTimePast={isPrayerTimePast}
-                formatPrayerTime={formatPrayerTime}
-              />
               {prayer.name === nextPrayer().name && (
                 <div class={styles.countdown}>
                   <FlipClock
@@ -176,6 +169,13 @@ const App: Component = () => {
                   />
                 </div>
               )}
+              <PrayerTimeItem
+                prayer={prayer}
+                currentPrayer={currentPrayer()}
+                nextPrayer={nextPrayer()}
+                isPrayerTimePast={isPrayerTimePast}
+                formatPrayerTime={formatPrayerTime}
+              />
             </div>
           ))}
         </div>

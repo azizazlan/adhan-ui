@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 import logo from './assets/logo.png';
 
-const ClockHeader = (props: { location: string }) => {
+const ClockHeader = (props: { location: string, formatDate: string }) => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
 
   createEffect(() => {
@@ -15,10 +15,16 @@ const ClockHeader = (props: { location: string }) => {
   });
 
   return (
-    <div class={styles.headerRow}>
-      <img src={logo} alt="logo" class={styles.logo} />
-      <div class={styles.headerTitle}>PRAYER TIMES</div>
-      <EnhancedDigitalClock />
+    <div>
+      <div>
+        <div class={styles.headerRow}>
+          <div class={styles.headerTitle}>PRAYER TIMES</div>
+          <EnhancedDigitalClock />
+        </div>
+        <div class={styles.locationRow}>
+          <div class={styles.locationText}>{props.location}, {props.formatDate}</div>
+        </div>
+      </div>
     </div>
   )
 }
