@@ -174,8 +174,8 @@ const App: Component = () => {
     }, 1000);
 
     const toggleInterval = setInterval(() => {
-      setShowPrayerTimes((prev) => !prev);
-      // setShowPrayerTimes(false);
+      // setShowPrayerTimes((prev) => !prev);
+      setShowPrayerTimes(false);
       setCurrentHadith(getNextHadith());
     }, 30000); // Toggle every 10 seconds
 
