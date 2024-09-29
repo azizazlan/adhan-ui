@@ -1,4 +1,5 @@
 export interface Hadith {
+  status: string;
   volume: string;
   hadithNumber: string;
   headingEnglish: string;
