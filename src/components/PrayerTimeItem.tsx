@@ -19,7 +19,7 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
   };
 
   const isCurrentPrayer = () => props.prayer.name === props.currentPrayer;
-
+  console.log(props.prayer.time);
   return (
     <div class={`${styles.prayerTimeItem} ${getItemClass()}`}>
       <div class={styles.prayerName}>
@@ -30,6 +30,7 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
       <FlipClock
         time={props.formatPrayerTime(props.prayer.time)}
         isCurrentPrayer={isCurrentPrayer()}
+        isCountdown={false}
       />
     </div>
   );

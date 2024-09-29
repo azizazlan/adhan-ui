@@ -1,8 +1,8 @@
 import { createSignal, onCleanup, For } from 'solid-js';
 import styles from './FlipClock.module.css';
 
-const DigitBox = (props: { digit: string; animate: boolean; index: number; isCurrentPrayer: boolean }) => (
-  <div class={`${styles.digitBox} ${props.animate ? styles.animate : ''} ${props.isCurrentPrayer ? styles.currentPrayer : ''}`} style={{ "--index": props.index }}>
+const DigitBox = (props: { digit: string; animate: boolean; index: number; isCurrentPrayer: boolean, isCountdown: boolean }) => (
+  <div class={`${styles.digitBox} ${props.animate ? styles.animate : ''} ${props.isCurrentPrayer ? styles.currentPrayer : ''} ${props.isCountdown ? styles.countdown : ''}`} style={{ "--index": props.index }}>
     <div class={styles.upperHalf} data-digit={props.digit}></div>
     <div class={styles.lowerHalf} data-digit={props.digit}></div>
     <div class={styles.flipCard}>
@@ -12,14 +12,31 @@ const DigitBox = (props: { digit: string; animate: boolean; index: number; isCur
   </div>
 );
 
-const FlipClock = (props: { time: string; isCurrentPrayer: boolean }) => {
-  const [animate, setAnimate] = createSignal(false);
-  const digits = () => props.time.replace(':', '').split('');
+const CountdownDigitBox = (props: { digit: string; animate: boolean; index: number; isCurrentPrayer: boolean, isCountdown: boolean }) => (
+  <div class={`${styles.countdownDigitBox} ${props.animate ? styles.animate : ''} ${props.isCurrentPrayer ? styles.currentPrayer : ''} ${props.isCountdown ? styles.countdown : ''}`} style={{ "--index": props.index }}>
+    <div class={styles.countdownUpperHalf} data-digit={props.digit}></div>
+    <div class={styles.countdownLowerHalf} data-digit={props.digit}></div>
+    <div class={styles.countdownFlipCard}>
+      <div class={styles.countdownFlipCardFront} data-digit={props.digit}></div>
+      <div class={styles.countdownFlipCardBack} data-digit={props.digit}></div>
+    </div>
+  </div>
+);
 
+const FlipClock = (props: { time: string; isCurrentPrayer: boolean, isCountdown: boolean }) => {
+  const [animate, setAnimate] = createSignal(false);
+  const digits = () => {
+    if (props.isCountdown) {
+      // Format countdown time as hh:mm:ss
+      const [hours, minutes, seconds] = props.time.split(':');
+      return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`.split('');
+    }
+    return props.time.replace(':', '').split('');
+  };
   const animationInterval = setInterval(() => {
     setAnimate(true);
     setTimeout(() => setAnimate(false), 1500); // Reset animation after 1500ms
-  }, 5000); // Trigger animation every 5 seconds
+  }, 60000);
 
   onCleanup(() => clearInterval(animationInterval));
 
@@ -27,15 +44,27 @@ const FlipClock = (props: { time: string; isCurrentPrayer: boolean }) => {
     <div class={styles.flipClock}>
       <For each={digits()}>
         {(digit, index) => {
-          if (digit !== ' ') return (
+          if (digit !== ' ' && !props.isCountdown) return (
             <>
               <DigitBox
                 digit={digit}
                 animate={animate()}
                 index={index()}
                 isCurrentPrayer={props.isCurrentPrayer}
+                isCountdown={props.isCountdown}
               />
-              {index() === 1 && <div class={`${styles.separator} ${props.isCurrentPrayer ? styles.currentPrayer : ''}`}>:</div>}
+              {(index() === 1) && <div class={`${styles.separator} ${props.isCurrentPrayer ? styles.currentPrayer : ''}`}>:</div>}
+            </>
+          )
+          if (props.isCountdown) return (
+            <>
+              <CountdownDigitBox
+                digit={digit}
+                animate={animate()}
+                index={index()}
+                isCurrentPrayer={props.isCurrentPrayer}
+                isCountdown={props.isCountdown}
+              />
             </>
           )
         }}

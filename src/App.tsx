@@ -2,10 +2,9 @@ import { Component, createSignal, createEffect } from 'solid-js';
 import { ProgressBar } from 'solid-bootstrap';
 import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import allahImage from './assets/allah.png';
-import muhammadImage from './assets/muhammad.png';
 import PrayerTimeItem from './components/PrayerTimeItem';
-import EnhancedDigitalClock from './components/EnhancedDigitalClock';
+import ClockHeader from './ClockHeader';
+import FlipClock from './components/FlipClock';
 
 const API_URL = 'http://api.aladhan.com/v1/timings/today?latitude=3.1579&longitude=101.5956&method=17&timezonestring=Asia/Kuala_Lumpur&tune=0,10,0,1,0,1,0,1,0';
 
@@ -81,7 +80,7 @@ const App: Component = () => {
       setNextPrayer({
         name: nextPrayerInfo.name,
         time: formatPrayerTime(nextPrayerInfo.date.toTimeString()),
-        countdown: `${hours.toString().padStart(2, '0')}h: ${minutes.toString().padStart(2, '0')}m :${seconds.toString().padStart(2, '0')}s`
+        countdown: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
       });
     }
   };
@@ -157,26 +156,27 @@ const App: Component = () => {
   return (
     <div class={styles.App} onClick={toggleFullScreen}>
       <header class={styles.header}>
-        <div class={styles.headerRow}>
-          <img src={muhammadImage} alt="Muhammad" class={styles.headerImage} />
-          <div class={styles.dateTimeDisplay}>
-            <div class={styles.locationDateRow}>
-              <span class={styles.location}>{location()}</span>
-              <span class={styles.date}>{currentDateTime().toDateString()}</span>
-            </div>
-            <EnhancedDigitalClock />
-          </div>
-          <img src={allahImage} alt="Allah" class={styles.headerImage} />
-        </div>
+        <ClockHeader />
         <div class={styles.prayerTimes}>
           {prayerTimes().map((prayer) => (
-            <PrayerTimeItem
-              prayer={prayer}
-              currentPrayer={currentPrayer()}
-              nextPrayer={nextPrayer()}
-              isPrayerTimePast={isPrayerTimePast}
-              formatPrayerTime={formatPrayerTime}
-            />
+            <div>
+              <PrayerTimeItem
+                prayer={prayer}
+                currentPrayer={currentPrayer()}
+                nextPrayer={nextPrayer()}
+                isPrayerTimePast={isPrayerTimePast}
+                formatPrayerTime={formatPrayerTime}
+              />
+              {prayer.name === nextPrayer().name && (
+                <div class={styles.countdown}>
+                  <FlipClock
+                    time={nextPrayer().countdown}
+                    isCurrentPrayer={false}
+                    isCountdown={true}
+                  />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </header>

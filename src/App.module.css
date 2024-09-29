@@ -77,11 +77,50 @@
 }
 
 .countdown {
-  font-size: 2.5rem; /* Increased from 1.1rem to 2.5rem */
+  font-size: 2.0rem; /* Increased from 1.1rem to 2.5rem */
   color: gold;
   margin-top: 0.8rem; /* Increased to give more space between prayer time and countdown */
   text-align: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  margin-right: 0.7rem;
 }
+
+.countdownItem {
+  display: flex;
+  flex-direction: row;
+}
+
+.letterBox {
+  font-weight: bold;
+  font-size: 3.0rem;
+  font-family: monospace;
+  color: #fff;
+  background-color: #333;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  margin: 0 1px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.letterBox::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1);
+}
+
 
 @keyframes logo-spin {
   from {

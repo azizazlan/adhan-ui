@@ -102,7 +102,7 @@
 
 .separator {
   margin: 0 8px;  /* Increased from 5px */
-  color: #666;
+  color: #d4d4d4;
   font-size: 5rem;  /* Increased from 3.5rem */
 }
 
@@ -127,4 +127,65 @@
 
 .currentPrayer.separator {
   color: #ffd700; /* Gold color for separator */
+}
+
+.countdownDigitBox {
+  width: 50px;  /* Increased from 60px */
+  height: 70px;  /* Increased from 90px */
+  background-color: #333;
+  color: #f86161;
+  font-size: 3rem;  /* Increased from 3.5rem */
+  font-weight: bold;
+  font-family: monospace;
+  border-radius: 5px;  /* Increased from 8px */
+  margin: 0 3px;  /* Increased from 2px */
+  position: relative;
+  overflow: hidden;
+}
+
+.countdownUpperHalf,
+.countdownLowerHalf,
+.countdownFlipCard,
+.countdownFlipCardFront,
+.countdownFlipCardBack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.countdownUpperHalf,
+.countdownFlipCardFront {
+  top: 0;
+  align-items: flex-start;
+  background-color: #444;
+}
+
+.countdownLowerHalf,
+.countdownFlipCardBack {
+  bottom: 0;
+  align-items: flex-end;
+  background-color: #333;
+}
+
+.countdownUpperHalf::after,
+.countdownLowerHalf::after,
+.countdownFlipCardFront::after,
+.countdownFlipCardBack::after {
+  content: attr(data-digit);
+  position: absolute;
+  font-size: 3rem;  /* Explicitly set font size */
+}
+
+.countdownUpperHalf::after,
+.countdownFlipCardFront::after {
+  top: 0;
+}
+
+.countdownLowerHalf::after,
+.countdownFlipCardBack::after {
+  bottom: 0;
 }
