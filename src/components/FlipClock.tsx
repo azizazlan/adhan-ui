@@ -1,8 +1,8 @@
 import { createSignal, onCleanup, For } from 'solid-js';
 import styles from './FlipClock.module.css';
 
-const DigitBox = (props: { digit: string; animate: boolean; index: number }) => (
-  <div class={`${styles.digitBox} ${props.animate ? styles.animate : ''}`} style={{ "--index": props.index }}>
+const DigitBox = (props: { digit: string; animate: boolean; index: number; isCurrentPrayer: boolean }) => (
+  <div class={`${styles.digitBox} ${props.animate ? styles.animate : ''} ${props.isCurrentPrayer ? styles.currentPrayer : ''}`} style={{ "--index": props.index }}>
     <div class={styles.upperHalf} data-digit={props.digit}></div>
     <div class={styles.lowerHalf} data-digit={props.digit}></div>
     <div class={styles.flipCard}>
@@ -15,7 +15,6 @@ const DigitBox = (props: { digit: string; animate: boolean; index: number }) => 
 const FlipClock = (props: { time: string; isCurrentPrayer: boolean }) => {
   const [animate, setAnimate] = createSignal(false);
   const digits = () => props.time.replace(':', '').split('');
-
 
   const animationInterval = setInterval(() => {
     setAnimate(true);
@@ -30,8 +29,13 @@ const FlipClock = (props: { time: string; isCurrentPrayer: boolean }) => {
         {(digit, index) => {
           if (digit !== ' ') return (
             <>
-              <DigitBox digit={digit} animate={animate()} index={index()} />
-              {index() === 1 && <div class={styles.separator}>:</div>}
+              <DigitBox
+                digit={digit}
+                animate={animate()}
+                index={index()}
+                isCurrentPrayer={props.isCurrentPrayer}
+              />
+              {index() === 1 && <div class={`${styles.separator} ${props.isCurrentPrayer ? styles.currentPrayer : ''}`}>:</div>}
             </>
           )
         }}

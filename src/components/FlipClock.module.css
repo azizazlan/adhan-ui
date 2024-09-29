@@ -117,3 +117,14 @@
   box-shadow: 0 3px 0 rgba(255, 255, 255, 0.1);  /* Increased from 2px */
   z-index: 3;
 }
+
+.currentPrayer .upperHalf::after,
+.currentPrayer .lowerHalf::after,
+.currentPrayer .flipCardFront::after,
+.currentPrayer .flipCardBack::after {
+  color: #ffd700; /* Gold color for the digits */
+}
+
+.currentPrayer.separator {
+  color: #ffd700; /* Gold color for separator */
+}
