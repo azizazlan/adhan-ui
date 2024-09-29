@@ -156,7 +156,7 @@ const App: Component = () => {
   return (
     <div class={styles.App} onClick={toggleFullScreen}>
       <header class={styles.header}>
-        <ClockHeader />
+        <ClockHeader location={location()} />
         <div class={styles.prayerTimes}>
           {prayerTimes().map((prayer) => (
             <div>

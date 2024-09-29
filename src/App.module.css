@@ -6,8 +6,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  color: white;
-  padding: 0rem;
 }
 
 .header {
@@ -16,27 +14,37 @@
 }
 
 .headerRow {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
   margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  justify-content: space-between;
 }
 
-.headerImage {
-  width: 135px;
-  height: 135px;
-  object-fit: contain;
+.logo {
+  width: 105px;
+  height: 80px;
+}
+
+.headerTitle {
+  color: white;
+  font-size: 3.0rem;
+  font-family: "Oswald", sans-serif;
+  font-weight: 400;
 }
 
 .dateTimeDisplay {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: right;
   margin-bottom: 1.5rem; /* Slightly increased margin */
 }
 
 .date, .location, .time {
-  margin-bottom: 0.6rem; /* Slightly reduced margin */
+  color: silver;
+  margin: 0.2rem;
 }
 
 .prayerTimes {

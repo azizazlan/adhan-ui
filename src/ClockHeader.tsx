@@ -1,11 +1,10 @@
 import { Component, createSignal, createEffect } from 'solid-js';
 import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import allahImage from './assets/allah.png';
-import muhammadImage from './assets/muhammad.png';
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
+import logo from './assets/logo.png';
 
-const ClockHeader = () => {
+const ClockHeader = (props: { location: string }) => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
 
   createEffect(() => {
@@ -17,15 +16,9 @@ const ClockHeader = () => {
 
   return (
     <div class={styles.headerRow}>
-      <img src={muhammadImage} alt="Muhammad" class={styles.headerImage} />
-      <div class={styles.dateTimeDisplay}>
-        <div class={styles.locationDateRow}>
-          <span class={styles.location}>{location()}</span>
-          <span class={styles.date}>{currentDateTime().toDateString()}</span>
-        </div>
-        <EnhancedDigitalClock />
-      </div>
-      <img src={allahImage} alt="Allah" class={styles.headerImage} />
+      <img src={logo} alt="logo" class={styles.logo} />
+      <div class={styles.headerTitle}>PRAYER TIMES</div>
+      <EnhancedDigitalClock />
     </div>
   )
 }

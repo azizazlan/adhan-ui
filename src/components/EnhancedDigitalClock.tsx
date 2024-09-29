@@ -31,7 +31,7 @@ const EnhancedDigitalClock = () => {
     <div class={styles.clock}>
       {formatTime(time()).map((segment, index) => (
         <>
-          {index < 3 ? (
+          {index < 4 ? (
             <div class={styles.segment}>
               <div class={styles.digitBox}>
                 <div class={styles.digit}>{segment[0]}</div>
