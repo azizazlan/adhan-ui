@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import PrayerTimeItem from './components/PrayerTimeItem';
 import ClockHeader from './ClockHeader';
 import FlipClock from './components/FlipClock';
+import HadithDisplay from './components/HadithDisplay';
+import { Hadith, HadithApiResponse } from './types/hadith';
 
 const API_URL = 'http://api.aladhan.com/v1/timings/today?latitude=3.1579&longitude=101.5956&method=17&timezonestring=Asia/Kuala_Lumpur&tune=0,10,0,1,0,1,0,1,0';
 
@@ -16,6 +18,37 @@ const App: Component = () => {
   const [currentPrayer, setCurrentPrayer] = createSignal('');
   const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
   const [location] = createSignal('Shah Alam, Malaysia');
+  const [showPrayerTimes, setShowPrayerTimes] = createSignal(false);
+  const [currentHadith, setCurrentHadith] = createSignal('');
+  const [hadiths, setHadiths] = createSignal<Hadith[]>([]);
+  const [currentHadithIndex, setCurrentHadithIndex] = createSignal(0);
+
+  const fetchHadiths = async () => {
+    const apiKey = '$2y$10$ZDNREaMrID1korqOI2KRatvXPDrwoAv5lfvGQmPDnbAwjgFiTa';
+    const apiUrl = `https://www.hadithapi.com/public/api/hadiths?apiKey=${apiKey}&paginate=100`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data: HadithApiResponse = await response.json();
+      console.log(data);
+      if (data.status === 200 && data.hadiths && data.hadiths.data) {
+        setHadiths(data.hadiths.data);
+      } else {
+        console.error('Failed to fetch hadiths or unexpected data structure');
+      }
+    } catch (error) {
+      console.error('Error fetching hadiths:', error);
+    }
+  };
+
+  const getNextHadith = () => {
+    const hadithsArray = hadiths();
+    if (hadithsArray.length === 0) {
+      return undefined;
+    }
+    const nextIndex = (currentHadith() ? hadithsArray.indexOf(currentHadith()!) + 1 : 0) % hadithsArray.length;
+    return hadithsArray[nextIndex];
+  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
@@ -132,13 +165,24 @@ const App: Component = () => {
   };
 
   createEffect(() => {
+    fetchHadiths();
     fetchPrayerTimes();
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
       updateCurrentAndNextPrayer();
       updateCurrentPrayerProgress();
     }, 1000);
-    return () => clearInterval(timer);
+
+    const toggleInterval = setInterval(() => {
+      setShowPrayerTimes((prev) => !prev);
+      // setShowPrayerTimes(false);
+      setCurrentHadith(getNextHadith());
+    }, 30000); // Toggle every 10 seconds
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(toggleInterval);
+    };
   });
 
   const toggleFullScreen = () => {
@@ -157,28 +201,34 @@ const App: Component = () => {
     <div class={styles.App} onClick={toggleFullScreen}>
       <header class={styles.header}>
         <ClockHeader location={location()} formatDate={currentDateTime().toDateString()} />
-        <div class={styles.prayerTimes}>
-          {prayerTimes().map((prayer) => (
-            <div>
-              {prayer.name === nextPrayer().name && (
-                <div class={styles.countdown}>
-                  <FlipClock
-                    time={nextPrayer().countdown}
-                    isCurrentPrayer={false}
-                    isCountdown={true}
-                  />
-                </div>
-              )}
-              <PrayerTimeItem
-                prayer={prayer}
-                currentPrayer={currentPrayer()}
-                nextPrayer={nextPrayer()}
-                isPrayerTimePast={isPrayerTimePast}
-                formatPrayerTime={formatPrayerTime}
-              />
-            </div>
-          ))}
-        </div>
+        {showPrayerTimes() ? (
+          <div class={styles.prayerTimes}>
+            {prayerTimes().map((prayer) => (
+              <div>
+                {prayer.name === nextPrayer().name && (
+                  <div class={styles.countdown}>
+                    <FlipClock
+                      time={nextPrayer().countdown}
+                      isCurrentPrayer={false}
+                      isCountdown={true}
+                    />
+                  </div>
+                )}
+                <PrayerTimeItem
+                  prayer={prayer}
+                  currentPrayer={currentPrayer()}
+                  nextPrayer={nextPrayer()}
+                  isPrayerTimePast={isPrayerTimePast}
+                  formatPrayerTime={formatPrayerTime}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class={styles.prayerTimes}>
+            <HadithDisplay hadith={getNextHadith()} />
+          </div>
+        )}
       </header>
     </div>
   );
