@@ -1,10 +1,11 @@
 import { Component, createSignal, createEffect } from 'solid-js';
+import { VsBook } from 'solid-icons/vs'
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 import logo from './assets/logo.png';
 import styles from './ClockHeader.module.css';
 import FlipClock from './components/FlipClock';
 
-const ClockHeader = (props: { toggleFullScreen: () => void, location: string, formatDate: string, showPrayerTimes: boolean, currentPrayer: string, nextPrayer: string }) => {
+const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith: () => void, location: string, formatDate: string, showPrayerTimes: boolean, currentPrayer: string, nextPrayer: string }) => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
 
   createEffect(() => {
@@ -22,6 +23,10 @@ const ClockHeader = (props: { toggleFullScreen: () => void, location: string, fo
           <EnhancedDigitalClock />
         </div>
         <div class={styles.locationRow}>
+          <VsBook
+            class={`${styles.bookIcon} ${!props.showPrayerTimes ? styles.activeBookIcon : ''}`}
+            onClick={props.toggleDisplayHadith}
+          />
           <div class={styles.locationText}>{props.location}, {props.formatDate}</div>
         </div>
         {!props.showPrayerTimes && (

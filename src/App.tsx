@@ -27,34 +27,6 @@ const App: Component = () => {
   const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
   const [location] = createSignal(LOCATION);
   const [showPrayerTimes, setShowPrayerTimes] = createSignal(true);
-  const [currentHadith, setCurrentHadith] = createSignal('');
-  const [hadiths, setHadiths] = createSignal<Hadith[]>([]);
-  const [currentHadithIndex, setCurrentHadithIndex] = createSignal(0);
-
-  const fetchHadiths = async () => {
-    const apiUrl = `https://www.hadithapi.com/public/api/hadiths?apiKey=${API_KEY}&paginate=100`;
-
-    try {
-      const response = await fetch(apiUrl);
-      const data: HadithApiResponse = await response.json();
-      if (data.status === 200 && data.hadiths && data.hadiths.data) {
-        setHadiths(data.hadiths.data);
-      } else {
-        console.error('Failed to fetch hadiths or unexpected data structure');
-      }
-    } catch (error) {
-      console.error('Error fetching hadiths:', error);
-    }
-  };
-
-  const getNextHadith = () => {
-    const hadithsArray = hadiths();
-    if (hadithsArray.length === 0) {
-      return undefined;
-    }
-    const nextIndex = (currentHadith() ? hadithsArray.indexOf(currentHadith()!) + 1 : 0) % hadithsArray.length;
-    return hadithsArray[nextIndex];
-  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
@@ -171,7 +143,6 @@ const App: Component = () => {
   };
 
   createEffect(() => {
-    fetchHadiths();
     fetchPrayerTimes();
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -207,11 +178,19 @@ const App: Component = () => {
     }
   };
 
+  const toggleDisplayHadith = () => {
+    setShowPrayerTimes((prev) => !prev);
+  };
+
   return (
     <div class={styles.App}>
       <header class={styles.header}>
-        <ClockHeader toggleFullScreen={toggleFullScreen} location={location()} formatDate={currentDateTime().toDateString()}
-          showPrayerTimes={showPrayerTimes()} currentPrayer={currentPrayer()} nextPrayer={nextPrayer()} />
+        <ClockHeader toggleFullScreen={toggleFullScreen} toggleDisplayHadith={toggleDisplayHadith} location={location()}
+          formatDate={currentDateTime().toDateString()}
+          showPrayerTimes={showPrayerTimes()}
+          currentPrayer={currentPrayer()}
+          nextPrayer={nextPrayer()}
+        />
         {showPrayerTimes() ? (
           <div class={styles.prayerTimes}>
             {prayerTimes().map((prayer) => (
@@ -237,7 +216,7 @@ const App: Component = () => {
           </div>
         ) : (
           <div class={styles.prayerTimes}>
-            <HadithDisplay hadith={getNextHadith()} />
+            <HadithDisplay apiKey={API_KEY} />
           </div>
         )}
       </header>

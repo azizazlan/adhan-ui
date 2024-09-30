@@ -1,21 +1,90 @@
-import { Component } from 'solid-js';
-import { Hadith } from '../types/hadith';
+import { Component, createSignal, createEffect, onMount } from 'solid-js';
+import { Hadith, HadithApiResponse } from '../types/hadith';
+import { IoCaretForward } from 'solid-icons/io'
+import { IoCaretBack } from 'solid-icons/io'
 import styles from './HadithDisplay.module.css';
 
 interface HadithDisplayProps {
-  hadith: Hadith | undefined;
+  apiKey: string;
 }
 
+const SHOW_PRAYER_TIMES_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS || '10000', 10));
+
 const HadithDisplay: Component<HadithDisplayProps> = (props) => {
+
+  const [currentHadith, setCurrentHadith] = createSignal<Hadith | undefined>(undefined);
+  const [hadiths, setHadiths] = createSignal<Hadith[]>([]);
+  const [currentHadithIndex, setCurrentHadithIndex] = createSignal(0);
+
+  const fetchHadiths = async () => {
+    const apiUrl = `https://www.hadithapi.com/public/api/hadiths?apiKey=${props.apiKey}&paginate=100`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data: HadithApiResponse = await response.json();
+      if (data.status === 200 && data.hadiths && data.hadiths.data) {
+        setHadiths(data.hadiths.data);
+        if (data.hadiths.data.length > 0) {
+          setCurrentHadith(data.hadiths.data[0]);
+        }
+      } else {
+        console.error('Failed to fetch hadiths or unexpected data structure');
+      }
+    } catch (error) {
+      console.error('Error fetching hadiths:', error);
+    }
+  };
+
+  const getNextHadith = () => {
+    const hadithsArray = hadiths();
+    if (hadithsArray.length === 0) {
+      return;
+    }
+    const nextIndex = (currentHadithIndex() + 1) % hadithsArray.length;
+    setCurrentHadithIndex(nextIndex);
+    setCurrentHadith(hadithsArray[nextIndex]);
+  };
+
+  const getPreviousHadith = () => {
+    const hadithsArray = hadiths();
+    if (hadithsArray.length === 0) {
+      return;
+    }
+    const previousIndex = (currentHadithIndex() - 1 + hadithsArray.length) % hadithsArray.length;
+    setCurrentHadithIndex(previousIndex);
+    setCurrentHadith(hadithsArray[previousIndex]);
+  };
+
+  // onMount(() => {
+  //   fetchHadiths();
+  // });
+
+  createEffect(() => {
+    fetchHadiths();
+
+    const toggleInterval = setInterval(() => {
+      setCurrentHadith(getNextHadith());
+    }, SHOW_PRAYER_TIMES_INTERVAL_MS); // SHOW_PRAYER_TIMES_INTERVAL_MS
+
+    return () => {
+      clearInterval(toggleInterval);
+    };
+  });
+
+
   return (
     <div class={styles.hadithContainer}>
-      {props.hadith ? (
+      <div class={styles.arrowContainer}>
+        <IoCaretBack onClick={getPreviousHadith} class={styles.arrowBck} />
+        <IoCaretForward onClick={getNextHadith} class={styles.arrowFwd} />
+      </div>
+      {currentHadith() ? (
         <>
-          <p class={styles.hadithTitle}>{props.hadith.headingEnglish}</p>
-          <p class={styles.hadithText}>{props.hadith.hadithEnglish}</p>
-          <p class={styles.bookName}>Hadith #{props.hadith.hadithNumber} Status: {props.hadith.status},
-            Chapter {props.hadith.chapter.id}: {props.hadith.chapter.chapterEnglish}, {props.hadith.book.bookName} (Vol {props.hadith.volume}),
-            by: {props.hadith.book.writerName}</p>
+          <p class={styles.hadithTitle}>{currentHadith().headingEnglish}</p>
+          <p class={styles.hadithText}>{currentHadith().hadithEnglish}</p>
+          <p class={styles.bookName}>Hadith #{currentHadith().hadithNumber} Status: {currentHadith().status},
+            Chapter {currentHadith().chapter.id}: {currentHadith().chapter.chapterEnglish}, {currentHadith().book.bookName} (Vol {currentHadith().volume}),
+            by: {currentHadith().book.writerName}</p>
         </>
       ) : (
         <p>Loading hadith...</p>

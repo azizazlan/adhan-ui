@@ -116,3 +116,13 @@
   border-radius: 5px;
   padding: 3px 15px;
 }
+
+.bookIcon {
+  color: rgb(119, 118, 118);
+  font-size: 2rem;
+  margin-right: 10px;
+}
+
+.activeBookIcon {
+  color: goldenrod;
+}
