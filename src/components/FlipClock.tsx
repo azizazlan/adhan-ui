@@ -43,7 +43,7 @@ const FlipClock = (props: { time: string; isCurrentPrayer: boolean, isCountdown:
   if (props.isCountdown) {
     return (
       <div class={styles.countdownContainer}>
-        <div class={styles.countdownText}>DEPARTURE</div>
+        <div class={styles.countdownText}>TIME LEFT</div>
         <div class={styles.flipClock}>
           <For each={digits()}>
             {(digit, index) => {

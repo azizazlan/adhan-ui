@@ -9,6 +9,7 @@
 .hadithContainer {
   max-width: 1100px;
   margin: 0 auto;
+  margin-top: 35px;
   background-color: #222323;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -31,7 +32,7 @@
 }
 
 .bookName {
-  font-size: 1.7rem;
+  font-size: 1.1rem;
   font-style: italic;
   text-align: right;
   color: #666;

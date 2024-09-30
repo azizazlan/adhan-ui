@@ -23,14 +23,20 @@ const App: Component = () => {
   const [hadiths, setHadiths] = createSignal<Hadith[]>([]);
   const [currentHadithIndex, setCurrentHadithIndex] = createSignal(0);
 
+  const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
+  const SHOW_PRAYER_TIMES_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS || '10000', 10));
+  const LOCATION = import.meta.env.VITE_LOCATION;
+  const LATITUDE = import.meta.env.VITE_LATITUDE;
+  const LONGITUDE = import.meta.env.VITE_LONGITUDE;
+  const TIMEZONE = import.meta.env.VITE_TIMEZONE;
+  const TUNE = import.meta.env.VITE_TUNE;
+
   const fetchHadiths = async () => {
-    const apiKey = '$2y$10$ZDNREaMrID1korqOI2KRatvXPDrwoAv5lfvGQmPDnbAwjgFiTa';
-    const apiUrl = `https://www.hadithapi.com/public/api/hadiths?apiKey=${apiKey}&paginate=100`;
+    const apiUrl = `https://www.hadithapi.com/public/api/hadiths?apiKey=${API_KEY}&paginate=100`;
 
     try {
       const response = await fetch(apiUrl);
       const data: HadithApiResponse = await response.json();
-      console.log(data);
       if (data.status === 200 && data.hadiths && data.hadiths.data) {
         setHadiths(data.hadiths.data);
       } else {
@@ -174,10 +180,10 @@ const App: Component = () => {
     }, 1000);
 
     const toggleInterval = setInterval(() => {
-      // setShowPrayerTimes((prev) => !prev);
-      setShowPrayerTimes(false);
+      setShowPrayerTimes((prev) => !prev);
+      // setShowPrayerTimes(false);
       setCurrentHadith(getNextHadith());
-    }, 30000); // Toggle every 10 seconds
+    }, SHOW_PRAYER_TIMES_INTERVAL_MS); // SHOW_PRAYER_TIMES_INTERVAL_MS
 
     return () => {
       clearInterval(timer);
@@ -200,7 +206,8 @@ const App: Component = () => {
   return (
     <div class={styles.App} onClick={toggleFullScreen}>
       <header class={styles.header}>
-        <ClockHeader location={location()} formatDate={currentDateTime().toDateString()} />
+        <ClockHeader location={location()} formatDate={currentDateTime().toDateString()}
+          showPrayerTimes={showPrayerTimes()} currentPrayer={currentPrayer()} nextPrayer={nextPrayer()} />
         {showPrayerTimes() ? (
           <div class={styles.prayerTimes}>
             {prayerTimes().map((prayer) => (

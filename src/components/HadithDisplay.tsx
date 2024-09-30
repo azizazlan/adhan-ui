@@ -13,10 +13,8 @@ const HadithDisplay: Component<HadithDisplayProps> = (props) => {
         <>
           <p class={styles.hadithTitle}>{props.hadith.headingEnglish}</p>
           <p class={styles.hadithText}>{props.hadith.hadithEnglish}</p>
-          <p class={styles.bookName}>- Hadith #{props.hadith.hadithNumber} Status: {props.hadith.status},
-            <br />
+          <p class={styles.bookName}>Hadith #{props.hadith.hadithNumber} Status: {props.hadith.status},
             Chapter {props.hadith.chapter.id}: {props.hadith.chapter.chapterEnglish}, {props.hadith.book.bookName} (Vol {props.hadith.volume}),
-            <br />
             by: {props.hadith.book.writerName}</p>
         </>
       ) : (
