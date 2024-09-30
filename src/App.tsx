@@ -131,6 +131,7 @@ const App: Component = () => {
       const timings = data.data.timings;
       setPrayerTimes([
         { name: 'Fajr', time: timings.Fajr },
+        { name: 'Sunrise', time: timings.Sunrise },
         { name: 'Dhuhr', time: timings.Dhuhr },
         { name: 'Asr', time: timings.Asr },
         { name: 'Maghrib', time: timings.Maghrib },

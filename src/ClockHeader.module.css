@@ -49,7 +49,10 @@
   justify-content: space-between;
 }
 
-.locationText {
+.locationDate {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   color: rgb(119, 118, 118);
   font-size: 1.5rem;
   font-family: "Oswald", sans-serif;

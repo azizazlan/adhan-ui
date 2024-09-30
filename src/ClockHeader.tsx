@@ -2,6 +2,7 @@ import { Component, createSignal, createEffect } from 'solid-js';
 import { VsBook } from 'solid-icons/vs';
 import { BiSolidPlaneLand } from 'solid-icons/bi';
 import { BiSolidPlaneTakeOff } from 'solid-icons/bi'
+import { FaSolidLocationDot } from 'solid-icons/fa'
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 import logo from './assets/logo.png';
 import styles from './ClockHeader.module.css';
@@ -29,7 +30,12 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
             class={`${styles.bookIcon} ${!props.showPrayerTimes ? styles.activeBookIcon : ''}`}
             onClick={props.toggleDisplayHadith}
           />
-          <div class={styles.locationText}>{props.location}, {props.formatDate}</div>
+          <div class={styles.locationDate}>
+            <FaSolidLocationDot />
+            <span>
+              {props.location}, {props.formatDate}
+            </span>
+          </div>
         </div>
         {!props.showPrayerTimes && (
           <div class={styles.prayerTimeContainer}>
