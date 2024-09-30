@@ -1,5 +1,7 @@
 import { Component, createSignal, createEffect } from 'solid-js';
-import { VsBook } from 'solid-icons/vs'
+import { VsBook } from 'solid-icons/vs';
+import { BiSolidPlaneLand } from 'solid-icons/bi';
+import { BiSolidPlaneTakeOff } from 'solid-icons/bi'
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 import logo from './assets/logo.png';
 import styles from './ClockHeader.module.css';
@@ -31,13 +33,19 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
         </div>
         {!props.showPrayerTimes && (
           <div class={styles.prayerTimeContainer}>
-            <span class={styles.label}>ARRIVED</span>
+            <span class={styles.label}>
+              ARRIVED
+              <BiSolidPlaneLand />
+            </span>
             <div class={styles.prayerName}>
               {props.currentPrayer.split('').map((letter, index) => (
                 <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
               ))}
             </div>
-            <span class={styles.label}>DEPARTURE</span>
+            <span class={styles.label}>
+              DEPARTURE
+              <BiSolidPlaneTakeOff />
+            </span>
             <div class={styles.prayerName}>
               {props.nextPrayer.name.split('').map((letter, index) => (
                 <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
