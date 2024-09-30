@@ -8,7 +8,15 @@ import FlipClock from './components/FlipClock';
 import HadithDisplay from './components/HadithDisplay';
 import { Hadith, HadithApiResponse } from './types/hadith';
 
-const API_URL = 'http://api.aladhan.com/v1/timings/today?latitude=3.1579&longitude=101.5956&method=17&timezonestring=Asia/Kuala_Lumpur&tune=0,10,0,1,0,1,0,1,0';
+const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
+const SHOW_PRAYER_TIMES_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS || '10000', 10));
+const LOCATION = import.meta.env.VITE_LOCATION;
+const LATITUDE = import.meta.env.VITE_LATITUDE;
+const LONGITUDE = import.meta.env.VITE_LONGITUDE;
+const TIMEZONE = import.meta.env.VITE_TIMEZONE;
+const TUNE = import.meta.env.VITE_TUNE;
+const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
+const API_URL = `http://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 
 const App: Component = () => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
@@ -17,20 +25,11 @@ const App: Component = () => {
   const [prayerTimes, setPrayerTimes] = createSignal([]);
   const [currentPrayer, setCurrentPrayer] = createSignal('');
   const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
-  const [location] = createSignal('Shah Alam, Malaysia');
+  const [location] = createSignal(LOCATION);
   const [showPrayerTimes, setShowPrayerTimes] = createSignal(true);
   const [currentHadith, setCurrentHadith] = createSignal('');
   const [hadiths, setHadiths] = createSignal<Hadith[]>([]);
   const [currentHadithIndex, setCurrentHadithIndex] = createSignal(0);
-
-  const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
-  const SHOW_PRAYER_TIMES_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS || '10000', 10));
-  const LOCATION = import.meta.env.VITE_LOCATION;
-  const LATITUDE = import.meta.env.VITE_LATITUDE;
-  const LONGITUDE = import.meta.env.VITE_LONGITUDE;
-  const TIMEZONE = import.meta.env.VITE_TIMEZONE;
-  const TUNE = import.meta.env.VITE_TUNE;
-  const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 
   const fetchHadiths = async () => {
     const apiUrl = `https://www.hadithapi.com/public/api/hadiths?apiKey=${API_KEY}&paginate=100`;
@@ -209,9 +208,9 @@ const App: Component = () => {
   };
 
   return (
-    <div class={styles.App} onClick={toggleFullScreen}>
+    <div class={styles.App}>
       <header class={styles.header}>
-        <ClockHeader location={location()} formatDate={currentDateTime().toDateString()}
+        <ClockHeader toggleFullScreen={toggleFullScreen} location={location()} formatDate={currentDateTime().toDateString()}
           showPrayerTimes={showPrayerTimes()} currentPrayer={currentPrayer()} nextPrayer={nextPrayer()} />
         {showPrayerTimes() ? (
           <div class={styles.prayerTimes}>

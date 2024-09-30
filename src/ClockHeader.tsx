@@ -4,7 +4,7 @@ import logo from './assets/logo.png';
 import styles from './ClockHeader.module.css';
 import FlipClock from './components/FlipClock';
 
-const ClockHeader = (props: { location: string, formatDate: string, showPrayerTimes: boolean, currentPrayer: string, nextPrayer: string }) => {
+const ClockHeader = (props: { toggleFullScreen: () => void, location: string, formatDate: string, showPrayerTimes: boolean, currentPrayer: string, nextPrayer: string }) => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
 
   createEffect(() => {
@@ -18,7 +18,7 @@ const ClockHeader = (props: { location: string, formatDate: string, showPrayerTi
     <div>
       <div>
         <div class={styles.headerRow}>
-          <div class={styles.headerTitle}>PRAYER TIMES</div>
+          <div class={styles.headerTitle} onClick={props.toggleFullScreen}>PRAYER TIMES</div>
           <EnhancedDigitalClock />
         </div>
         <div class={styles.locationRow}>
