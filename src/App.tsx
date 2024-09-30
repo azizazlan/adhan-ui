@@ -18,7 +18,7 @@ const App: Component = () => {
   const [currentPrayer, setCurrentPrayer] = createSignal('');
   const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
   const [location] = createSignal('Shah Alam, Malaysia');
-  const [showPrayerTimes, setShowPrayerTimes] = createSignal(false);
+  const [showPrayerTimes, setShowPrayerTimes] = createSignal(true);
   const [currentHadith, setCurrentHadith] = createSignal('');
   const [hadiths, setHadiths] = createSignal<Hadith[]>([]);
   const [currentHadithIndex, setCurrentHadithIndex] = createSignal(0);
@@ -30,6 +30,7 @@ const App: Component = () => {
   const LONGITUDE = import.meta.env.VITE_LONGITUDE;
   const TIMEZONE = import.meta.env.VITE_TIMEZONE;
   const TUNE = import.meta.env.VITE_TUNE;
+  const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 
   const fetchHadiths = async () => {
     const apiUrl = `https://www.hadithapi.com/public/api/hadiths?apiKey=${API_KEY}&paginate=100`;
@@ -180,9 +181,13 @@ const App: Component = () => {
     }, 1000);
 
     const toggleInterval = setInterval(() => {
-      setShowPrayerTimes((prev) => !prev);
-      // setShowPrayerTimes(false);
-      setCurrentHadith(getNextHadith());
+      if (DISPLAY_HADITH) {
+        setShowPrayerTimes((prev) => !prev);
+        // setShowPrayerTimes(false);
+        setCurrentHadith(getNextHadith());
+      } else {
+        setShowPrayerTimes(true);
+      }
     }, SHOW_PRAYER_TIMES_INTERVAL_MS); // SHOW_PRAYER_TIMES_INTERVAL_MS
 
     return () => {
