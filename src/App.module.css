@@ -15,37 +15,6 @@
   width: 1140px;
 }
 
-.prayerTime {
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.3rem 1.0rem; /* Slightly reduced padding */
-  margin: 0.0rem 0; /* Slightly increased to accommodate larger countdown */
-  border-radius: 5px;
-}
-
-.prayerInfo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.prayerName, .prayerTimeValue {
-  font-size: 3.1rem; /* Changed from 3.5rem to 3.1rem */
-  font-weight: bold;
-  color: #4CAF50; /* Default color for upcoming prayers (green) */
-}
-
-.currentPrayer .prayerName,
-.currentPrayer .prayerTimeValue {
-  color: gold; /* Gold color for the current prayer */
-}
-
-.pastPrayer .prayerName,
-.pastPrayer .prayerTimeValue {
-  color: #808080; /* Grey color for past prayers */
-}
-
 .countdown {
   font-size: 2.0rem; /* Increased from 1.1rem to 2.5rem */
   color: gold;
@@ -54,43 +23,15 @@
   flex-direction: row;
   justify-content: right;
   align-items: center;
-}
-
-.letterBox {
-  font-weight: bold;
-  font-size: 3.0rem;
-  font-family: monospace;
-  color: #fff;
-  background-color: #333;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-  margin: 0 1px;
-  text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
-}
-
-.letterBox::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 20%;
-  height: 1px;
-  background-color: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.5rem;
 }
 
 .countdownLetterBox {
   font-weight: bold;
   font-size: 3.0rem;
   font-family: monospace;
-  color: gold;
-  background-color: #474747;
+  color: white;
+  background-color: #353535;
   width: 50px;
   height: 50px;
   display: flex;
