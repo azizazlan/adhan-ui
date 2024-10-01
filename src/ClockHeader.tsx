@@ -9,6 +9,8 @@ import logo from './assets/logo.png';
 import styles from './ClockHeader.module.css';
 import FlipClock from './components/FlipClock';
 
+const TIMER_THRESHOLD_MINS = parseInt(import.meta.env.VITE_TIMER_THRESHOLD_MINS || '60', 10);
+
 const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith: () => void, location: string, formatDate: string, showPrayerTimes: boolean, currentPrayer: string, nextPrayer: string }) => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
 
@@ -18,6 +20,12 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
     }, 1000);
     return () => clearInterval(timer);
   });
+
+  const isCountdownUnderThreshold = (countdown: string) => {
+    const [hours, minutes] = countdown.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    return totalMinutes < TIMER_THRESHOLD_MINS;
+  };
 
   return (
     <div class={styles.container}>
@@ -63,7 +71,9 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
             {props.nextPrayer.countdown.split('').map((letter, index) => {
               if (letter !== ' ') {
                 return (
-                  <span class={styles.letterBox} key={index}>{letter}</span>
+                  <span
+                    style={{ color: isCountdownUnderThreshold(props.nextPrayer.countdown) ? 'red' : 'white' }}
+                    class={styles.letterBox} key={index}>{letter}</span>
                 )
               }
             })}

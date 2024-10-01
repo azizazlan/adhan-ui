@@ -17,6 +17,8 @@ const TIMEZONE = import.meta.env.VITE_TIMEZONE;
 const TUNE = import.meta.env.VITE_TUNE;
 const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 const API_URL = `http://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
+const TIMER_THRESHOLD_MINS = parseInt(import.meta.env.VITE_TIMER_THRESHOLD_MINS || '60', 10);
+
 
 const App: Component = () => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
@@ -55,6 +57,12 @@ const App: Component = () => {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const isCountdownUnderThreshold = (countdown: string) => {
+    const [hours, minutes] = countdown.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    return totalMinutes < TIMER_THRESHOLD_MINS;
   };
 
   const isPrayerTimePast = (prayerTime: string) => {
@@ -201,7 +209,10 @@ const App: Component = () => {
                     {nextPrayer().countdown.split('').map((letter, index) => {
                       if (letter !== ' ') {
                         return (
-                          <span class={styles.countdownLetterBox} key={index}>{letter}</span>
+                          <span class={styles.countdownLetterBox}
+                            style={{ color: isCountdownUnderThreshold(nextPrayer().countdown) ? 'red' : 'inherit' }}
+                            key={index}>
+                            {letter}</span>
                         )
                       }
                     })}
