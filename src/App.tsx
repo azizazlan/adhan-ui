@@ -204,6 +204,13 @@ const App: Component = () => {
           <div class={styles.contents}>
             {prayerTimes().map((prayer) => (
               <div>
+                <PrayerTimeItem
+                  prayer={prayer}
+                  currentPrayer={currentPrayer()}
+                  nextPrayer={nextPrayer()}
+                  isPrayerTimePast={isPrayerTimePast}
+                  formatPrayerTime={formatPrayerTime}
+                />
                 {prayer.name === nextPrayer().name && (
                   <div class={styles.countdown}>
                     {nextPrayer().countdown.split('').map((letter, index) => {
@@ -218,13 +225,6 @@ const App: Component = () => {
                     })}
                   </div>
                 )}
-                <PrayerTimeItem
-                  prayer={prayer}
-                  currentPrayer={currentPrayer()}
-                  nextPrayer={nextPrayer()}
-                  isPrayerTimePast={isPrayerTimePast}
-                  formatPrayerTime={formatPrayerTime}
-                />
               </div>
             ))}
           </div>

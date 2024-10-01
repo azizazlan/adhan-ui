@@ -53,3 +53,22 @@
 .past .letterBox {
   opacity: 0.5;
 }
+
+.nextPrayerNameContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  justify-content: center;
+}
+
+.nextPrayerLabel {
+  font-size: 1.3rem;
+  color: black;
+  text-align: left;
+  background-color: gold;
+  padding: 0px 5px;
+  border-radius: 3px;
+  font-weight: 700;
+  max-height: 32px; 
+  font-family: "Oswald", sans-serif;
+}

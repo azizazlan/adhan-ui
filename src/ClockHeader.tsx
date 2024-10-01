@@ -1,7 +1,5 @@
 import { Component, createSignal, createEffect } from 'solid-js';
 import { VsBook } from 'solid-icons/vs';
-import { BiSolidPlaneLand } from 'solid-icons/bi';
-import { BiSolidPlaneTakeOff } from 'solid-icons/bi'
 import { FaSolidLocationDot } from 'solid-icons/fa'
 import { OcStopwatch2 } from 'solid-icons/oc'
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
@@ -40,15 +38,15 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
         />
         <div class={styles.locationDate}>
           <FaSolidLocationDot />
-          <span>
-            {props.location}, {props.formatDate}
-          </span>
+          <div>
+            {props.location}, <span class={styles.date}>{props.formatDate}</span>
+          </div>
         </div>
       </div>
       {!props.showPrayerTimes && (
         <div class={styles.prayerTimeContainer}>
           <span class={styles.label}>
-            <BiSolidPlaneTakeOff class={styles.icon} />
+            NEXT
           </span>
           <div class={styles.prayerName}>
             {props.nextPrayer.name.split('').map((letter, index) => (
@@ -64,7 +62,7 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
               }
             })}
           </div>
-          <span class={styles.label}>
+          <span class={styles.label2}>
             <OcStopwatch2 class={styles.icon2} />
           </span>
           <div class={styles.prayerName}>

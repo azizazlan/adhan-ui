@@ -87,7 +87,7 @@
 }
 
 .digitBox.animate .flipCard {
-  animation: flip 0.6s ease-in-out;
+  animation: flip 0.7s ease-in-out;
   animation-delay: calc(var(--index) * 0.1s);
 }
 
@@ -122,9 +122,9 @@
 .currentPrayer .lowerHalf::after,
 .currentPrayer .flipCardFront::after,
 .currentPrayer .flipCardBack::after {
-  color: #ffd700; /* Gold color for the digits */
+  color:gold;
 }
 
 .currentPrayer.separator {
-  color: #ffd700; /* Gold color for separator */
+  color:gold;
 }

@@ -19,12 +19,35 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
   };
 
   const isCurrentPrayer = () => props.prayer.name === props.currentPrayer;
+
+  if (props.nextPrayer.name === props.prayer.name) {
+    return (
+      <div class={`${styles.prayerTimeItem} ${getItemClass()}`}>
+        <div class={styles.nextPrayerNameContainer}>
+          <div class={styles.nextPrayerLabel}>NEXT</div>
+          <div class={styles.prayerName}>
+            {props.prayer.name.split('').map((letter, index) => (
+              <span class={styles.letterBox} key={index}>{letter}</span>
+            ))}
+          </div>
+        </div>
+        <FlipClock
+          time={props.formatPrayerTime(props.prayer.time)}
+          isCurrentPrayer={isCurrentPrayer()}
+          isCountdown={false}
+        />
+      </div>
+    );
+  }
+
   return (
     <div class={`${styles.prayerTimeItem} ${getItemClass()}`}>
-      <div class={styles.prayerName}>
-        {props.prayer.name.split('').map((letter, index) => (
-          <span class={styles.letterBox} key={index}>{letter}</span>
-        ))}
+      <div>
+        <div class={styles.prayerName}>
+          {props.prayer.name.split('').map((letter, index) => (
+            <span class={styles.letterBox} key={index}>{letter}</span>
+          ))}
+        </div>
       </div>
       <FlipClock
         time={props.formatPrayerTime(props.prayer.time)}
