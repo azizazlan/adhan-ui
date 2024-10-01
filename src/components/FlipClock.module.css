@@ -122,11 +122,11 @@
 .currentPrayer .lowerHalf::after,
 .currentPrayer .flipCardFront::after,
 .currentPrayer .flipCardBack::after {
-  color:gold;
+  color:goldenrod;
 }
 
 .currentPrayer.separator {
-  color:gold;
+  color:goldenrod;
 }
 
 .past .upperHalf::after,

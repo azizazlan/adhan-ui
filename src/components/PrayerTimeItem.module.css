@@ -43,11 +43,11 @@
 }
 
 .current .letterBox {
-  color: gold !important;
+  color: goldenrod !important;
 }
 
 .next .letterBox {
-  color: gold!important;
+  color: goldenrod!important;
 }
 
 .past .letterBox {
@@ -56,7 +56,7 @@
 
 .nextPrayerLabel {
   font-size: 2.9rem;
-  color: gold;
+  color: goldenrod;
   text-align: left;
   padding: 0px 0px 0px 0px;
   font-weight: 700;
