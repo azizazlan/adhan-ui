@@ -44,7 +44,7 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
       {!props.showPrayerTimes && (
         <div class={styles.prayerTimeContainer}>
           <span class={styles.label}>
-            NEXT
+            NEXT▸
           </span>
           <div class={styles.prayerName}>
             {props.nextPrayer.name.split('').map((letter, index) => (

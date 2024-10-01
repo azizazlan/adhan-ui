@@ -29,7 +29,7 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
     <div class={`${styles.prayerTimeItem} ${getItemClass()}`}>
       <div>
         <div class={styles.prayerName}>
-          {props.nextPrayer.name === props.prayer.name ? <span class={styles.nextPrayerLabel}><FaSolidAngleRight /></span> : null}
+          {props.nextPrayer.name === props.prayer.name ? <span class={styles.nextPrayerLabel}>▸</span> : null}
           {props.prayer.name.split('').map((letter, index) => (
             <span class={styles.letterBox} key={index}>{letter}</span>
           ))}
