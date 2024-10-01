@@ -1,6 +1,5 @@
 import { Component, createSignal, createEffect } from 'solid-js';
 import { VsBook } from 'solid-icons/vs';
-import { FaSolidLocationDot } from 'solid-icons/fa'
 import { OcStopwatch2 } from 'solid-icons/oc'
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 import logo from './assets/logo.png';
@@ -37,7 +36,6 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
           onClick={props.toggleDisplayHadith}
         />
         <div class={styles.locationDate}>
-          <FaSolidLocationDot />
           <div>
             {props.location}, <span class={styles.date}>{props.formatDate}</span>
           </div>
