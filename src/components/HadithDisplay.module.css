@@ -1,15 +1,6 @@
-.hadith {
-  text-align: left;;
-  font-size: 2.5rem;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
 .hadithContainer {
-  max-width: 1100px;
-  margin: 0 auto;
-  margin-top: 5px;
+  max-width: 1150px;
+  margin-top: 15px;
   background-color: #222323;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -41,8 +32,6 @@
 .arrowContainer {
   display: flex;
   flex-direction: row;
-  align-items: right;
-  justify-content: right;
 }
 
 .arrowFwd {

@@ -193,16 +193,18 @@ const App: Component = () => {
           nextPrayer={nextPrayer()}
         />
         {showPrayerTimes() ? (
-          <div class={styles.prayerTimes}>
+          <div class={styles.contents}>
             {prayerTimes().map((prayer) => (
               <div>
                 {prayer.name === nextPrayer().name && (
                   <div class={styles.countdown}>
-                    <FlipClock
-                      time={nextPrayer().countdown}
-                      isCurrentPrayer={false}
-                      isCountdown={true}
-                    />
+                    {nextPrayer().countdown.split('').map((letter, index) => {
+                      if (letter !== ' ') {
+                        return (
+                          <span class={styles.countdownLetterBox} key={index}>{letter}</span>
+                        )
+                      }
+                    })}
                   </div>
                 )}
                 <PrayerTimeItem
@@ -216,7 +218,7 @@ const App: Component = () => {
             ))}
           </div>
         ) : (
-          <div class={styles.prayerTimes}>
+          <div class={styles.contents}>
             <HadithDisplay apiKey={API_KEY} />
           </div>
         )}

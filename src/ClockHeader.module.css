@@ -1,10 +1,8 @@
-.header {
-  width: 100%;
-  max-width: 1100px; /* Slightly increased to accommodate larger countdown */
+.container {
+  width: 1140px;
 }
 
-.headerRow {
-  width: 100%;
+.headerTitleContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -23,30 +21,18 @@
   padding: 8px 25px;
 }
 
-.dateTimeDisplay {
+.toolbar {
   display: flex;
-  flex-direction: column;
-  align-items: right;
-  margin-bottom: 1.5rem; /* Slightly increased margin */
-}
-
-.date, .location, .time {
-  color: silver;
-  margin: 0.2rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1140px;
+  margin-bottom: 1rem;
 }
 
 .locationText {
   color: silver;
   font-size: 1.5rem;
-}
-
-.locationRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 1rem;
-  margin-top: 0.0rem;
-  justify-content: space-between;
 }
 
 .locationDate {
@@ -60,17 +46,10 @@
   text-transform: uppercase;
 }
 
-
 .prayerTimeContainer {
-  width: 100%;
-  color: #fff;
-  font-size: 1.5rem;
   font-weight: bold;
   display: flex;
   flex-direction: row;
-  justify-content: left;
-  padding-bottom: 35px;
-  border-bottom: 1px solid #595959;
 }
 
 .prayerName {
@@ -129,3 +108,12 @@
 .activeBookIcon {
   color: goldenrod;
 }
+
+.icon {
+  font-size: 2.7rem;
+}
+
+.icon2 {
+  font-size: 2.1rem;
+}
+

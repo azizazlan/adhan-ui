@@ -1,4 +1,5 @@
 import { createSignal, onCleanup, For } from 'solid-js';
+import { OcStopwatch2 } from 'solid-icons/oc'
 import styles from './FlipClock.module.css';
 
 const DigitBox = (props: { digit: string; animate: boolean; index: number; isCurrentPrayer: boolean, isCountdown: boolean }) => (
@@ -23,14 +24,9 @@ const CountdownDigitBox = (props: { digit: string; animate: boolean; index: numb
   </div>
 );
 
-const FlipClock = (props: { time: string; isCurrentPrayer: boolean, isCountdown: boolean }) => {
+const FlipClock = (props: { time: string; isCurrentPrayer: boolean }) => {
   const [animate, setAnimate] = createSignal(false);
   const digits = () => {
-    if (props.isCountdown) {
-      // Format countdown time as hh:mm:ss
-      const [hours, minutes, seconds] = props.time.split(':');
-      return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`.split('');
-    }
     return props.time.replace(':', '').split('');
   };
   const animationInterval = setInterval(() => {
@@ -39,31 +35,6 @@ const FlipClock = (props: { time: string; isCurrentPrayer: boolean, isCountdown:
   }, 60000);
 
   onCleanup(() => clearInterval(animationInterval));
-
-  if (props.isCountdown) {
-    return (
-      <div class={styles.countdownContainer}>
-        <div class={styles.countdownText}>TIME LEFT</div>
-        <div class={styles.flipClock}>
-          <For each={digits()}>
-            {(digit, index) => {
-              return (
-                <>
-                  <CountdownDigitBox
-                    digit={digit}
-                    animate={animate()}
-                    index={index()}
-                    isCurrentPrayer={props.isCurrentPrayer}
-                    isCountdown={props.isCountdown}
-                  />
-                </>
-              )
-            }}
-          </For>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div class={styles.flipClock}>
