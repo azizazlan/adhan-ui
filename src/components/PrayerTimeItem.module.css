@@ -43,32 +43,22 @@
 }
 
 .current .letterBox {
-  color: gold;
+  color: gold !important;
 }
 
-.next {
-  background-color: lightgreen;
+.next .letterBox {
+  color: gold!important;
 }
 
 .past .letterBox {
-  opacity: 0.5;
-}
-
-.nextPrayerNameContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: top;
-  justify-content: center;
+  opacity: 0.5 !important;
 }
 
 .nextPrayerLabel {
-  font-size: 1.3rem;
-  color: black;
+  font-size: 2.9rem;
+  color: gold;
   text-align: left;
-  background-color: gold;
-  padding: 0px 5px;
-  border-radius: 3px;
+  padding: 0px 0px 0px 0px;
   font-weight: 700;
-  max-height: 32px; 
-  font-family: "Oswald", sans-serif;
+  padding-top: 3px;
 }
