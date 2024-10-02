@@ -40,11 +40,13 @@ const ClockHeader = (props: {
         <EnhancedDigitalClock />
       </div>
       <div class={styles.prayerTimeContainer}>
-        <div class={styles.prayerName}>
-          {"NEXT".split('').map((letter, index) => (
-            <span class={styles.yellowLetterBox} key={index}>{letter.toUpperCase()}</span>
-          ))}
-        </div>
+        {props.nextPrayer.name.length > 0 &&
+          <div class={styles.prayerName}>
+            {"NEXT".split('').map((letter, index) => (
+              <span class={styles.yellowLetterBox} key={index}>{letter.toUpperCase()}</span>
+            ))}
+          </div>
+        }
         <div class={styles.prayerName}>
           {props.nextPrayer.name.split('').map((letter, index) => (
             <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
