@@ -2,10 +2,12 @@ import { Component, createSignal, createEffect, onMount } from 'solid-js';
 import { Hadith, HadithApiResponse } from '../types/hadith';
 import { IoCaretForward } from 'solid-icons/io'
 import { IoCaretBack } from 'solid-icons/io'
+import { IoCloseCircleOutline } from 'solid-icons/io'
 import styles from './HadithDisplay.module.css';
 
 interface HadithDisplayProps {
   apiKey: string;
+  onClose: () => void;
 }
 
 const SHOW_PRAYER_TIMES_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS || '10000', 10));
@@ -55,10 +57,6 @@ const HadithDisplay: Component<HadithDisplayProps> = (props) => {
     setCurrentHadith(hadithsArray[previousIndex]);
   };
 
-  // onMount(() => {
-  //   fetchHadiths();
-  // });
-
   createEffect(() => {
     fetchHadiths();
 
@@ -74,9 +72,18 @@ const HadithDisplay: Component<HadithDisplayProps> = (props) => {
 
   return (
     <div class={styles.hadithContainer}>
-      <div class={styles.arrowContainer}>
-        <IoCaretBack onClick={getPreviousHadith} class={styles.arrowBck} />
-        <IoCaretForward onClick={getNextHadith} class={styles.arrowFwd} />
+      <div class={styles.toolbar}>
+        <div class={styles.arrowContainer}>
+          <button class={styles.iconButton} onClick={getPreviousHadith} title="Previous Hadith">
+            <IoCaretBack class={styles.arrowBck} />
+          </button>
+          <button class={styles.iconButton} onClick={getNextHadith} title="Next Hadith">
+            <IoCaretForward class={styles.arrowFwd} />
+          </button>
+        </div>
+        <button class={styles.iconButton} onClick={props.onClose} title="Close Settings">
+          <IoCloseCircleOutline class={styles.closeIconButton} />
+        </button>
       </div>
       {currentHadith() ? (
         <>

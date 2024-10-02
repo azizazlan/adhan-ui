@@ -268,7 +268,7 @@ const App: Component = () => {
               </div>
             ))
           )}
-          {displayMode() === 'hadith' && <HadithDisplay apiKey={API_KEY} />}
+          {displayMode() === 'hadith' && <HadithDisplay apiKey={API_KEY} onClose={toggleDisplayMode} />}
           {displayMode() === 'settings' && <SettingsDisplay onClose={toggleSettings} />}
         </div>
       </header>

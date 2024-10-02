@@ -43,3 +43,20 @@
   font-size: 2.5rem;
   color: #666;
 }
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.iconButton {
+  background-color: transparent;
+  border: none;
+}
+
+.closeIconButton {
+  font-size: 2.5rem;
+  color: #666;
+}
