@@ -15,6 +15,7 @@
   width: 1140px;
   max-width: 95%; /* Add this line */
   margin: 0 auto; /* Add this line */
+  padding-bottom: 3rem;
 }
 
 .countdown {

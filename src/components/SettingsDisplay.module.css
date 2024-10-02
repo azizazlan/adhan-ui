@@ -3,12 +3,10 @@
   max-width: 100%; /* Add this line */
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
   justify-content: left;
 }
 
 .envVariables {
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   align-items: left;

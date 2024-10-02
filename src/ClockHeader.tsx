@@ -10,6 +10,7 @@ const TIMER_THRESHOLD_MINS = parseInt(import.meta.env.VITE_TIMER_THRESHOLD_MINS 
 const ClockHeader = (props: {
   toggleFullScreen: () => void,
   toggleDisplayMode: () => void,
+  toggleSettings: () => void,
   location: string,
   displayMode: string,
   currentPrayer: string,
@@ -32,21 +33,45 @@ const ClockHeader = (props: {
     return totalMinutes < TIMER_THRESHOLD_MINS;
   };
 
-  // console.log(props.hijriDate.day);
-  console.log(props.displayMode);
-
   return (
     <div class={styles.container}>
       <div class={styles.headerTitleContainer}>
         <div class={styles.headerTitle} onClick={props.toggleFullScreen}>PRAYER TIMES</div>
         <EnhancedDigitalClock />
       </div>
+      <div class={styles.prayerTimeContainer}>
+        <div class={styles.prayerName}>
+          {"NEXT".split('').map((letter, index) => (
+            <span class={styles.yellowLetterBox} key={index}>{letter.toUpperCase()}</span>
+          ))}
+        </div>
+        <div class={styles.prayerName}>
+          {props.nextPrayer.name.split('').map((letter, index) => (
+            <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
+          ))}
+        </div>
+        <div class={styles.prayerName}>
+          {props.nextPrayer.time.split('').map((letter, index) => {
+            if (letter !== ' ') {
+              return (
+                <span class={styles.letterBox} key={index}>{letter}</span>
+              )
+            }
+          })}
+        </div>
+        <div class={styles.prayerName}>
+          {props.nextPrayer.countdown.split('').map((letter, index) => {
+            if (letter !== ' ') {
+              return (
+                <span
+                  style={{ color: isCountdownUnderThreshold(props.nextPrayer.countdown) ? 'red' : 'white' }}
+                  class={styles.letterBox} key={index}>{letter}</span>
+              )
+            }
+          })}
+        </div>
+      </div>
       <div class={styles.toolbar}>
-        <button
-          class={`${styles.hadithButton} ${props.displayMode === 'hadith' ? styles.activeHadithButton : ''}`} kx
-          onClick={props.toggleDisplayMode}>
-          HADITHS
-        </button>
         <div class={styles.locationAndDateContainer}>
           <div>
             <span class={styles.location}>{props.location}</span>
@@ -60,41 +85,18 @@ const ClockHeader = (props: {
             }
           </div>
         </div>
+        <button
+          disabled={props.displayMode === 'settings'}
+          class={`${styles.hadithButton}`}
+          onClick={props.toggleDisplayMode}>
+          HADITHS
+        </button>
+        <button
+          class={`${styles.settingsButton}`}
+          onClick={props.toggleSettings}>
+          SETTINGS
+        </button>
       </div>
-      {
-        !props.showPrayerTimes && (
-          <div class={styles.prayerTimeContainer}>
-            <span class={styles.label}>
-              NEXT▸
-            </span>
-            <div class={styles.prayerName}>
-              {props.nextPrayer.name.split('').map((letter, index) => (
-                <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
-              ))}
-            </div>
-            <div class={styles.prayerName}>
-              {props.nextPrayer.time.split('').map((letter, index) => {
-                if (letter !== ' ') {
-                  return (
-                    <span class={styles.letterBox} key={index}>{letter}</span>
-                  )
-                }
-              })}
-            </div>
-            <div class={styles.prayerName}>
-              {props.nextPrayer.countdown.split('').map((letter, index) => {
-                if (letter !== ' ') {
-                  return (
-                    <span
-                      style={{ color: isCountdownUnderThreshold(props.nextPrayer.countdown) ? 'red' : 'white' }}
-                      class={styles.letterBox} key={index}>{letter}</span>
-                  )
-                }
-              })}
-            </div>
-          </div>
-        )
-      }
     </div >
   )
 }

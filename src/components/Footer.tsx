@@ -1,15 +1,12 @@
 import { Component } from 'solid-js';
 import styles from './Footer.module.css';
-import { BiRegularCog } from 'solid-icons/bi'
 
 const Footer: Component = (props: { onSettingsClick: () => void }) => {
   return (
     <footer class={styles.footer}>
       <div class={styles.container}>
-        <button
-          onClick={props.onSettingsClick}
-          class={styles.settingsButton}><BiRegularCog /></button>
-        <p class={styles.copyright}>&copy; {new Date().getFullYear()} Prayer Times App</p>
+        <p class={styles.copyright}>In the name of Allah, the most gracious, the most merciful, may this app be a means of guidance and a source of blessing for all muslims worldwide.</p>
+        <p class={styles.version}>{import.meta.env.VITE_APP_NAME} Version {import.meta.env.VITE_APP_VERSION}</p>
       </div>
     </footer>
   );

@@ -229,6 +229,7 @@ const App: Component = () => {
         <ClockHeader
           toggleFullScreen={toggleFullScreen}
           toggleDisplayMode={toggleDisplayMode}
+          toggleSettings={toggleSettings}
           location={location()}
           formattedDate={format(currentDateTime(), 'EEE dd-MM-yyyy').toUpperCase()}
           displayMode={displayMode()}
@@ -271,7 +272,7 @@ const App: Component = () => {
           {displayMode() === 'settings' && <SettingsDisplay onClose={toggleSettings} />}
         </div>
       </header>
-      <Footer onSettingsClick={toggleSettings} />
+      <Footer />
     </div>
   );
 };
