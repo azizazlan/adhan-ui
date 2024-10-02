@@ -23,7 +23,7 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
   const isCurrentPrayer = () => props.prayer.name === props.currentPrayer;
 
   const isPrayerTimePast = () => {
-    return props.isPrayerTimePast(props.prayer.time);
+    return props.isPrayerTimePast(props.prayer.time, props.prayer.name);
   };
 
   return (

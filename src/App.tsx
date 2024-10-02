@@ -83,11 +83,17 @@ const App: Component = () => {
     return totalMinutes < TIMER_THRESHOLD_MINS;
   };
 
-  const isPrayerTimePast = (prayerTime: string) => {
+  const isPrayerTimePast = (prayerTime: string, prayerName: string) => {
     const now = currentDateTime();
     const [hours, minutes] = prayerTime.split(':').map(Number);
-    const prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-    // the prayer time has passed more than 10 minutes ago
+    let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+
+    // If it's Lastthird and the time is before the current time, assume it's for the next day
+    if (prayerName === 'Las3rd' && prayerDate < now) {
+      prayerDate.setDate(prayerDate.getDate() + 1);
+    }
+
+    // The prayer time has passed more than 10 minutes ago
     const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
     return prayerDate < tenMinutesAgo;
   };
@@ -95,11 +101,16 @@ const App: Component = () => {
   const updateCurrentAndNextPrayer = () => {
     const now = currentDateTime();
     let currentPrayerInfo = { name: '', date: new Date(0) };
-    let nextPrayerInfo = { name: '', date: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) };
+    let nextPrayerInfo = { name: '', date: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 59) };
 
     prayerTimes().forEach(prayer => {
       const [hours, minutes] = prayer.time.split(':').map(Number);
-      const prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+      let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+
+      // If the prayer time is before the current time and it's Lastthird, it's for the next day
+      if (prayer.name === 'Las3rd' && prayerDate < now) {
+        prayerDate.setDate(prayerDate.getDate() + 1);
+      }
 
       if (prayerDate <= now && prayerDate > currentPrayerInfo.date) {
         currentPrayerInfo = { name: prayer.name, date: prayerDate };
@@ -107,6 +118,18 @@ const App: Component = () => {
         nextPrayerInfo = { name: prayer.name, date: prayerDate };
       }
     });
+
+    // Special case: If it's after Isha and before midnight, set Las3rd as next prayer
+    if (currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
+      const las3rdPrayer = prayerTimes().find(p => p.name === 'Las3rd');
+      if (las3rdPrayer) {
+        const [hours, minutes] = las3rdPrayer.time.split(':').map(Number);
+        nextPrayerInfo = {
+          name: 'Las3rd',
+          date: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, hours, minutes)
+        };
+      }
+    }
 
     setCurrentPrayer(currentPrayerInfo.name);
 
@@ -164,6 +187,7 @@ const App: Component = () => {
         { name: 'Asr', time: timings.Asr },
         { name: 'Maghrib', time: timings.Maghrib },
         { name: 'Isha', time: timings.Isha },
+        { name: 'Las3rd', time: timings.Lastthird },
       ]);
       updateCurrentAndNextPrayer();
     } catch (error) {
