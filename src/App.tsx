@@ -1,5 +1,6 @@
 import { Component, createSignal, createEffect } from 'solid-js';
 import { ProgressBar } from 'solid-bootstrap';
+import { format } from 'date-fns';
 import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrayerTimeItem from './components/PrayerTimeItem';
@@ -18,6 +19,7 @@ const TUNE = import.meta.env.VITE_TUNE;
 const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 const API_URL = `http://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 const TIMER_THRESHOLD_MINS = parseInt(import.meta.env.VITE_TIMER_THRESHOLD_MINS || '60', 10);
+const API_HIJRI = "http://api.aladhan.com/v1/gToH/";
 
 
 const App: Component = () => {
@@ -29,6 +31,7 @@ const App: Component = () => {
   const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
   const [location] = createSignal(LOCATION);
   const [showPrayerTimes, setShowPrayerTimes] = createSignal(true);
+  const [hijriDate, setHijriDate] = createSignal<HijriDate | null>(null);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
@@ -151,10 +154,24 @@ const App: Component = () => {
     }
   };
 
+  const fetchHijriDate = async (today: Date) => {
+    try {
+      const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear()}`;
+      const response = await fetch(API_HIJRI + formattedDate);
+      const data = await response.json();
+      console.log(data);
+      setHijriDate(data.data.hijri);
+    } catch (error) {
+      console.error('Error fetching hijri date:', error);
+    }
+  };
+
   createEffect(() => {
+    const today = new Date();
     fetchPrayerTimes();
+    fetchHijriDate(today);
     const timer = setInterval(() => {
-      setCurrentDateTime(new Date());
+      setCurrentDateTime(today);
       updateCurrentAndNextPrayer();
       updateCurrentPrayerProgress();
     }, 1000);
@@ -195,10 +212,11 @@ const App: Component = () => {
     <div class={styles.App}>
       <header class={styles.header}>
         <ClockHeader toggleFullScreen={toggleFullScreen} toggleDisplayHadith={toggleDisplayHadith} location={location()}
-          formatDate={currentDateTime().toDateString()}
+          formattedDate={format(currentDateTime(), 'EEE dd-MM-yyyy').toUpperCase()}
           showPrayerTimes={showPrayerTimes()}
           currentPrayer={currentPrayer()}
           nextPrayer={nextPrayer()}
+          hijriDate={hijriDate()}
         />
         {showPrayerTimes() ? (
           <div class={styles.contents}>

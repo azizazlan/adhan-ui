@@ -5,24 +5,29 @@ import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 import logo from './assets/logo.png';
 import styles from './ClockHeader.module.css';
 import FlipClock from './components/FlipClock';
+import { HijriDate } from './types/hijri';
 
 const TIMER_THRESHOLD_MINS = parseInt(import.meta.env.VITE_TIMER_THRESHOLD_MINS || '60', 10);
 
-const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith: () => void, location: string, formatDate: string, showPrayerTimes: boolean, currentPrayer: string, nextPrayer: string }) => {
+const ClockHeader = (props: {
+  toggleFullScreen: () => void,
+  toggleDisplayHadith: () => void,
+  location: string,
+  showPrayerTimes: boolean,
+  currentPrayer: string,
+  nextPrayer: string,
+  formattedDate: string,
+  hijriDate: HijriDate
+}) => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
-
-  createEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDateTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  });
 
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
     return totalMinutes < TIMER_THRESHOLD_MINS;
   };
+
+  // console.log(props.hijriDate.day);
 
   return (
     <div class={styles.container}>
@@ -35,9 +40,17 @@ const ClockHeader = (props: { toggleFullScreen: () => void, toggleDisplayHadith:
           class={`${styles.bookIcon} ${!props.showPrayerTimes ? styles.activeBookIcon : ''}`}
           onClick={props.toggleDisplayHadith}
         />
-        <div class={styles.locationDate}>
+        <div class={styles.locationAndDateContainer}>
           <div>
-            {props.location}, <span class={styles.date}>{props.formatDate}</span>
+            <span class={styles.location}>{props.location}</span>
+            &nbsp;
+            <span class={styles.date}>{props.formattedDate}</span>
+            &nbsp;
+            {props.hijriDate &&
+              <>
+                <span class={styles.hijriDate}>{props.hijriDate.day} {props.hijriDate.month.en} / {props.hijriDate.date}</span>
+              </>
+            }
           </div>
         </div>
       </div>
