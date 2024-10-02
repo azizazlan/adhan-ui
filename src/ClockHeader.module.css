@@ -128,21 +128,24 @@
   padding: 0px 15px;
 }
 
-.bookIcon {
-  color: rgb(119, 118, 118);
-  font-size: 2rem;
-  margin-right: 10px;
+.activeHadithButton {
+  background-color: goldenrod !important;
+  color: black !important;
+  font-weight: 600 !important;
 }
 
-.activeBookIcon {
-  color: goldenrod;
+.hadithButton {
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-family: "Oswald", sans-serif;
+  color:silver;
+  padding: 0px 15px 1px;
+  border-radius: 5px;
+  background-color: #444;
+  border: inherit;
 }
 
-.icon {
-  font-size: 2.7rem;
-}
-
-.icon2 {
-  font-size: 2.1rem;
+.hadithButton:hover {
+  background-color: #244;
 }
 

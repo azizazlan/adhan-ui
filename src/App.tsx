@@ -8,6 +8,8 @@ import ClockHeader from './ClockHeader';
 import FlipClock from './components/FlipClock';
 import HadithDisplay from './components/HadithDisplay';
 import { Hadith, HadithApiResponse } from './types/hadith';
+import Footer from './components/Footer';
+import SettingsDisplay from './components/SettingsDisplay';
 
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const SHOW_PRAYER_TIMES_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS || '10000', 10));
@@ -32,6 +34,19 @@ const App: Component = () => {
   const [location] = createSignal(LOCATION);
   const [showPrayerTimes, setShowPrayerTimes] = createSignal(true);
   const [hijriDate, setHijriDate] = createSignal<HijriDate | null>(null);
+  const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerTimes');
+
+  const toggleDisplayMode = () => {
+    setDisplayMode(prev => {
+      if (prev === 'prayerTimes') return 'hadith';
+      if (prev === 'hadith') return 'prayerTimes';
+      return prev; // Keep settings if it's already on settings
+    });
+  };
+
+  const toggleSettings = () => {
+    setDisplayMode(prev => prev === 'settings' ? 'prayerTimes' : 'settings');
+  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
@@ -211,16 +226,20 @@ const App: Component = () => {
   return (
     <div class={styles.App}>
       <header class={styles.header}>
-        <ClockHeader toggleFullScreen={toggleFullScreen} toggleDisplayHadith={toggleDisplayHadith} location={location()}
+        <ClockHeader
+          toggleFullScreen={toggleFullScreen}
+          toggleDisplayMode={toggleDisplayMode}
+          location={location()}
           formattedDate={format(currentDateTime(), 'EEE dd-MM-yyyy').toUpperCase()}
-          showPrayerTimes={showPrayerTimes()}
+          displayMode={displayMode()}
           currentPrayer={currentPrayer()}
           nextPrayer={nextPrayer()}
           hijriDate={hijriDate()}
         />
-        {showPrayerTimes() ? (
-          <div class={styles.contents}>
-            {prayerTimes().map((prayer) => (
+        <div class={styles.contents}>
+          {displayMode() === 'prayerTimes' && (
+            // Prayer times content
+            prayerTimes().map((prayer) => (
               <div>
                 <PrayerTimeItem
                   prayer={prayer}
@@ -228,30 +247,31 @@ const App: Component = () => {
                   nextPrayer={nextPrayer()}
                   isPrayerTimePast={isPrayerTimePast}
                   formatPrayerTime={formatPrayerTime}
+                  toggleDisplayMode={toggleDisplayMode}
                 />
                 {prayer.name === nextPrayer().name && (
                   <div class={styles.countdown}>
-                    {nextPrayer().countdown.split('').map((letter, index) => {
-                      if (letter !== ' ') {
-                        return (
-                          <span class={styles.countdownLetterBox}
-                            style={{ color: isCountdownUnderThreshold(nextPrayer().countdown) ? 'red' : 'inherit' }}
-                            key={index}>
-                            {letter}</span>
-                        )
-                      }
-                    })}
+                    {nextPrayer().countdown.split('').map((letter, index) => (
+                      letter !== ' ' && (
+                        <span
+                          class={styles.countdownLetterBox}
+                          style={{ color: isCountdownUnderThreshold(nextPrayer().countdown) ? 'red' : 'inherit' }}
+                          key={index}
+                        >
+                          {letter}
+                        </span>
+                      )
+                    ))}
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div class={styles.contents}>
-            <HadithDisplay apiKey={API_KEY} />
-          </div>
-        )}
+            ))
+          )}
+          {displayMode() === 'hadith' && <HadithDisplay apiKey={API_KEY} />}
+          {displayMode() === 'settings' && <SettingsDisplay onClose={toggleSettings} />}
+        </div>
       </header>
+      <Footer onSettingsClick={toggleSettings} />
     </div>
   );
 };

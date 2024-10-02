@@ -1,0 +1,33 @@
+.footer {
+  width: 1140px;
+  max-width: 95%;
+  background-color: #222323;
+  color: #ffffff;
+  padding: 1rem 2rem;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.copyright {
+  margin: 0;
+  font-size: 0.9rem;
+  margin-right: 1rem; /* Added margin to separate copyright from button */
+  padding-top: 3px;
+}
+
+.settingsButton {
+  background-color: #222323;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.settingsButton:hover {
+  background-color: #444444;
+}

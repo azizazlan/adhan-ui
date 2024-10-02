@@ -1,6 +1,4 @@
 import { Component, createSignal, createEffect } from 'solid-js';
-import { VsBook } from 'solid-icons/vs';
-import { OcStopwatch2 } from 'solid-icons/oc'
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 import logo from './assets/logo.png';
 import styles from './ClockHeader.module.css';
@@ -11,9 +9,9 @@ const TIMER_THRESHOLD_MINS = parseInt(import.meta.env.VITE_TIMER_THRESHOLD_MINS 
 
 const ClockHeader = (props: {
   toggleFullScreen: () => void,
-  toggleDisplayHadith: () => void,
+  toggleDisplayMode: () => void,
   location: string,
-  showPrayerTimes: boolean,
+  displayMode: string,
   currentPrayer: string,
   nextPrayer: string,
   formattedDate: string,
@@ -35,6 +33,7 @@ const ClockHeader = (props: {
   };
 
   // console.log(props.hijriDate.day);
+  console.log(props.displayMode);
 
   return (
     <div class={styles.container}>
@@ -43,10 +42,11 @@ const ClockHeader = (props: {
         <EnhancedDigitalClock />
       </div>
       <div class={styles.toolbar}>
-        <VsBook
-          class={`${styles.bookIcon} ${!props.showPrayerTimes ? styles.activeBookIcon : ''}`}
-          onClick={props.toggleDisplayHadith}
-        />
+        <button
+          class={`${styles.hadithButton} ${props.displayMode === 'hadith' ? styles.activeHadithButton : ''}`} kx
+          onClick={props.toggleDisplayMode}>
+          HADITHS
+        </button>
         <div class={styles.locationAndDateContainer}>
           <div>
             <span class={styles.location}>{props.location}</span>
@@ -61,42 +61,41 @@ const ClockHeader = (props: {
           </div>
         </div>
       </div>
-      {!props.showPrayerTimes && (
-        <div class={styles.prayerTimeContainer}>
-          <span class={styles.label}>
-            NEXT▸
-          </span>
-          <div class={styles.prayerName}>
-            {props.nextPrayer.name.split('').map((letter, index) => (
-              <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
-            ))}
+      {
+        !props.showPrayerTimes && (
+          <div class={styles.prayerTimeContainer}>
+            <span class={styles.label}>
+              NEXT▸
+            </span>
+            <div class={styles.prayerName}>
+              {props.nextPrayer.name.split('').map((letter, index) => (
+                <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
+              ))}
+            </div>
+            <div class={styles.prayerName}>
+              {props.nextPrayer.time.split('').map((letter, index) => {
+                if (letter !== ' ') {
+                  return (
+                    <span class={styles.letterBox} key={index}>{letter}</span>
+                  )
+                }
+              })}
+            </div>
+            <div class={styles.prayerName}>
+              {props.nextPrayer.countdown.split('').map((letter, index) => {
+                if (letter !== ' ') {
+                  return (
+                    <span
+                      style={{ color: isCountdownUnderThreshold(props.nextPrayer.countdown) ? 'red' : 'white' }}
+                      class={styles.letterBox} key={index}>{letter}</span>
+                  )
+                }
+              })}
+            </div>
           </div>
-          <div class={styles.prayerName}>
-            {props.nextPrayer.time.split('').map((letter, index) => {
-              if (letter !== ' ') {
-                return (
-                  <span class={styles.letterBox} key={index}>{letter}</span>
-                )
-              }
-            })}
-          </div>
-          <span class={styles.label2}>
-            <OcStopwatch2 class={styles.icon2} />
-          </span>
-          <div class={styles.prayerName}>
-            {props.nextPrayer.countdown.split('').map((letter, index) => {
-              if (letter !== ' ') {
-                return (
-                  <span
-                    style={{ color: isCountdownUnderThreshold(props.nextPrayer.countdown) ? 'red' : 'white' }}
-                    class={styles.letterBox} key={index}>{letter}</span>
-                )
-              }
-            })}
-          </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   )
 }
 
