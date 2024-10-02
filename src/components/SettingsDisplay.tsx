@@ -19,8 +19,8 @@ const SettingsDisplay: Component = (props: { onClose: () => void }) => {
   return (
     <div class={styles.settingsDisplay}>
       <div class={styles.header}>
-        <button class={styles.closeButton} onClick={props.onClose} title="Close Settings">
-          <IoCloseCircleOutline />
+        <button class={styles.iconButton} onClick={props.onClose} title="Close Settings">
+          <IoCloseCircleOutline class={styles.closeIconButton} />
         </button>
       </div>
       <div className={styles.envVariables}>

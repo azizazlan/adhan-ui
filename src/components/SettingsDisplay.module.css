@@ -35,18 +35,12 @@
   justify-content: right;
 }
 
-.closeButton {
-  background: none;
+.iconButton {
+  background-color: transparent;
   border: none;
-  cursor: pointer;
-  color: silver;
-  font-size: 1.5rem;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.closeButton:hover {
+.closeIconButton {
+  font-size: 2.5rem;
   color: #666;
 }
