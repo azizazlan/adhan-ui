@@ -46,6 +46,12 @@
   color: goldenrod !important;
 }
 
+.currentlyPassed .letterBox {
+  color: goldenrod !important;
+  opacity: 0.5 !important;
+}
+
+
 .next .letterBox {
   color: goldenrod!important;
 }

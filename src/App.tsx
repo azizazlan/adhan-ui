@@ -72,7 +72,9 @@ const App: Component = () => {
     const now = currentDateTime();
     const [hours, minutes] = prayerTime.split(':').map(Number);
     const prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-    return prayerDate < now;
+    // the prayer time has passed more than 10 minutes ago
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+    return prayerDate < tenMinutesAgo;
   };
 
   const updateCurrentAndNextPrayer = () => {

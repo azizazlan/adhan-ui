@@ -13,9 +13,10 @@ interface PrayerTimeItemProps {
 
 const PrayerTimeItem = (props: PrayerTimeItemProps) => {
   const getItemClass = () => {
-    if (props.prayer.name === props.currentPrayer) return styles.current;
+    if (props.isPrayerTimePast(props.prayer.time) && props.prayer.name == props.currentPrayer) return styles.currentlyPassed;
     if (props.prayer.name === props.nextPrayer.name) return styles.next;
     if (props.isPrayerTimePast(props.prayer.time)) return styles.past;
+    if (props.prayer.name === props.currentPrayer) return styles.current;
     return '';
   };
 
