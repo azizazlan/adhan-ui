@@ -159,7 +159,6 @@ const App: Component = () => {
       const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear()}`;
       const response = await fetch(API_HIJRI + formattedDate);
       const data = await response.json();
-      console.log(data);
       setHijriDate(data.data.hijri);
     } catch (error) {
       console.error('Error fetching hijri date:', error);
@@ -167,11 +166,10 @@ const App: Component = () => {
   };
 
   createEffect(() => {
-    const today = new Date();
     fetchPrayerTimes();
-    fetchHijriDate(today);
+    fetchHijriDate(new Date());
     const timer = setInterval(() => {
-      setCurrentDateTime(today);
+      setCurrentDateTime(new Date());
       updateCurrentAndNextPrayer();
       updateCurrentPrayerProgress();
     }, 1000);

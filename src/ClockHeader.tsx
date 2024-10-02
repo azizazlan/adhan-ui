@@ -21,6 +21,13 @@ const ClockHeader = (props: {
 }) => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
 
+  createEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  });
+
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
