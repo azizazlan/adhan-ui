@@ -1,0 +1,37 @@
+.container {
+  width: 1140px;
+  max-width: 100%; /* Add this line */
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+}
+
+.header {
+  display: flex;
+  justify-content: right;
+}
+
+.iconButton {
+  background-color: transparent;
+  border: none;
+}
+
+.closeIconButton {
+  font-size: 2.5rem;
+  color: #666;
+}
+
+.arabic {
+  font-size: 3.1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.contents {
+  padding: 1rem;
+  background-color: white;
+  color: black;
+  border-radius: 0.3rem;
+  border: 1px solid #ccc;
+  text-align: left;
+}

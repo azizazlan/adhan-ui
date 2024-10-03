@@ -5,12 +5,11 @@ import styles from './ClockHeader.module.css';
 import FlipClock from './components/FlipClock';
 import { HijriDate } from './types/hijri';
 
-const TIMER_THRESHOLD_MINS = parseInt(import.meta.env.VITE_TIMER_THRESHOLD_MINS || '60', 10);
+const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS || '60', 10);
 
 const ClockHeader = (props: {
   toggleFullScreen: () => void,
   toggleDisplayMode: () => void,
-  toggleSettings: () => void,
   location: string,
   displayMode: string,
   currentPrayer: string,
@@ -30,7 +29,7 @@ const ClockHeader = (props: {
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
-    return totalMinutes < TIMER_THRESHOLD_MINS;
+    return totalMinutes < REMINDER_BEFORE_PRAYER_MINS;
   };
 
   return (
@@ -88,14 +87,13 @@ const ClockHeader = (props: {
           </div>
         </div>
         <button
-          disabled={props.displayMode === 'settings'}
           class={`${styles.hadithButton}`}
-          onClick={props.toggleDisplayMode}>
+          onClick={() => props.toggleDisplayMode('hadith')}>
           HADITHS
         </button>
         <button
           class={`${styles.settingsButton}`}
-          onClick={props.toggleSettings}>
+          onClick={() => props.toggleDisplayMode('settings')}>
           SETTINGS
         </button>
       </div>

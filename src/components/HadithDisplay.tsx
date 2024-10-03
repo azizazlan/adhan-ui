@@ -10,7 +10,7 @@ interface HadithDisplayProps {
   onClose: () => void;
 }
 
-const SHOW_PRAYER_TIMES_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS || '10000', 10));
+const SHOW_NEXT_HADITH_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_NEXT_HADITH_INTERVAL_MS || '10000', 10));
 
 const HadithDisplay: Component<HadithDisplayProps> = (props) => {
 
@@ -61,8 +61,8 @@ const HadithDisplay: Component<HadithDisplayProps> = (props) => {
     fetchHadiths();
 
     const toggleInterval = setInterval(() => {
-      setCurrentHadith(getNextHadith());
-    }, SHOW_PRAYER_TIMES_INTERVAL_MS); // SHOW_PRAYER_TIMES_INTERVAL_MS
+      getNextHadith();
+    }, SHOW_NEXT_HADITH_INTERVAL_MS);
 
     return () => {
       clearInterval(toggleInterval);

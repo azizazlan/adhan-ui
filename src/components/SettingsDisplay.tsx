@@ -12,6 +12,7 @@ const SettingsDisplay: Component = (props: { onClose: () => void }) => {
     'VITE_TUNE': import.meta.env.VITE_TUNE,
     'VITE_REMINDER_BEFORE_PRAYER_MINS': import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS,
     'VITE_REMINDER_AFTER_PRAYER_MINS': import.meta.env.VITE_REMINDER_AFTER_PRAYER_MINS,
+    'VITE_SHOW_NEXT_HADITH_INTERVAL_MS': import.meta.env.VITE_SHOW_NEXT_HADITH_INTERVAL_MS,
     'VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS': import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS,
   };
 
@@ -25,7 +26,7 @@ const SettingsDisplay: Component = (props: { onClose: () => void }) => {
       <div className={styles.envVariables}>
         {Object.entries(envVariables).map(([key, value]) => (
           <div key={key} className={styles.envVariable}>
-            <span className={styles.envKey}>{key}:</span>
+            <span className={styles.envKey}>{key}=</span>
             <span className={styles.envValue}>{value}</span>
           </div>
         ))}
