@@ -22,8 +22,8 @@ const LONGITUDE = import.meta.env.VITE_LONGITUDE;
 const TIMEZONE = import.meta.env.VITE_TIMEZONE;
 const TUNE = import.meta.env.VITE_TUNE;
 const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
-const API_URL = `http://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
-const API_HIJRI = "http://api.aladhan.com/v1/gToH/";
+const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
+const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 
 type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings';
 
