@@ -1,6 +1,5 @@
 import { Component, createSignal, createEffect } from 'solid-js';
 import HeaderClock from './components/HeaderClock';
-import logo from './assets/logo.png';
 import styles from './Header.module.css';
 import FlipClock from './components/FlipClock';
 import { HijriDate } from './types/hijri';
