@@ -10,3 +10,10 @@ In the name of Allah, the most gracious, the most merciful, may this app be a me
 
 ### Fix
 - [ ] Fix the bug where the current prayer is not highlighted
+
+## Credits
+
+To our brothers and sisters at AlAdhan and Hadith APIs, we are grateful to these services. Without them, this app would be hard to develop.
+
+- [AlAdhan API](https://aladhan.com) - Used for Islamic prayer times and calendar information.
+- [Hadith API](https://www.hadithapi.com/) - Used for accessing verified collections of hadiths.
