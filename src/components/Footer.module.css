@@ -12,30 +12,11 @@
   flex-direction: column;
 }
 
-.copyright {
+.footerText {
   margin: 0;
   font-size: 0.9rem;
-  margin-right: 1rem; /* Added margin to separate copyright from button */
-  padding-top: 3px;
-  text-align: left;
   color: grey;
-}
-
-.credits {
-  margin: 0;
-  font-size: 0.9rem;
-  padding-top: 3px;
   text-align: left;
-  color: grey;
-}
-
-.version {
-  margin: 0;
-  font-size: 0.9rem;
-  margin-right: 1rem; /* Added margin to separate copyright from button */
-  padding-top: 3px;
-  text-align: left;
-  color: grey;
 }
 
 .footerLink {

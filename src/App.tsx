@@ -4,14 +4,15 @@ import { format } from 'date-fns';
 import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrayerTimeItem from './components/PrayerTimeItem';
-import ClockHeader from './ClockHeader';
+import Header from './Header';
 import FlipClock from './components/FlipClock';
-import HadithDisplay from './components/HadithDisplay';
 import { Hadith, HadithApiResponse } from './types/hadith';
 import Footer from './components/Footer';
-import SettingsDisplay from './components/SettingsDisplay';
+import Hadiths from './components/Hadiths';
+import Settings from './components/Settings';
 import CountdownTimer from './components/CountdownTimer';
 import Credits from './components/Credits';
+
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS || '10000', 10));
 const REMINDER_AFTER_PRAYER_MINS = Math.max(0, parseInt(import.meta.env.VITE_REMINDER_AFTER_PRAYER_MINS || '10', 10));
@@ -24,7 +25,7 @@ const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 const API_URL = `http://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 const API_HIJRI = "http://api.aladhan.com/v1/gToH/";
 
-type DisplayMode = 'prayerTimes' | 'hadith' | 'credits' | 'settings';
+type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings';
 
 const App: Component = () => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
@@ -232,7 +233,7 @@ const App: Component = () => {
   return (
     <div class={styles.App}>
       <header class={styles.header}>
-        <ClockHeader
+        <Header
           toggleFullScreen={toggleFullScreen}
           toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
           location={location()}
@@ -261,9 +262,9 @@ const App: Component = () => {
               </div>
             ))
           )}
-          {displayMode() === 'hadith' && <HadithDisplay apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
+          {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
           {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
-          {displayMode() === 'settings' && <SettingsDisplay onClose={() => toggleDisplayMode('prayerTimes')} />}
+          {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
         </div>
       </header>
       <Footer onCreditsClick={() => toggleDisplayMode('credits')} />

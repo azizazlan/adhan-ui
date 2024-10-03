@@ -1,13 +1,13 @@
 import { Component, createSignal, createEffect } from 'solid-js';
 import EnhancedDigitalClock from './components/EnhancedDigitalClock';
 import logo from './assets/logo.png';
-import styles from './ClockHeader.module.css';
+import styles from './Header.module.css';
 import FlipClock from './components/FlipClock';
 import { HijriDate } from './types/hijri';
 
 const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS || '60', 10);
 
-const ClockHeader = (props: {
+const Header = (props: {
   toggleFullScreen: () => void,
   toggleDisplayMode: () => void,
   location: string,
@@ -88,7 +88,7 @@ const ClockHeader = (props: {
         </div>
         <button
           class={`${styles.hadithButton}`}
-          onClick={() => props.toggleDisplayMode('hadith')}>
+          onClick={() => props.toggleDisplayMode('hadiths')}>
           HADITHS
         </button>
         <button
@@ -101,4 +101,4 @@ const ClockHeader = (props: {
   )
 }
 
-export default ClockHeader;
+export default Header;

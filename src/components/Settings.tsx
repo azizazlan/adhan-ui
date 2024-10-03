@@ -1,8 +1,8 @@
 import { Component } from 'solid-js';
 import { IoCloseCircleOutline } from 'solid-icons/io'
-import styles from './SettingsDisplay.module.css';
+import styles from './Settings.module.css';
 
-const SettingsDisplay: Component = (props: { onClose: () => void }) => {
+const Settings: Component = (props: { onClose: () => void }) => {
 
   const envVariables = {
     'VITE_LOCATION': import.meta.env.VITE_LOCATION,
@@ -35,4 +35,4 @@ const SettingsDisplay: Component = (props: { onClose: () => void }) => {
   );
 };
 
-export default SettingsDisplay;
+export default Settings;

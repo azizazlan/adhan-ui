@@ -3,7 +3,7 @@ import { Hadith, HadithApiResponse } from '../types/hadith';
 import { IoCaretForward } from 'solid-icons/io'
 import { IoCaretBack } from 'solid-icons/io'
 import { IoCloseCircleOutline } from 'solid-icons/io'
-import styles from './HadithDisplay.module.css';
+import styles from './Hadiths.module.css';
 
 interface HadithDisplayProps {
   apiKey: string;

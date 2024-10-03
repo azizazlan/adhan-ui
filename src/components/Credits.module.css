@@ -9,6 +9,7 @@
 .header {
   display: flex;
   justify-content: right;
+  margin-bottom: 0.5rem;
 }
 
 .iconButton {
