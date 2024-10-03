@@ -1,5 +1,5 @@
 import { Component, createSignal, createEffect } from 'solid-js';
-import EnhancedDigitalClock from './components/EnhancedDigitalClock';
+import HeaderClock from './components/HeaderClock';
 import logo from './assets/logo.png';
 import styles from './Header.module.css';
 import FlipClock from './components/FlipClock';
@@ -36,7 +36,7 @@ const Header = (props: {
     <div class={styles.container}>
       <div class={styles.headerTitleContainer}>
         <div class={styles.headerTitle} onClick={props.toggleFullScreen}>PRAYER TIMES</div>
-        <EnhancedDigitalClock />
+        <HeaderClock />
       </div>
       <div class={styles.prayerTimeContainer}>
         {props.nextPrayer.name.length > 0 &&

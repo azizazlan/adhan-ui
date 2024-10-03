@@ -1,9 +1,9 @@
 import { createSignal, onCleanup } from 'solid-js';
-import styles from './EnhancedDigitalClock.module.css';
+import styles from './HeaderClock.module.css';
 
 const padNumber = (num: number): string => num.toString().padStart(2, '0');
 
-const EnhancedDigitalClock = () => {
+const HeaderClock = () => {
   const [time, setTime] = createSignal(new Date());
 
   const timer = setInterval(() => {
@@ -50,4 +50,4 @@ const EnhancedDigitalClock = () => {
   );
 };
 
-export default EnhancedDigitalClock;
+export default HeaderClock;
