@@ -12,7 +12,8 @@ import Footer from './components/Footer';
 import SettingsDisplay from './components/SettingsDisplay';
 import CountdownTimer from './components/CountdownTimer';
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
-const SHOW_PRAYER_TIMES_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS || '10000', 10));
+const ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS || '10000', 10));
+const REMINDER_AFTER_PRAYER_MINS = Math.max(0, parseInt(import.meta.env.VITE_REMINDER_AFTER_PRAYER_MINS || '10', 10));
 const LOCATION = import.meta.env.VITE_LOCATION;
 const LATITUDE = import.meta.env.VITE_LATITUDE;
 const LONGITUDE = import.meta.env.VITE_LONGITUDE;
@@ -86,8 +87,8 @@ const App: Component = () => {
     }
 
     // The prayer time has passed more than 10 minutes ago
-    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
-    return prayerDate < tenMinutesAgo;
+    const afterMinutesAgo = new Date(now.getTime() - REMINDER_AFTER_PRAYER_MINS * 60 * 1000);
+    return prayerDate < afterMinutesAgo;
   };
 
   const updateCurrentAndNextPrayer = () => {
@@ -209,13 +210,11 @@ const App: Component = () => {
 
     const toggleInterval = setInterval(() => {
       if (DISPLAY_HADITH) {
-        setShowPrayerTimes((prev) => !prev);
-        // setShowPrayerTimes(false);
-        setCurrentHadith(getNextHadith());
+        toggleDisplayMode();
       } else {
         setShowPrayerTimes(true);
       }
-    }, SHOW_PRAYER_TIMES_INTERVAL_MS); // SHOW_PRAYER_TIMES_INTERVAL_MS
+    }, ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS);
 
     return () => {
       clearInterval(timer);

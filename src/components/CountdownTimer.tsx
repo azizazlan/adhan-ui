@@ -1,14 +1,14 @@
 import { Component } from 'solid-js';
 import styles from './CountdownTimer.module.css';
 
-const TIMER_THRESHOLD_MINS = parseInt(import.meta.env.VITE_TIMER_THRESHOLD_MINS || '60', 10);
+const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS || '60', 10);
 
 const CountdownTimer: Component = (props: { onClose: () => void }) => {
 
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
-    return totalMinutes < TIMER_THRESHOLD_MINS;
+    return totalMinutes < REMINDER_BEFORE_PRAYER_MINS;
   };
 
   return (

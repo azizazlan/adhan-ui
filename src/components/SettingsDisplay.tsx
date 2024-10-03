@@ -5,15 +5,14 @@ import styles from './SettingsDisplay.module.css';
 const SettingsDisplay: Component = (props: { onClose: () => void }) => {
 
   const envVariables = {
-    'VITE_DISPLAY_HADITH': import.meta.env.VITE_DISPLAY_HADITH,
-    'VITE_HADITH_API_KEY': import.meta.env.VITE_HADITH_API_KEY,
-    'VITE_SHOW_PRAYER_TIMES_INTERVAL_MS': import.meta.env.VITE_SHOW_PRAYER_TIMES_INTERVAL_MS,
     'VITE_LOCATION': import.meta.env.VITE_LOCATION,
     'VITE_LATITUDE': import.meta.env.VITE_LATITUDE,
     'VITE_LONGITUDE': import.meta.env.VITE_LONGITUDE,
     'VITE_TIMEZONE': import.meta.env.VITE_TIMEZONE,
     'VITE_TUNE': import.meta.env.VITE_TUNE,
-    'VITE_TIMER_THRESHOLD_MINS': import.meta.env.VITE_TIMER_THRESHOLD_MINS
+    'VITE_REMINDER_BEFORE_PRAYER_MINS': import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS,
+    'VITE_REMINDER_AFTER_PRAYER_MINS': import.meta.env.VITE_REMINDER_AFTER_PRAYER_MINS,
+    'VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS': import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS,
   };
 
   return (
