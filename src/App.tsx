@@ -196,6 +196,20 @@ const App: Component = () => {
   };
 
   createEffect(() => {
+    const logAppDimensions = () => {
+      const appElement = document.getElementById('root');
+      if (appElement) {
+        const { width, height } = appElement.getBoundingClientRect();
+        console.log(`App dimensions: ${width}px x ${height}px`);
+      }
+    };
+
+    logAppDimensions();
+    window.addEventListener('resize', logAppDimensions);
+    return () => window.removeEventListener('resize', logAppDimensions);
+  }, []);
+
+  createEffect(() => {
     fetchPrayerTimes();
     fetchHijriDate(new Date());
     const timer = setInterval(() => {
@@ -232,41 +246,38 @@ const App: Component = () => {
 
   return (
     <div class={styles.App}>
-      <header class={styles.header}>
-        <Header
-          toggleFullScreen={toggleFullScreen}
-          toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
-          location={location()}
-          formattedDate={format(currentDateTime(), 'EEE dd-MM-yyyy').toUpperCase()}
-          displayMode={displayMode()}
-          currentPrayer={currentPrayer()}
-          nextPrayer={nextPrayer()}
-          hijriDate={hijriDate()}
-        />
-        <div class={styles.contents}>
-          {displayMode() === 'prayerTimes' && (
-            // Prayer times content
-            prayerTimes().map((prayer) => (
-              <div>
-                <PrayerTimeItem
-                  prayer={prayer}
-                  currentPrayer={currentPrayer()}
-                  nextPrayer={nextPrayer()}
-                  isPrayerTimePast={isPrayerTimePast}
-                  formatPrayerTime={formatPrayerTime}
-                  toggleDisplayMode={() => toggleDisplayMode('hadith')}
-                />
-                {prayer.name === nextPrayer().name && (
-                  <CountdownTimer nextPrayer={nextPrayer()} />
-                )}
-              </div>
-            ))
-          )}
-          {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
-          {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
-          {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
-        </div>
-      </header>
+      <Header
+        toggleFullScreen={toggleFullScreen}
+        toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
+        location={location()}
+        formattedDate={format(currentDateTime(), 'EEE dd-MM-yyyy').toUpperCase()}
+        displayMode={displayMode()}
+        currentPrayer={currentPrayer()}
+        nextPrayer={nextPrayer()}
+        hijriDate={hijriDate()}
+      />
+      <div>
+        {displayMode() === 'prayerTimes' && (
+          prayerTimes().map((prayer) => (
+            <div>
+              <PrayerTimeItem
+                prayer={prayer}
+                currentPrayer={currentPrayer()}
+                nextPrayer={nextPrayer()}
+                isPrayerTimePast={isPrayerTimePast}
+                formatPrayerTime={formatPrayerTime}
+                toggleDisplayMode={() => toggleDisplayMode('hadith')}
+              />
+              {prayer.name === nextPrayer().name && (
+                <CountdownTimer nextPrayer={nextPrayer()} />
+              )}
+            </div>
+          ))
+        )}
+        {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
+        {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
+        {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
+      </div>
       <Footer onCreditsClick={() => toggleDisplayMode('credits')} />
     </div>
   );

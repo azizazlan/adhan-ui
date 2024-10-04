@@ -4,17 +4,17 @@
 }
 
 .digitBox {
-  width: 80px;  /* Increased from 60px */
-  height: 120px;  /* Increased from 90px */
+  width: 70px;  /* Increased from 60px */
+  height: 90px;  /* Increased from 90px */
   background-color: #333;
   color: #fff;
-  font-size: 5rem;  /* Increased from 3.5rem */
+  font-size: 4.0rem;  /* Increased from 3.5rem */
   font-weight: bold;
   font-family: monospace;
-  border-radius: 12px;  /* Increased from 8px */
-  margin: 0 3px;  /* Increased from 2px */
+  border-radius: 7px;  /* Increased from 8px */
   position: relative;
   overflow: hidden;
+  margin-left: 7px;
 }
 
 .upperHalf,
@@ -23,6 +23,7 @@
 .flipCardFront,
 .flipCardBack {
   position: absolute;
+  top: 3px;
   left: 0;
   right: 0;
   height: 50%;
@@ -35,12 +36,11 @@
 .flipCardFront {
   top: 0;
   align-items: flex-start;
-  background-color: #444;
+  background-color: #333;
 }
 
 .lowerHalf,
 .flipCardBack {
-  bottom: 0;
   align-items: flex-end;
   background-color: #333;
 }
@@ -51,7 +51,6 @@
 .flipCardBack::after {
   content: attr(data-digit);
   position: absolute;
-  font-size: 5rem;  /* Explicitly set font size */
 }
 
 .upperHalf::after,
@@ -100,19 +99,13 @@
   }
 }
 
-.separator {
-  margin: 0 8px;  /* Increased from 5px */
-  color: #d4d4d4;
-  font-size: 5rem;  /* Increased from 3.5rem */
-}
-
 .digitBox::after {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
   top: 50%;
-  height: 3px;  /* Increased from 2px */
+  height: 5px;  /* Increased from 2px */
   background-color: rgba(0, 0, 0, 0.3);
   box-shadow: 0 3px 0 rgba(255, 255, 255, 0.1);  /* Increased from 2px */
   z-index: 3;

@@ -15,9 +15,7 @@ const DigitBox = (props: { digit: string; animate: boolean; index: number; isCur
 
 const FlipClock = (props: { time: string; isCurrentPrayer: boolean, isPrayerTimePast: boolean }) => {
   const [animate, setAnimate] = createSignal(false);
-  const digits = () => {
-    return props.time.replace(':', '').split('');
-  };
+
   const animationInterval = setInterval(() => {
     setAnimate(true);
     setTimeout(() => setAnimate(false), 1500); // Reset animation after 1500ms
@@ -27,20 +25,17 @@ const FlipClock = (props: { time: string; isCurrentPrayer: boolean, isPrayerTime
 
   return (
     <div class={styles.flipClock}>
-      <For each={digits()}>
+      <For each={props.time}>
         {(digit, index) => {
           if (digit !== ' ' && !props.isCountdown) return (
-            <>
-              <DigitBox
-                digit={digit}
-                animate={animate()}
-                index={index()}
-                isCurrentPrayer={props.isCurrentPrayer}
-                isCountdown={props.isCountdown}
-                isPrayerTimePast={props.isPrayerTimePast}
-              />
-              {(index() === 1) && <div class={`${styles.separator} ${props.isCurrentPrayer ? styles.currentPrayer : ''}`}>:</div>}
-            </>
+            <DigitBox
+              digit={digit}
+              animate={animate()}
+              index={index()}
+              isCurrentPrayer={props.isCurrentPrayer}
+              isCountdown={props.isCountdown}
+              isPrayerTimePast={props.isPrayerTimePast}
+            />
           )
         }}
       </For>
