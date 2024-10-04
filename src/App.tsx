@@ -239,7 +239,9 @@ const App: Component = () => {
         {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
         {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
       </div>
-      <Footer onCreditsClick={() => toggleDisplayMode('credits')} />
+      <Footer onCreditsClick={() => toggleDisplayMode('credits')}
+        onHadithsClick={() => toggleDisplayMode('hadiths')}
+        onSettingsClick={() => toggleDisplayMode('settings')} />
     </div>
   );
 };

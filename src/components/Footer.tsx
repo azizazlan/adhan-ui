@@ -1,7 +1,11 @@
 import { Component } from 'solid-js';
 import styles from './Footer.module.css';
 
-const Footer: Component = (props: { onCreditsClick: () => void }) => {
+const Footer: Component = (props: {
+  onCreditsClick: () => void,
+  onHadithsClick: () => void,
+  onSettingsClick: () => void
+}) => {
   return (
     <footer class={styles.footer}>
       <div class={styles.container}>
@@ -10,6 +14,10 @@ const Footer: Component = (props: { onCreditsClick: () => void }) => {
           In the name of Allah, the most gracious, the most merciful, may this app be a means of guidance and a source of blessing for all muslims worldwide.
           {" "}
           <button class={styles.footerLink} onClick={props.onCreditsClick}>Credits & Terms</button>
+          {" "}
+          <button class={styles.footerLink} onClick={props.onHadithsClick}>Hadiths</button>
+          {" "}
+          <button class={styles.footerLink} onClick={props.onSettingsClick}>Settings</button>
         </p>
       </div>
     </footer >

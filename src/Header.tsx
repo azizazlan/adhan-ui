@@ -8,7 +8,6 @@ const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFOR
 
 const Header = (props: {
   toggleFullScreen: () => void,
-  toggleDisplayMode: () => void,
   location: string,
   displayMode: string,
   currentPrayer: string,
@@ -39,14 +38,19 @@ const Header = (props: {
       </div>
       <div class={styles.prayerTimeContainer}>
         {props.nextPrayer.name.length > 0 &&
-          <div class={styles.prayerName}>
-            {"NEXT".split('').map((letter, index) => (
-              <span class={styles.yellowLetterBox} key={index}>{letter.toUpperCase()}</span>
-            ))}
-          </div>
+          <>
+            <div class={styles.prayerName}>
+              {"NEXT".split('').map((letter, index) => (
+                <span class={styles.yellowLetterBox} key={index}>{letter.toUpperCase()}</span>
+              ))}
+            </div>
+            <div class={styles.prayerName}>
+              <span class={styles.letterBox} key={666}>{" "}</span>
+            </div>
+          </>
         }
         <div class={styles.prayerName}>
-          {props.nextPrayer.name.split('').map((letter, index) => (
+          {`${props.nextPrayer.name + " "}`.split('').map((letter, index) => (
             <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
           ))}
         </div>
@@ -60,6 +64,9 @@ const Header = (props: {
           })}
         </div>
         <div class={styles.prayerName}>
+          <span class={styles.letterBox} key={999}>{" "}</span>
+        </div>
+        <div class={styles.prayerName}>
           {props.nextPrayer.countdown.split('').map((letter, index) => {
             if (letter !== ' ') {
               return (
@@ -71,30 +78,16 @@ const Header = (props: {
           })}
         </div>
       </div>
-      <div class={styles.toolbar}>
-        <div class={styles.locationAndDateContainer}>
-          <div>
-            <span class={styles.location}>{props.location}</span>
-            &nbsp;
-            <span class={styles.date}>{props.formattedDate}</span>
-            &nbsp;
-            {props.hijriDate &&
-              <>
-                <span class={styles.hijriDate}>{props.hijriDate.day} {props.hijriDate.month.en} / {props.hijriDate.date}</span>
-              </>
-            }
-          </div>
-        </div>
-        <button
-          class={`${styles.settingsButton}`}
-          onClick={() => props.toggleDisplayMode('settings')}>
-          SETTINGS
-        </button>
-        <button
-          class={`${styles.hadithButton}`}
-          onClick={() => props.toggleDisplayMode('hadiths')}>
-          HADITHS
-        </button>
+      <div class={styles.locationAndDateContainer}>
+        <span class={styles.location}>{props.location}</span>
+        &nbsp;
+        <span class={styles.date}>{props.formattedDate}</span>
+        &nbsp;
+        {props.hijriDate &&
+          <>
+            <span class={styles.hijriDate}>{props.hijriDate.day} {props.hijriDate.month.en} / {props.hijriDate.date}</span>
+          </>
+        }
       </div>
     </div>
   )
