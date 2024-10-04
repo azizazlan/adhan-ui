@@ -1,6 +1,6 @@
 .countdown {
   font-size: 2.0rem; /* Increased from 1.1rem to 2.5rem */
-  color: goldenrod;
+  color: gold;
   text-align: right;
   display: flex;
   flex-direction: row;
@@ -16,7 +16,7 @@
   color: white;
   background-color: #353535;
   width: 50px;
-  height: 50px;
+  height: 55px;
   display: flex;
   align-items: center;
   justify-content: center;

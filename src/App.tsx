@@ -256,28 +256,26 @@ const App: Component = () => {
         nextPrayer={nextPrayer()}
         hijriDate={hijriDate()}
       />
-      <div>
-        {displayMode() === 'prayerTimes' && (
-          prayerTimes().map((prayer) => (
-            <div>
-              <PrayerTimeItem
-                prayer={prayer}
-                currentPrayer={currentPrayer()}
-                nextPrayer={nextPrayer()}
-                isPrayerTimePast={isPrayerTimePast}
-                formatPrayerTime={formatPrayerTime}
-                toggleDisplayMode={() => toggleDisplayMode('hadith')}
-              />
-              {prayer.name === nextPrayer().name && (
-                <CountdownTimer nextPrayer={nextPrayer()} />
-              )}
-            </div>
-          ))
-        )}
-        {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
-        {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
-        {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
-      </div>
+      {displayMode() === 'prayerTimes' && (
+        prayerTimes().map((prayer) => (
+          <>
+            <PrayerTimeItem
+              prayer={prayer}
+              currentPrayer={currentPrayer()}
+              nextPrayer={nextPrayer()}
+              isPrayerTimePast={isPrayerTimePast}
+              formatPrayerTime={formatPrayerTime}
+              toggleDisplayMode={() => toggleDisplayMode('hadith')}
+            />
+            {prayer.name === nextPrayer().name && (
+              <CountdownTimer nextPrayer={nextPrayer()} />
+            )}
+          </>
+        ))
+      )}
+      {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
+      {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
+      {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
       <Footer onCreditsClick={() => toggleDisplayMode('credits')} />
     </div>
   );

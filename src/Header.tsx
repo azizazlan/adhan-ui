@@ -96,7 +96,7 @@ const Header = (props: {
           SETTINGS
         </button>
       </div>
-    </div >
+    </div>
   )
 }
 
