@@ -3,15 +3,16 @@ import { ProgressBar } from 'solid-bootstrap';
 import { format } from 'date-fns';
 import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PrayerTimeItem from './components/PrayerTimeItem';
 import Header from './Header';
 import FlipClock from './components/FlipClock';
-import { Hadith, HadithApiResponse } from './types/hadith';
 import Footer from './components/Footer';
 import Hadiths from './components/Hadiths';
 import Settings from './components/Settings';
 import CountdownTimer from './components/CountdownTimer';
 import Credits from './components/Credits';
+import Prayers from './components/Prayers';
+import { formatPrayerTime, formatCountdown, formatTime } from './utils/formatter';
+import { Hadith, HadithApiResponse } from './types/hadith';
 
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS || '10000', 10));
@@ -25,15 +26,16 @@ const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 
-type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings';
+export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings';
 
 const App: Component = () => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
+  const [currentPrayer, setCurrentPrayer] = createSignal('');
+  const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
+
   const [currentPrayerProgress, setCurrentPrayerProgress] = createSignal(0);
   const [currentPrayerRemaining, setCurrentPrayerRemaining] = createSignal('');
   const [prayerTimes, setPrayerTimes] = createSignal([]);
-  const [currentPrayer, setCurrentPrayer] = createSignal('');
-  const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
   const [location] = createSignal(LOCATION);
   const [showPrayerTimes, setShowPrayerTimes] = createSignal(true);
   const [hijriDate, setHijriDate] = createSignal<HijriDate | null>(null);
@@ -41,35 +43,6 @@ const App: Component = () => {
 
   const toggleDisplayMode = (mode: DisplayMode) => {
     setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
-  };
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    }).replace(/\s(AM|PM)/, (match) => match.toUpperCase());
-  };
-
-  const formatPrayerTime = (timeString: string) => {
-    const [hours, minutes] = timeString.split(':');
-    const date = new Date();
-    date.setHours(parseInt(hours, 10));
-    date.setMinutes(parseInt(minutes, 10));
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    }).replace(/\s(AM|PM)/, (match) => match.toUpperCase());
-  };
-
-  const formatCountdown = (milliseconds: number) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const isPrayerTimePast = (prayerTime: string, prayerName: string) => {
@@ -256,26 +229,16 @@ const App: Component = () => {
         nextPrayer={nextPrayer()}
         hijriDate={hijriDate()}
       />
-      {displayMode() === 'prayerTimes' && (
-        prayerTimes().map((prayer) => (
-          <>
-            <PrayerTimeItem
-              prayer={prayer}
-              currentPrayer={currentPrayer()}
-              nextPrayer={nextPrayer()}
-              isPrayerTimePast={isPrayerTimePast}
-              formatPrayerTime={formatPrayerTime}
-              toggleDisplayMode={() => toggleDisplayMode('hadith')}
-            />
-            {prayer.name === nextPrayer().name && (
-              <CountdownTimer nextPrayer={nextPrayer()} />
-            )}
-          </>
-        ))
-      )}
-      {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
-      {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
-      {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
+      <div class={styles.contents}>
+        {displayMode() === 'prayerTimes' && <Prayers prayerTimes={prayerTimes()}
+          currentPrayer={currentPrayer()}
+          nextPrayer={nextPrayer()}
+          isPrayerTimePast={isPrayerTimePast}
+          toggleDisplayMode={toggleDisplayMode} />}
+        {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
+        {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
+        {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
+      </div>
       <Footer onCreditsClick={() => toggleDisplayMode('credits')} />
     </div>
   );

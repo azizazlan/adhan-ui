@@ -79,6 +79,7 @@
   font-weight: 500;
   text-transform: uppercase;
   justify-content: right;
+  margin-right: 1rem;
 }
 
 .location{

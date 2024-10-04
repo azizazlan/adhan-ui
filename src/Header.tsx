@@ -86,14 +86,14 @@ const Header = (props: {
           </div>
         </div>
         <button
-          class={`${styles.hadithButton}`}
-          onClick={() => props.toggleDisplayMode('hadiths')}>
-          HADITHS
-        </button>
-        <button
           class={`${styles.settingsButton}`}
           onClick={() => props.toggleDisplayMode('settings')}>
           SETTINGS
+        </button>
+        <button
+          class={`${styles.hadithButton}`}
+          onClick={() => props.toggleDisplayMode('hadiths')}>
+          HADITHS
         </button>
       </div>
     </div>

@@ -1,15 +1,11 @@
 .hadithContainer {
-  max-width: 1150px;
   margin-top: 15px;
   background-color: #222323;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .hadithTitle {
   font-size: 2.5rem;
   font-weight: bold;
-  line-height: 1.6;
   text-align: left;
   color: goldenrod;
 }
@@ -17,7 +13,6 @@
 .hadithText {
   color: whitesmoke;
   font-size: 2.1rem;
-  line-height: 1.6;
   margin-bottom: 10px;
   text-align: left;
 }
@@ -32,16 +27,22 @@
 .arrowContainer {
   display: flex;
   flex-direction: row;
+  margin: 0;
+  padding: 0;
 }
 
 .arrowFwd {
   font-size: 2.5rem;
   color: #666;
+  margin: 0;
+  padding: 0;
 }
 
 .arrowBck {
   font-size: 2.5rem;
   color: #666;
+  margin: 0;
+  padding: 0;
 }
 
 .toolbar {
@@ -54,9 +55,13 @@
 .iconButton {
   background-color: transparent;
   border: none;
+  margin: 0;
+  padding: 0;
 }
 
 .closeIconButton {
   font-size: 2.5rem;
   color: #666;
+  margin: 0;
+  padding: 0;
 }

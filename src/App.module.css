@@ -2,4 +2,10 @@
   background-color: #222323;
   display: flex;
   flex-direction: column;
+  padding: 1.5rem;
+}
+
+.contents {
+  flex-grow: 1;
+  min-height: 600px;
 }
