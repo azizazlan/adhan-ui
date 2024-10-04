@@ -36,22 +36,21 @@ const Header = (props: {
         <div class={styles.headerTitle} onClick={props.toggleFullScreen}>PRAYER TIMES</div>
         <HeaderClock />
       </div>
+      <div class={styles.locationAndDateContainer}>
+        <div class={styles.location}>{props.location}</div>
+        <div class={styles.dateContainer}>
+          <span class={styles.gregorianDate}>{props.formattedDate}</span>
+          {props.hijriDate &&
+            <>
+              <span class={styles.hijriDate}>{props.hijriDate.day} {props.hijriDate.month.en} / {props.hijriDate.date}</span>
+            </>
+          }
+        </div>
+      </div>
       <div class={styles.prayerTimeContainer}>
-        {props.nextPrayer.name.length > 0 &&
-          <>
-            <div class={styles.prayerName}>
-              {"NEXT".split('').map((letter, index) => (
-                <span class={styles.yellowLetterBox} key={index}>{letter.toUpperCase()}</span>
-              ))}
-            </div>
-            <div class={styles.prayerName}>
-              <span class={styles.letterBox} key={666}>{" "}</span>
-            </div>
-          </>
-        }
         <div class={styles.prayerName}>
-          {`${props.nextPrayer.name + " "}`.split('').map((letter, index) => (
-            <span class={styles.letterBox} key={index}>{letter.toUpperCase()}</span>
+          {`▸${props.nextPrayer.name + " "}`.split('').map((letter, index) => (
+            <span class={styles.yellowLetterBox} key={index}>{letter.toUpperCase()}</span>
           ))}
         </div>
         <div class={styles.prayerName}>
@@ -63,31 +62,22 @@ const Header = (props: {
             }
           })}
         </div>
+
         <div class={styles.prayerName}>
           <span class={styles.letterBox} key={999}>{" "}</span>
         </div>
+
         <div class={styles.prayerName}>
           {props.nextPrayer.countdown.split('').map((letter, index) => {
             if (letter !== ' ') {
               return (
                 <span
-                  style={{ color: isCountdownUnderThreshold(props.nextPrayer.countdown) ? 'red' : 'white' }}
-                  class={styles.letterBox} key={index}>{letter}</span>
+                  style={{ color: isCountdownUnderThreshold(props.nextPrayer.countdown) ? 'red' : 'gold' }}
+                  class={styles.yellowLetterBox} key={index}>{letter}</span>
               )
             }
           })}
         </div>
-      </div>
-      <div class={styles.locationAndDateContainer}>
-        <span class={styles.location}>{props.location}</span>
-        &nbsp;
-        <span class={styles.date}>{props.formattedDate}</span>
-        &nbsp;
-        {props.hijriDate &&
-          <>
-            <span class={styles.hijriDate}>{props.hijriDate.day} {props.hijriDate.month.en} / {props.hijriDate.date}</span>
-          </>
-        }
       </div>
     </div>
   )

@@ -25,17 +25,21 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .prayerName {
   display: flex;
 }
 
+.blankBox {
+  display: flex;
+}
+
 .yellowLetterBox {
+  font-weight: bold;
   font-size: 1.9rem;
   font-family: monospace;
-  font-weight: bold;
   color: goldenrod;
   background-color: #333;
   width: 35px;
@@ -45,40 +49,53 @@
   justify-content: center;
   border-radius: 3px;
   text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
   margin-right: 4px;
 }
 
 .yellowLetterBox::after {
   content: '';
+  position: absolute;
   left: 0;
   right: 0;
   top: 50%;
-  height: 5px;
+  height: 3px;
   background-color: rgba(0, 0, 0, 0.3);
   box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1);
 }
 
 .locationAndDateContainer {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   color: rgb(119, 118, 118);
   font-size: 1.5rem;
-  font-family: "Oswald", sans-serif;
+  font-family: monospace;
   font-weight: 500;
   text-transform: uppercase;
-  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  justify-content: left;
 }
 
 .location{
+  width: 100%;
   color: silver;
   font-size: 1.5rem;
 }
 
-.date {
-  color: goldenrod;
+.dateContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+}
+
+.gregorianDate {
+  color: silver;
   font-weight: 500;
-  margin-left: 7px;
 }
 
 .hijriDate {
