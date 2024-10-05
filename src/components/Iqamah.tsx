@@ -93,34 +93,32 @@ interface Prayer {
 }
 
 interface IqamahProps {
+  currentDateTime: Date;
   onClose: () => void;
   prayer: Prayer;
 }
 
-const Iqamah: Component<AdhanProps> = (props) => {
-  const isCountdownUnderThreshold = (countdown: string) => {
-    const [hours, minutes] = countdown.split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes;
-    return totalMinutes < REMINDER_BEFORE_PRAYER_MINS;
-  };
+const Iqamah: Component<IqamahProps> = (props) => {
+  const [startPrayer, setStartPrayer] = createSignal(false);
 
-  const parseCountdown = (countdownString: string) => {
-    const [hours, minutes, seconds] = countdownString.split(':').map(Number);
-    return { hours, minutes, seconds };
+  const handleDemoStartPrayer = () => {
+    setStartPrayer(prev => !prev);
   };
-
-  const countdownTime = parseCountdown(props.prayer.countdown);
 
   return (
     <div class={styles.iqamahContainer}>
       <div class={styles.iqamahHeader}>
         <div class={styles.iqamahLabel}>Iqamah</div>
-        <HeaderClock />
+        <button onClick={handleDemoStartPrayer}>
+          {startPrayer() ? 'Reset' : 'Start Prayer'}
+        </button>
+        <HeaderClock currentDateTime={props.currentDateTime} />
       </div>
       <div class={styles.content}>
-        <h1 class={styles.message}>{" "}</h1>
+        <h1 class={styles.message}>{startPrayer() ? "Salat!" : " "}</h1>
+        {startPrayer() && <div class={styles.iqamahMessage}>Lurus dan rapikan saf!</div>}
       </div>
-      <Countdown time={props.prayer.countdown} />
+      {!startPrayer() && <Countdown time={props.prayer.countdown} />}
     </div>
   );
 };

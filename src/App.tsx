@@ -20,7 +20,8 @@ import { Hadith, HadithApiResponse } from './types/hadith';
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const SHOW_LASTTHIRD = import.meta.env.VITE_SHOW_LASTTHIRD === 'true';
 const ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS || '10000', 10));
-const REMINDER_AFTER_PRAYER_MINS = Math.max(0, parseInt(import.meta.env.VITE_REMINDER_AFTER_PRAYER_MINS || '10', 10));
+const ALERT_BEFORE_PRAYER_MINS = Math.max(0, parseInt(import.meta.env.VITE_ALERT_BEFORE_PRAYER_MINS || '30', 10));
+const GRACE_PERIOD_AFTER_PRAYER_MINS = Math.max(0, parseInt(import.meta.env.VITE_GRACE_PERIOD_AFTER_PRAYER_MINS || '10', 10));
 const LOCATION = import.meta.env.VITE_LOCATION;
 const LATITUDE = import.meta.env.VITE_LATITUDE;
 const LONGITUDE = import.meta.env.VITE_LONGITUDE;
@@ -121,7 +122,7 @@ const App: Component = () => {
     }
 
     // The prayer time has passed more than 10 minutes ago
-    const afterMinutesAgo = new Date(now.getTime() - REMINDER_AFTER_PRAYER_MINS * 60 * 1000);
+    const afterMinutesAgo = new Date(now.getTime() - GRACE_PERIOD_AFTER_PRAYER_MINS * 60 * 1000);
     return prayerDate < afterMinutesAgo;
   };
 
@@ -179,10 +180,11 @@ const App: Component = () => {
       const diffMinutes = Math.floor(timeDiff / (1000 * 60));
 
       // Check if it's time to show Adhan
-      if (diffMinutes < (DEMO_ADHAN_MINS - 1) && diffMinutes >= 0 && displayMode() !== 'adhan') {
-        // toggleDisplayMode('adhan');
-        console.log('show adhan screen!');
-
+      if ((diffMinutes < (DEMO_ADHAN_MINS - 1)) || (diffMinutes < ALERT_BEFORE_PRAYER_MINS) && diffMinutes >= 0 && displayMode() !== 'adhan') {
+        if (displayMode() !== 'adhan') {
+          toggleDisplayMode('adhan');
+          console.log('show adhan screen!');
+        }
       }
     }
   };
@@ -324,9 +326,9 @@ const App: Component = () => {
   return (
     <div class={styles.App}>
       {displayMode() === 'adhan' ? (
-        <Adhan prayer={nextPrayer()} onClose={() => toggleDisplayMode('prayerTimes')} />
+        <Adhan prayer={nextPrayer()} currentDateTime={currentDateTime()} toggleDisplayMode={toggleDisplayMode} onClose={() => toggleDisplayMode('prayerTimes')} />
       ) : displayMode() === 'iqamah' ? (
-        <Iqamah prayer={nextPrayer()} onClose={() => toggleDisplayMode('prayerTimes')} />
+        <Iqamah prayer={nextPrayer()} currentDateTime={currentDateTime()} onClose={() => toggleDisplayMode('prayerTimes')} />
       ) : (
         <>
           <Header

@@ -1,6 +1,8 @@
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
 import styles from './Adhan.module.css';
 import HeaderClock from './HeaderClock';
+import { formatPrayerTime } from '../utils/formatter';
+
 interface CountdownProps {
   time: {
     hours: number;
@@ -93,6 +95,7 @@ interface Prayer {
 }
 
 interface AdhanProps {
+  currentDateTime: Date;
   onClose: () => void;
   prayer: Prayer;
 }
@@ -111,15 +114,26 @@ const Adhan: Component<AdhanProps> = (props) => {
 
   const countdownTime = parseCountdown(props.prayer.countdown);
 
+  const [startAdhan, setStartAdhan] = createSignal(false);
+
+  const handleDemoStartAdhan = () => {
+    setStartAdhan(prev => !prev);
+    props.toggleDisplayMode('iqamah');
+  };
+
+
   return (
     <div class={styles.adhanContainer}>
       <div class={styles.adhanHeader}>
         <div class={styles.adhanLabel}>Azan</div>
-        <HeaderClock />
+        <button onClick={handleDemoStartAdhan}>
+          {startAdhan() ? 'Reset' : 'Start Adhan'}
+        </button>
+        <HeaderClock currentDateTime={props.currentDateTime} />
       </div>
       <div class={styles.adhanPrayer}>
         <h1 class={styles.prayerName}>{props.prayer.name}</h1>
-        <div class={styles.prayerTime}>{props.prayer.time.replace(/\s/g, '')}</div>
+        <div class={styles.prayerTime}>{formatPrayerTime(props.prayer.time).replace(/\s/g, '')}</div>
       </div>
       <Countdown time={props.prayer.countdown} />
     </div>

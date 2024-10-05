@@ -34,12 +34,18 @@
 .message {
   width: 100%;
   font-family: monospace;
-  font-size: 5rem; /* Changed from 19em to 4rem */
+  font-size: 9rem; /* Changed from 19em to 4rem */
   font-weight: bold;
   color: white;
   text-align: center;
   height: auto; /* Changed from fit-content to auto */
   padding: 0.5rem 0; /* Added padding for better spacing */
+}
+
+.iqamahMessage {
+  font-size: 7rem;
+  color: white;
+  text-align: center;
 }
 
 .countdown {
