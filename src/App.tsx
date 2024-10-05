@@ -30,6 +30,7 @@ const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 const LANGUAGE = import.meta.env.VITE_LANGUAGE;
+const DEMO_ADHAN_MINS = Math.max(0, parseInt(import.meta.env.VITE_DEMO_ADHAN_MINS || '30', 10));
 
 export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
 
@@ -62,7 +63,7 @@ const App: Component = () => {
         const [hours, minutes] = nextPrayerInfo.time.split(':').map(Number);
         const now = new Date();
         let demoTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-        demoTime = addMinutes(demoTime, -30); // Set to 30 minutes before
+        demoTime = addMinutes(demoTime, -DEMO_ADHAN_MINS); // Set to 30 minutes before
 
         setCurrentDateTime(demoTime);
         setDemoNextPrayer(nextPrayerInfo);
@@ -174,6 +175,15 @@ const App: Component = () => {
         time: nextPrayerInfo.time,
         countdown: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
       });
+
+      const diffMinutes = Math.floor(timeDiff / (1000 * 60));
+
+      // Check if it's time to show Adhan
+      if (diffMinutes < (DEMO_ADHAN_MINS - 1) && diffMinutes >= 0 && displayMode() !== 'adhan') {
+        // toggleDisplayMode('adhan');
+        console.log('show adhan screen!');
+
+      }
     }
   };
 
