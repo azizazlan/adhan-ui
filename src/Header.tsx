@@ -13,6 +13,8 @@ const Header = (props: {
   toggleDisplayMode: (mode: DisplayMode) => void,
   toggleDemo: () => void,
   isDemo: boolean,
+  toggleDemo2: () => void,
+  isDemo2: boolean,
   location: string,
   displayMode: string,
   currentPrayer: string,
@@ -61,6 +63,17 @@ const Header = (props: {
           }}
         >
           {props.isDemo ? 'Exit Demo' : 'Enter Demo'}
+        </button>
+        <span style={{ width: '7px' }}></span>
+        <button
+          class={styles.demoButton}
+          onClick={props.toggleDemo2}
+          style={{
+            color: props.isDemo2 ? 'red' : 'inherit',
+            fontWeight: props.isDemo2 ? 'bold' : 'normal'
+          }}
+        >
+          {props.isDemo2 ? 'Exit Demo 2' : 'Enter Demo 2'}
         </button>
       </div>
       {props.displayMode === 'hadiths' &&

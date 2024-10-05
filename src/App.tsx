@@ -20,8 +20,8 @@ import { Hadith, HadithApiResponse } from './types/hadith';
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const SHOW_LASTTHIRD = import.meta.env.VITE_SHOW_LASTTHIRD === 'true';
 const ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS || '10000', 10));
-const ALERT_BEFORE_PRAYER_MINS = Math.max(0, parseInt(import.meta.env.VITE_ALERT_BEFORE_PRAYER_MINS || '30', 10));
-const GRACE_PERIOD_AFTER_PRAYER_MINS = Math.max(0, parseInt(import.meta.env.VITE_GRACE_PERIOD_AFTER_PRAYER_MINS || '10', 10));
+const BEFORE_DISPLAY_ADHAN_MINS = Math.max(0, parseInt(import.meta.env.VITE_BEFORE_DISPLAY_ADHAN_MINS || '15', 10));
+const VITE_ADHAN_MINS = Math.max(0, parseInt(import.meta.env.VITE_ADHAN_MINS || '10', 10));
 const LOCATION = import.meta.env.VITE_LOCATION;
 const LATITUDE = import.meta.env.VITE_LATITUDE;
 const LONGITUDE = import.meta.env.VITE_LONGITUDE;
@@ -38,6 +38,7 @@ export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | '
 const App: Component = () => {
 
   const [isDemo, setIsDemo] = createSignal(false);
+  const [isDemo2, setIsDemo2] = createSignal(false);
   const [demoNextPrayer, setDemoNextPrayer] = createSignal(null);
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
   const [currentPrayer, setCurrentPrayer] = createSignal('');
@@ -92,6 +93,44 @@ const App: Component = () => {
     setIsDemo(!isDemo());
   };
 
+  const toggleDemo2 = () => {
+    const demoDateTime = new Date(2024, 9, 5, 13, 5, 0); // October 5, 2024, 1:00 PM
+    setCurrentDateTime(demoDateTime);
+    if (!isDemo2()) {
+      // Entering demo mode
+      const nextPrayerInfo = nextPrayer();
+      if (nextPrayerInfo && nextPrayerInfo.time) {
+        const [hours, minutes] = nextPrayerInfo.time.split(':').map(Number);
+        const now = new Date();
+        let demoTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+        demoTime = addMinutes(demoTime, -DEMO_ADHAN_MINS); // Set to 30 minutes before
+
+        setCurrentDateTime(demoTime);
+        setDemoNextPrayer(nextPrayerInfo);
+        setDemoSecondCounter(0);
+
+        // Update current prayer based on demo time
+        const currentPrayerInfo = findCurrentPrayer(demoTime);
+        setCurrentPrayer(currentPrayerInfo.name);
+
+        // Force an update of prayer times
+        updateCurrentAndNextPrayer();
+      }
+    } else {
+      // Exiting demo mode
+      setCurrentDateTime(new Date());
+      setDemoNextPrayer(null);
+
+      // Reset current prayer based on actual time
+      const currentPrayerInfo = findCurrentPrayer(new Date());
+      setCurrentPrayer(currentPrayerInfo.name);
+
+      // Force an update of prayer times
+      updateCurrentAndNextPrayer();
+    }
+    setIsDemo2(!isDemo2());
+  };
+
   const findCurrentPrayer = (time: Date) => {
     let currentPrayerInfo = { name: '', time: '' };
 
@@ -122,7 +161,7 @@ const App: Component = () => {
     }
 
     // The prayer time has passed more than 10 minutes ago
-    const afterMinutesAgo = new Date(now.getTime() - GRACE_PERIOD_AFTER_PRAYER_MINS * 60 * 1000);
+    const afterMinutesAgo = new Date(now.getTime() - VITE_ADHAN_MINS * 60 * 1000);
     return prayerDate < afterMinutesAgo;
   };
 
@@ -178,9 +217,12 @@ const App: Component = () => {
       });
 
       const diffMinutes = Math.floor(timeDiff / (1000 * 60));
+      const diffSeconds = Math.floor(timeDiff / 1000);
+      console.log('diffSeconds', diffSeconds);
 
+      console.log('diffMinutes', diffMinutes);
       // Check if it's time to show Adhan
-      if ((diffMinutes < (DEMO_ADHAN_MINS - 1)) || (diffMinutes < ALERT_BEFORE_PRAYER_MINS) && diffMinutes >= 0 && displayMode() !== 'adhan') {
+      if ((diffMinutes < (DEMO_ADHAN_MINS - 1)) || (diffMinutes < BEFORE_DISPLAY_ADHAN_MINS) && diffMinutes >= 0 && displayMode() !== 'adhan') {
         if (displayMode() !== 'adhan') {
           toggleDisplayMode('adhan');
           console.log('show adhan screen!');
@@ -277,7 +319,7 @@ const App: Component = () => {
     fetchHijriDate(new Date());
 
     const timer = setInterval(() => {
-      if (!isDemo()) {
+      if (!isDemo() && !isDemo2()) {
         setCurrentDateTime(new Date());
       } else {
         setCurrentDateTime(prevTime => {
@@ -293,12 +335,13 @@ const App: Component = () => {
           }
         });
       }
+
       updateCurrentAndNextPrayer();
       updateCurrentPrayerProgress();
     }, 1000);
 
     const toggleInterval = setInterval(() => {
-      if (DISPLAY_HADITH) {
+      if (DISPLAY_HADITH && !isDemo() && !isDemo2()) {
         toggleDisplayMode();
       } else {
         setShowPrayerTimes(true);
@@ -328,7 +371,7 @@ const App: Component = () => {
       {displayMode() === 'adhan' ? (
         <Adhan prayer={nextPrayer()} currentDateTime={currentDateTime()} toggleDisplayMode={toggleDisplayMode} onClose={() => toggleDisplayMode('prayerTimes')} />
       ) : displayMode() === 'iqamah' ? (
-        <Iqamah prayer={nextPrayer()} currentDateTime={currentDateTime()} onClose={() => toggleDisplayMode('prayerTimes')} />
+        <Iqamah currentDateTime={currentDateTime()} onClose={() => toggleDisplayMode('prayerTimes')} />
       ) : (
         <>
           <Header
@@ -336,6 +379,8 @@ const App: Component = () => {
             toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
             toggleDemo={toggleDemo}
             isDemo={isDemo()}
+            toggleDemo2={toggleDemo2}
+            isDemo2={isDemo2()}
             location={location()}
             formattedDate={getFormattedDate(currentDateTime())}
             currentDateTime={currentDateTime()}

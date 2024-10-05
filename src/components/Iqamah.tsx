@@ -93,32 +93,21 @@ interface Prayer {
 }
 
 interface IqamahProps {
-  currentDateTime: Date;
   onClose: () => void;
-  prayer: Prayer;
 }
 
 const Iqamah: Component<IqamahProps> = (props) => {
-  const [startPrayer, setStartPrayer] = createSignal(false);
-
-  const handleDemoStartPrayer = () => {
-    setStartPrayer(prev => !prev);
-  };
 
   return (
     <div class={styles.iqamahContainer}>
       <div class={styles.iqamahHeader}>
         <div class={styles.iqamahLabel}>Iqamah</div>
-        <button onClick={handleDemoStartPrayer}>
-          {startPrayer() ? 'Reset' : 'Start Prayer'}
-        </button>
         <HeaderClock currentDateTime={props.currentDateTime} />
       </div>
       <div class={styles.content}>
-        <h1 class={styles.message}>{startPrayer() ? "Salat!" : " "}</h1>
-        {startPrayer() && <div class={styles.iqamahMessage}>Lurus dan rapikan saf!</div>}
+        <h1 class={styles.message}>Salat!</h1>
+        <div class={styles.iqamahMessage}>Lurus dan rapikan saf!</div>
       </div>
-      {!startPrayer() && <Countdown time={props.prayer.countdown} />}
     </div>
   );
 };

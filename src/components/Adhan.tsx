@@ -125,7 +125,7 @@ const Adhan: Component<AdhanProps> = (props) => {
   return (
     <div class={styles.adhanContainer}>
       <div class={styles.adhanHeader}>
-        <div class={styles.adhanLabel}>Azan</div>
+        <div class={styles.adhanLabel}>Azan sebentar lagi...</div>
         <button onClick={handleDemoStartAdhan}>
           {startAdhan() ? 'Reset' : 'Start Adhan'}
         </button>
