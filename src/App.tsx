@@ -62,17 +62,51 @@ const App: Component = () => {
         const [hours, minutes] = nextPrayerInfo.time.split(':').map(Number);
         const now = new Date();
         let demoTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-        demoTime = addMinutes(demoTime, -60); // Set to one hour before
+        demoTime = addMinutes(demoTime, -30); // Set to 30 minutes before
+
         setCurrentDateTime(demoTime);
         setDemoNextPrayer(nextPrayerInfo);
         setDemoSecondCounter(0);
+
+        // Update current prayer based on demo time
+        const currentPrayerInfo = findCurrentPrayer(demoTime);
+        setCurrentPrayer(currentPrayerInfo.name);
+
+        // Force an update of prayer times
+        updateCurrentAndNextPrayer();
       }
     } else {
       // Exiting demo mode
       setCurrentDateTime(new Date());
       setDemoNextPrayer(null);
+
+      // Reset current prayer based on actual time
+      const currentPrayerInfo = findCurrentPrayer(new Date());
+      setCurrentPrayer(currentPrayerInfo.name);
+
+      // Force an update of prayer times
+      updateCurrentAndNextPrayer();
     }
     setIsDemo(!isDemo());
+  };
+
+  const findCurrentPrayer = (time: Date) => {
+    let currentPrayerInfo = { name: '', time: '' };
+
+    prayerTimes().forEach(prayer => {
+      const [prayerHours, prayerMinutes] = prayer.time.split(':').map(Number);
+      let prayerDate = new Date(time.getFullYear(), time.getMonth(), time.getDate(), prayerHours, prayerMinutes);
+
+      if (prayer.name === 'Las3rd' && prayerDate < time) {
+        prayerDate.setDate(prayerDate.getDate() + 1);
+      }
+
+      if (prayerDate <= time && (currentPrayerInfo.name === '' || prayerDate > new Date(time.getFullYear(), time.getMonth(), time.getDate(), ...currentPrayerInfo.time.split(':').map(Number)))) {
+        currentPrayerInfo = prayer;
+      }
+    });
+
+    return currentPrayerInfo;
   };
 
   const isPrayerTimePast = (prayerTime: string, prayerName: string) => {
@@ -92,12 +126,13 @@ const App: Component = () => {
 
   const updateCurrentAndNextPrayer = () => {
     const now = currentDateTime();
-    let currentPrayerInfo = { name: '', time: '' };
+    let currentPrayerInfo = findCurrentPrayer(now);
     let nextPrayerInfo = { name: '', time: '' };
 
     if (isDemo() && demoNextPrayer()) {
       nextPrayerInfo = demoNextPrayer();
     } else {
+      // Find next prayer
       prayerTimes().forEach(prayer => {
         const [hours, minutes] = prayer.time.split(':').map(Number);
         let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
@@ -106,23 +141,23 @@ const App: Component = () => {
           prayerDate.setDate(prayerDate.getDate() + 1);
         }
 
-        if (prayerDate <= now && (currentPrayerInfo.name === '' || prayerDate > new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...currentPrayerInfo.time.split(':').map(Number)))) {
-          currentPrayerInfo = { name: prayer.name, time: prayer.time };
-        } else if (prayerDate > now && (nextPrayerInfo.name === '' || prayerDate < new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...nextPrayerInfo.time.split(':').map(Number)))) {
-          nextPrayerInfo = { name: prayer.name, time: prayer.time };
+        if (prayerDate > now && (nextPrayerInfo.name === '' || prayerDate < new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...nextPrayerInfo.time.split(':').map(Number)))) {
+          nextPrayerInfo = prayer;
         }
       });
+    }
 
-      if (SHOW_LASTTHIRD && currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
-        const las3rdPrayer = prayerTimes().find(p => p.name === 'Las3rd');
-        if (las3rdPrayer) {
-          nextPrayerInfo = {
-            name: 'Las3rd',
-            time: las3rdPrayer.time
-          };
-        }
+
+    if (SHOW_LASTTHIRD && currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
+      const las3rdPrayer = prayerTimes().find(p => p.name === 'Las3rd');
+      if (las3rdPrayer) {
+        nextPrayerInfo = {
+          name: 'Las3rd',
+          time: las3rdPrayer.time
+        };
       }
     }
+
 
     setCurrentPrayer(currentPrayerInfo.name);
 
