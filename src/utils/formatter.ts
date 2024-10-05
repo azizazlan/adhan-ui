@@ -1,3 +1,5 @@
+import { format, addMinutes, subMinutes, isValid } from 'date-fns';
+
 const formatTime = (date: Date) => {
   return date.toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -29,3 +31,11 @@ const formatCountdown = (milliseconds: number) => {
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 export { formatCountdown };
+
+const getFormattedDate = (date: Date) => {
+  if (isValid(date)) {
+    return format(date, 'dd/MM/yyyy').toUpperCase();
+  }
+  return 'Invalid Date';
+};
+export { getFormattedDate };

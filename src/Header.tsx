@@ -6,25 +6,29 @@ import { HijriDate } from './types/hijri';
 import { DisplayMode } from './App';
 
 const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS || '60', 10);
+const IS_DEMO = import.meta.env.VITE_DEMO === 'true';
 
 const Header = (props: {
   toggleFullScreen: () => void,
   toggleDisplayMode: (mode: DisplayMode) => void,
+  toggleDemo: () => void,
+  isDemo: boolean,
   location: string,
   displayMode: string,
   currentPrayer: string,
   nextPrayer: string,
   formattedDate: string,
-  hijriDate: HijriDate
+  hijriDate: HijriDate,
+  currentDateTime: Date
 }) => {
-  const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
+  // const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
 
-  createEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDateTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  });
+  // createEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setCurrentDateTime(new Date());
+  //   }, 1000);
+  //   return () => clearInterval(timer);
+  // });
 
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
@@ -41,13 +45,23 @@ const Header = (props: {
             <span class={styles.hijriDate}>{props.hijriDate.date.replace(/-/g, '/')} AH</span>
           </div>
         }
-        <HeaderClock />
+        <HeaderClock currentDateTime={props.currentDateTime} />
       </div>
       <div class={styles.locationContainer}>
         <div class={styles.location}>{import.meta.env.VITE_MOSQUE_NAME}</div>
         {/* Testing buttons */}
         <button class={styles.testButton} onClick={() => props.toggleDisplayMode('adhan')}>Adhan</button>
         <button class={styles.testButton} onClick={() => props.toggleDisplayMode('iqamah')}>Iqamah</button>
+        <button
+          class={styles.demoButton}
+          onClick={props.toggleDemo}
+          style={{
+            color: props.isDemo ? 'red' : 'inherit',
+            fontWeight: props.isDemo ? 'bold' : 'normal'
+          }}
+        >
+          {props.isDemo ? 'Exit Demo' : 'Enter Demo'}
+        </button>
       </div>
       {props.displayMode === 'hadiths' &&
         <div class={styles.prayerTimeContainer}>

@@ -1,6 +1,6 @@
 import { Component, createSignal, createEffect } from 'solid-js';
 import { ProgressBar } from 'solid-bootstrap';
-import { format } from 'date-fns';
+import { format, addDays, addMinutes, addSeconds, subHours, subMinutes, isValid, parse } from 'date-fns';
 import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './Header';
@@ -13,7 +13,7 @@ import Credits from './components/Credits';
 import Prayers from './components/Prayers';
 import Adhan from './components/Adhan';
 import Iqamah from './components/Iqamah';
-import { formatPrayerTime, formatCountdown, formatTime } from './utils/formatter';
+import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Hadith, HadithApiResponse } from './types/hadith';
 
@@ -34,10 +34,12 @@ const LANGUAGE = import.meta.env.VITE_LANGUAGE;
 export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
 
 const App: Component = () => {
+
+  const [isDemo, setIsDemo] = createSignal(false);
+  const [demoNextPrayer, setDemoNextPrayer] = createSignal(null);
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
   const [currentPrayer, setCurrentPrayer] = createSignal('');
   const [nextPrayer, setNextPrayer] = createSignal({ name: '', time: '', countdown: '' });
-
   const [currentPrayerProgress, setCurrentPrayerProgress] = createSignal(0);
   const [currentPrayerRemaining, setCurrentPrayerRemaining] = createSignal('');
   const [prayerTimes, setPrayerTimes] = createSignal([]);
@@ -46,9 +48,31 @@ const App: Component = () => {
   const [hijriDate, setHijriDate] = createSignal<HijriDate | null>(null);
   const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerTimes');
   const [contentsHeight, setContentsHeight] = createSignal(700);
+  const [demoSecondCounter, setDemoSecondCounter] = createSignal(0);
 
   const toggleDisplayMode = (mode: DisplayMode) => {
     setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
+  };
+
+  const toggleDemo = () => {
+    if (!isDemo()) {
+      // Entering demo mode
+      const nextPrayerInfo = nextPrayer();
+      if (nextPrayerInfo && nextPrayerInfo.time) {
+        const [hours, minutes] = nextPrayerInfo.time.split(':').map(Number);
+        const now = new Date();
+        let demoTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+        demoTime = addMinutes(demoTime, -60); // Set to one hour before
+        setCurrentDateTime(demoTime);
+        setDemoNextPrayer(nextPrayerInfo);
+        setDemoSecondCounter(0);
+      }
+    } else {
+      // Exiting demo mode
+      setCurrentDateTime(new Date());
+      setDemoNextPrayer(null);
+    }
+    setIsDemo(!isDemo());
   };
 
   const isPrayerTimePast = (prayerTime: string, prayerName: string) => {
@@ -68,48 +92,51 @@ const App: Component = () => {
 
   const updateCurrentAndNextPrayer = () => {
     const now = currentDateTime();
-    let currentPrayerInfo = { name: '', date: new Date(0) };
-    let nextPrayerInfo = { name: '', date: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 59) };
+    let currentPrayerInfo = { name: '', time: '' };
+    let nextPrayerInfo = { name: '', time: '' };
 
-    prayerTimes().forEach(prayer => {
-      const [hours, minutes] = prayer.time.split(':').map(Number);
-      let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+    if (isDemo() && demoNextPrayer()) {
+      nextPrayerInfo = demoNextPrayer();
+    } else {
+      prayerTimes().forEach(prayer => {
+        const [hours, minutes] = prayer.time.split(':').map(Number);
+        let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
 
-      // If the prayer time is before the current time and it's Lastthird, it's for the next day
-      if (prayer.name === 'Las3rd' && prayerDate < now) {
-        prayerDate.setDate(prayerDate.getDate() + 1);
-      }
+        if (prayer.name === 'Las3rd' && prayerDate < now) {
+          prayerDate.setDate(prayerDate.getDate() + 1);
+        }
 
-      if (prayerDate <= now && prayerDate > currentPrayerInfo.date) {
-        currentPrayerInfo = { name: prayer.name, date: prayerDate };
-      } else if (prayerDate > now && prayerDate < nextPrayerInfo.date) {
-        nextPrayerInfo = { name: prayer.name, date: prayerDate };
-      }
-    });
+        if (prayerDate <= now && (currentPrayerInfo.name === '' || prayerDate > new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...currentPrayerInfo.time.split(':').map(Number)))) {
+          currentPrayerInfo = { name: prayer.name, time: prayer.time };
+        } else if (prayerDate > now && (nextPrayerInfo.name === '' || prayerDate < new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...nextPrayerInfo.time.split(':').map(Number)))) {
+          nextPrayerInfo = { name: prayer.name, time: prayer.time };
+        }
+      });
 
-    // Special case: If it's after Isha and before midnight, set Las3rd as next prayer
-    if (SHOW_LASTTHIRD && currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
-      const las3rdPrayer = prayerTimes().find(p => p.name === 'Las3rd');
-      if (las3rdPrayer) {
-        const [hours, minutes] = las3rdPrayer.time.split(':').map(Number);
-        nextPrayerInfo = {
-          name: 'Las3rd',
-          date: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, hours, minutes)
-        };
+      if (SHOW_LASTTHIRD && currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
+        const las3rdPrayer = prayerTimes().find(p => p.name === 'Las3rd');
+        if (las3rdPrayer) {
+          nextPrayerInfo = {
+            name: 'Las3rd',
+            time: las3rdPrayer.time
+          };
+        }
       }
     }
 
     setCurrentPrayer(currentPrayerInfo.name);
 
     if (nextPrayerInfo.name) {
-      const timeDiff = nextPrayerInfo.date.getTime() - now.getTime();
+      const [nextHours, nextMinutes] = nextPrayerInfo.time.split(':').map(Number);
+      const nextPrayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextHours, nextMinutes);
+      const timeDiff = nextPrayerDate.getTime() - now.getTime();
       const hours = Math.floor(timeDiff / (1000 * 60 * 60));
       const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
       setNextPrayer({
         name: nextPrayerInfo.name,
-        time: formatPrayerTime(nextPrayerInfo.date.toTimeString()),
+        time: nextPrayerInfo.time,
         countdown: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
       });
     }
@@ -201,8 +228,24 @@ const App: Component = () => {
   createEffect(() => {
     fetchPrayerTimes();
     fetchHijriDate(new Date());
+
     const timer = setInterval(() => {
-      setCurrentDateTime(new Date());
+      if (!isDemo()) {
+        setCurrentDateTime(new Date());
+      } else {
+        setCurrentDateTime(prevTime => {
+          const newSecondCounter = (demoSecondCounter() + 1) % 60;
+          setDemoSecondCounter(newSecondCounter);
+
+          if (newSecondCounter === 0) {
+            // Increment by one minute every 60 seconds
+            return addMinutes(prevTime, 1);
+          } else {
+            // Just update seconds
+            return addSeconds(prevTime, 1);
+          }
+        });
+      }
       updateCurrentAndNextPrayer();
       updateCurrentPrayerProgress();
     }, 1000);
@@ -244,8 +287,11 @@ const App: Component = () => {
           <Header
             toggleFullScreen={toggleFullScreen}
             toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
+            toggleDemo={toggleDemo}
+            isDemo={isDemo()}
             location={location()}
-            formattedDate={format(currentDateTime(), 'dd/MM/yyyy').toUpperCase()}
+            formattedDate={getFormattedDate(currentDateTime())}
+            currentDateTime={currentDateTime()}
             displayMode={displayMode()}
             currentPrayer={currentPrayer()}
             nextPrayer={nextPrayer()}

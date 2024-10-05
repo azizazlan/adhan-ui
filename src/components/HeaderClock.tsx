@@ -1,13 +1,18 @@
-import { createSignal, onCleanup } from 'solid-js';
+import { createSignal, createEffect, onCleanup } from 'solid-js';
+import { addSeconds } from 'date-fns';
 import styles from './HeaderClock.module.css';
 
 const padNumber = (num: number): string => num.toString().padStart(2, '0');
 
-const HeaderClock = () => {
-  const [time, setTime] = createSignal(new Date());
+const HeaderClock = (props: { currentDateTime: Date }) => {
+  const [time, setTime] = createSignal(props.currentDateTime);
+
+  createEffect(() => {
+    setTime(props.currentDateTime);
+  });
 
   const timer = setInterval(() => {
-    setTime(new Date());
+    setTime(prevTime => addSeconds(prevTime, 1));
   }, 1000);
 
   onCleanup(() => clearInterval(timer));
@@ -31,19 +36,15 @@ const HeaderClock = () => {
     <div class={styles.clock}>
       {formatTime(time()).map((segment, index) => (
         <>
-          {index < 4 ? (
-            <div class={styles.segment}>
-              <div class={styles.digitBox}>
-                <div class={styles.digit}>{segment[0]}</div>
-              </div>
-              <div class={styles.digitBox}>
-                <div class={styles.digit}>{segment[1]}</div>
-              </div>
+          <div class={`${styles.segment} ${index === 3 ? styles.ampmSegment : ''}`}>
+            <div class={styles.digitBox}>
+              <div class={styles.digit}>{segment[0]}</div>
             </div>
-          ) : (
-            <div class={styles.ampm}>{segment}</div>
-          )}
-          {index < 2 && <div class={styles.separator}>:</div>}
+            <div class={styles.digitBox}>
+              <div class={styles.digit}>{segment[1]}</div>
+            </div>
+          </div>
+          {index < 3 && <div class={styles.separator}>:</div>}
         </>
       ))}
     </div>
