@@ -3,11 +3,13 @@ import HeaderClock from './components/HeaderClock';
 import styles from './Header.module.css';
 import FlipClock from './components/FlipClock';
 import { HijriDate } from './types/hijri';
+import { DisplayMode } from './App';
 
 const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS || '60', 10);
 
 const Header = (props: {
   toggleFullScreen: () => void,
+  toggleDisplayMode: (mode: DisplayMode) => void,
   location: string,
   displayMode: string,
   currentPrayer: string,
@@ -43,6 +45,9 @@ const Header = (props: {
       </div>
       <div class={styles.locationContainer}>
         <div class={styles.location}>{import.meta.env.VITE_MOSQUE_NAME}</div>
+        {/* Testing buttons */}
+        <button class={styles.testButton} onClick={() => props.toggleDisplayMode('adhan')}>Adhan</button>
+        <button class={styles.testButton} onClick={() => props.toggleDisplayMode('iqamah')}>Iqamah</button>
       </div>
       {props.displayMode === 'hadiths' &&
         <div class={styles.prayerTimeContainer}>

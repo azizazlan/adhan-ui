@@ -11,6 +11,7 @@ import Settings from './components/Settings';
 import CountdownTimer from './components/CountdownTimer';
 import Credits from './components/Credits';
 import Prayers from './components/Prayers';
+import Adhan from './components/Adhan';
 import { formatPrayerTime, formatCountdown, formatTime } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Hadith, HadithApiResponse } from './types/hadith';
@@ -29,7 +30,7 @@ const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&l
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 const LANGUAGE = import.meta.env.VITE_LANGUAGE;
 
-export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings';
+export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | 'adhan';
 
 const App: Component = () => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
@@ -233,29 +234,37 @@ const App: Component = () => {
 
   return (
     <div class={styles.App}>
-      <Header
-        toggleFullScreen={toggleFullScreen}
-        toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
-        location={location()}
-        formattedDate={format(currentDateTime(), 'dd/MM/yyyy').toUpperCase()}
-        displayMode={displayMode()}
-        currentPrayer={currentPrayer()}
-        nextPrayer={nextPrayer()}
-        hijriDate={hijriDate()}
-      />
-      <div class={styles.contents} style={{ height: `${contentsHeight()}px` }}>
-        {displayMode() === 'prayerTimes' && <Prayers prayerTimes={prayerTimes()}
-          currentPrayer={currentPrayer()}
-          nextPrayer={nextPrayer()}
-          isPrayerTimePast={isPrayerTimePast}
-          toggleDisplayMode={toggleDisplayMode} />}
-        {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
-        {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
-        {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
-      </div>
-      <Footer onCreditsClick={() => toggleDisplayMode('credits')}
-        onHadithsClick={() => toggleDisplayMode('hadiths')}
-        onSettingsClick={() => toggleDisplayMode('settings')} />
+      {displayMode() === 'adhan' ? (
+        <Adhan onClose={() => toggleDisplayMode('prayerTimes')} />
+      ) : (
+        <>
+          <Header
+            toggleFullScreen={toggleFullScreen}
+            toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
+            location={location()}
+            formattedDate={format(currentDateTime(), 'dd/MM/yyyy').toUpperCase()}
+            displayMode={displayMode()}
+            currentPrayer={currentPrayer()}
+            nextPrayer={nextPrayer()}
+            hijriDate={hijriDate()}
+          />
+          <div class={styles.contents} style={{ height: `${contentsHeight()}px` }}>
+            {displayMode() === 'prayerTimes' && <Prayers prayerTimes={prayerTimes()}
+              currentPrayer={currentPrayer()}
+              nextPrayer={nextPrayer()}
+              isPrayerTimePast={isPrayerTimePast}
+              toggleDisplayMode={toggleDisplayMode} />}
+            {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
+            {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
+            {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
+          </div>
+          <Footer
+            onCreditsClick={() => toggleDisplayMode('credits')}
+            onHadithsClick={() => toggleDisplayMode('hadiths')}
+            onSettingsClick={() => toggleDisplayMode('settings')}
+          />
+        </>
+      )}
     </div>
   );
 };
