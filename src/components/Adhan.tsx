@@ -126,9 +126,6 @@ const Adhan: Component<AdhanProps> = (props) => {
     <div class={styles.adhanContainer}>
       <div class={styles.adhanHeader}>
         <div class={styles.adhanLabel}>Azan sebentar lagi...</div>
-        <button onClick={handleDemoStartAdhan}>
-          {startAdhan() ? 'Reset' : 'Start Adhan'}
-        </button>
         <HeaderClock currentDateTime={props.currentDateTime} />
       </div>
       <div class={styles.adhanPrayer}>

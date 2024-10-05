@@ -52,6 +52,9 @@ const App: Component = () => {
   const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerTimes');
   const [contentsHeight, setContentsHeight] = createSignal(700);
   const [demoSecondCounter, setDemoSecondCounter] = createSignal(0);
+  const [lastTriggeredPrayer, setLastTriggeredPrayer] = createSignal('');
+  const [iqamahTriggerTime, setIqamahTriggerTime] = createSignal<Date | null>(null);
+
 
   const toggleDisplayMode = (mode: DisplayMode) => {
     setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
@@ -188,7 +191,6 @@ const App: Component = () => {
       });
     }
 
-
     if (SHOW_LASTTHIRD && currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
       const las3rdPrayer = prayerTimes().find(p => p.name === 'Las3rd');
       if (las3rdPrayer) {
@@ -198,7 +200,6 @@ const App: Component = () => {
         };
       }
     }
-
 
     setCurrentPrayer(currentPrayerInfo.name);
 
@@ -218,14 +219,25 @@ const App: Component = () => {
 
       const diffMinutes = Math.floor(timeDiff / (1000 * 60));
       const diffSeconds = Math.floor(timeDiff / 1000);
-      console.log('diffSeconds', diffSeconds);
-
-      console.log('diffMinutes', diffMinutes);
       // Check if it's time to show Adhan
       if ((diffMinutes < (DEMO_ADHAN_MINS - 1)) || (diffMinutes < BEFORE_DISPLAY_ADHAN_MINS) && diffMinutes >= 0 && displayMode() !== 'adhan') {
         if (displayMode() !== 'adhan') {
           toggleDisplayMode('adhan');
           console.log('show adhan screen!');
+        }
+      }
+      // Check if we've just passed the prayer time
+      if (!iqamahTriggerTime() && nextPrayerInfo.name !== lastTriggeredPrayer()) {
+        setIqamahTriggerTime(nextPrayerDate);
+      }
+
+      // Check if it's time to show Iqamah
+      if (iqamahTriggerTime() && now >= iqamahTriggerTime()!) {
+        if (displayMode() !== 'iqamah') {
+          toggleDisplayMode('iqamah');
+          setLastTriggeredPrayer(nextPrayerInfo.name);
+          setIqamahTriggerTime(null);
+          console.log('show iqamah screen!');
         }
       }
     }
