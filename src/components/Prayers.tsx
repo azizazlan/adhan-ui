@@ -17,7 +17,7 @@ const Prayers = (props: PrayersProps) => {
   return (
     <>
       {props.prayerTimes.map((prayer) => (
-        <>
+        <div class={styles.prayerTimeContainer}>
           <PrayerTimeItem
             prayer={prayer}
             currentPrayer={props.currentPrayer}
@@ -27,9 +27,11 @@ const Prayers = (props: PrayersProps) => {
             toggleDisplayMode={() => props.toggleDisplayMode('hadith')}
           />
           {prayer.name === props.nextPrayer.name && (
-            <CountdownTimer nextPrayer={props.nextPrayer} />
+            <div class={styles.countdownTimerContainer}>
+              <CountdownTimer nextPrayer={props.nextPrayer} />
+            </div>
           )}
-        </>
+        </div>
       ))}
     </>
   );

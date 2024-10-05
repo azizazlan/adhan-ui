@@ -65,7 +65,7 @@
   box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1);
 }
 
-.locationAndDateContainer {
+.locationContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -98,10 +98,20 @@
   font-weight: 500;
 }
 
+.hijriDateContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  width: 100%;
+  margin-left: 1rem;
+}
+
 .hijriDate {
+  font-family: "Oswald", sans-serif;
   color:gold;
-  font-weight: 500;
-  margin-left: 7px;
+  font-size: 2.7rem;
+  font-weight: 600;
 }
 
 .letterBox {

@@ -10,6 +10,7 @@ const Settings: Component = (props: { onClose: () => void }) => {
     'VITE_LONGITUDE': import.meta.env.VITE_LONGITUDE,
     'VITE_TIMEZONE': import.meta.env.VITE_TIMEZONE,
     'VITE_TUNE': import.meta.env.VITE_TUNE,
+    'VITE_SHOW_LASTTHIRD': import.meta.env.VITE_SHOW_LASTTHIRD,
     'VITE_REMINDER_BEFORE_PRAYER_MINS': import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS,
     'VITE_REMINDER_AFTER_PRAYER_MINS': import.meta.env.VITE_REMINDER_AFTER_PRAYER_MINS,
     'VITE_SHOW_NEXT_HADITH_INTERVAL_MS': import.meta.env.VITE_SHOW_NEXT_HADITH_INTERVAL_MS,

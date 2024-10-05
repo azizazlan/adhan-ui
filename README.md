@@ -6,6 +6,10 @@ In the name of Allah, the most gracious, the most merciful, may this app be a me
 
 [Demo](https://azizazlan.github.io/adhan-ui)
 
+## Settings
+
+- Only supports english and malay. Refer language codes [here](https://github.com/cospired/i18n-iso-languages)
+
 ## Features
 
 Prayer times app displays:

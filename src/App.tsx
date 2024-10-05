@@ -12,9 +12,11 @@ import CountdownTimer from './components/CountdownTimer';
 import Credits from './components/Credits';
 import Prayers from './components/Prayers';
 import { formatPrayerTime, formatCountdown, formatTime } from './utils/formatter';
+import { getPrayerName } from './utils/prayername';
 import { Hadith, HadithApiResponse } from './types/hadith';
 
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
+const SHOW_LASTTHIRD = import.meta.env.VITE_SHOW_LASTTHIRD === 'true';
 const ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS || '10000', 10));
 const REMINDER_AFTER_PRAYER_MINS = Math.max(0, parseInt(import.meta.env.VITE_REMINDER_AFTER_PRAYER_MINS || '10', 10));
 const LOCATION = import.meta.env.VITE_LOCATION;
@@ -25,6 +27,7 @@ const TUNE = import.meta.env.VITE_TUNE;
 const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
+const LANGUAGE = import.meta.env.VITE_LANGUAGE;
 
 export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings';
 
@@ -40,6 +43,7 @@ const App: Component = () => {
   const [showPrayerTimes, setShowPrayerTimes] = createSignal(true);
   const [hijriDate, setHijriDate] = createSignal<HijriDate | null>(null);
   const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerTimes');
+  const [contentsHeight, setContentsHeight] = createSignal(700);
 
   const toggleDisplayMode = (mode: DisplayMode) => {
     setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
@@ -51,7 +55,7 @@ const App: Component = () => {
     let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
 
     // If it's Lastthird and the time is before the current time, assume it's for the next day
-    if (prayerName === 'Las3rd' && prayerDate < now) {
+    if (SHOW_LASTTHIRD && prayerName === 'Las3rd' && prayerDate < now) {
       prayerDate.setDate(prayerDate.getDate() + 1);
     }
 
@@ -82,7 +86,7 @@ const App: Component = () => {
     });
 
     // Special case: If it's after Isha and before midnight, set Las3rd as next prayer
-    if (currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
+    if (SHOW_LASTTHIRD && currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
       const las3rdPrayer = prayerTimes().find(p => p.name === 'Las3rd');
       if (las3rdPrayer) {
         const [hours, minutes] = las3rdPrayer.time.split(':').map(Number);
@@ -142,15 +146,26 @@ const App: Component = () => {
       const response = await fetch(API_URL);
       const data = await response.json();
       const timings = data.data.timings;
-      setPrayerTimes([
-        { name: 'Fajr', time: timings.Fajr },
-        { name: 'Sunrise', time: timings.Sunrise },
-        { name: 'Dhuhr', time: timings.Dhuhr },
-        { name: 'Asr', time: timings.Asr },
-        { name: 'Maghrib', time: timings.Maghrib },
-        { name: 'Isha', time: timings.Isha },
-        { name: 'Las3rd', time: timings.Lastthird },
-      ]);
+      if (SHOW_LASTTHIRD) {
+        setPrayerTimes([
+          { name: getPrayerName(LANGUAGE, 'Fajr'), time: timings.Fajr },
+          { name: getPrayerName(LANGUAGE, 'Sunrise'), time: timings.Sunrise },
+          { name: getPrayerName(LANGUAGE, 'Dhuhr'), time: timings.Dhuhr },
+          { name: getPrayerName(LANGUAGE, 'Asr'), time: timings.Asr },
+          { name: getPrayerName(LANGUAGE, 'Maghrib'), time: timings.Maghrib },
+          { name: getPrayerName(LANGUAGE, 'Isha'), time: timings.Isha },
+          { name: getPrayerName(LANGUAGE, 'Las3rd'), time: timings.Lastthird },
+        ]);
+      } else {
+        setPrayerTimes([
+          { name: getPrayerName(LANGUAGE, 'Fajr'), time: timings.Fajr },
+          { name: getPrayerName(LANGUAGE, 'Sunrise'), time: timings.Sunrise },
+          { name: getPrayerName(LANGUAGE, 'Dhuhr'), time: timings.Dhuhr },
+          { name: getPrayerName(LANGUAGE, 'Asr'), time: timings.Asr },
+          { name: getPrayerName(LANGUAGE, 'Maghrib'), time: timings.Maghrib },
+          { name: getPrayerName(LANGUAGE, 'Isha'), time: timings.Isha },
+        ]);
+      }
       updateCurrentAndNextPrayer();
     } catch (error) {
       console.error('Error fetching prayer times:', error);
@@ -169,17 +184,16 @@ const App: Component = () => {
   };
 
   createEffect(() => {
-    const logAppDimensions = () => {
-      const appElement = document.getElementById('root');
-      if (appElement) {
-        const { width, height } = appElement.getBoundingClientRect();
-        console.log(`App dimensions: ${width}px x ${height}px`);
-      }
+    const logBrowserDimensions = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      console.log(`Browser dimensions: ${width}px x ${height}px`);
+      setContentsHeight(height - 275); // value 275 is by trials and erros
     };
 
-    logAppDimensions();
-    window.addEventListener('resize', logAppDimensions);
-    return () => window.removeEventListener('resize', logAppDimensions);
+    logBrowserDimensions();
+    window.addEventListener('resize', logBrowserDimensions);
+    return () => window.removeEventListener('resize', logBrowserDimensions);
   }, []);
 
   createEffect(() => {
@@ -223,13 +237,13 @@ const App: Component = () => {
         toggleFullScreen={toggleFullScreen}
         toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
         location={location()}
-        formattedDate={format(currentDateTime(), 'EEE dd-MM-yyyy').toUpperCase()}
+        formattedDate={format(currentDateTime(), 'dd/MM/yyyy').toUpperCase()}
         displayMode={displayMode()}
         currentPrayer={currentPrayer()}
         nextPrayer={nextPrayer()}
         hijriDate={hijriDate()}
       />
-      <div class={styles.contents}>
+      <div class={styles.contents} style={{ height: `${contentsHeight()}px` }}>
         {displayMode() === 'prayerTimes' && <Prayers prayerTimes={prayerTimes()}
           currentPrayer={currentPrayer()}
           nextPrayer={nextPrayer()}
