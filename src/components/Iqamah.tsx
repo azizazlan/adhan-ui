@@ -1,5 +1,5 @@
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
-import styles from './Adhan.module.css';
+import styles from './Iqamah.module.css';
 import HeaderClock from './HeaderClock';
 interface CountdownProps {
   time: {
@@ -92,12 +92,12 @@ interface Prayer {
   };
 }
 
-interface AdhanProps {
+interface IqamahProps {
   onClose: () => void;
   prayer: Prayer;
 }
 
-const Adhan: Component<AdhanProps> = (props) => {
+const Iqamah: Component<AdhanProps> = (props) => {
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
@@ -112,18 +112,17 @@ const Adhan: Component<AdhanProps> = (props) => {
   const countdownTime = parseCountdown(props.prayer.countdown);
 
   return (
-    <div class={styles.adhanContainer}>
-      <div class={styles.adhanHeader}>
-        <div class={styles.adhanLabel}>Azan</div>
+    <div class={styles.iqamahContainer}>
+      <div class={styles.iqamahHeader}>
+        <div class={styles.iqamahLabel}>Iqamah</div>
         <HeaderClock />
       </div>
-      <div class={styles.adhanPrayer}>
-        <h1 class={styles.prayerName}>{props.prayer.name}</h1>
-        <div class={styles.prayerTime}>{props.prayer.time.replace(/\s/g, '')}</div>
+      <div class={styles.content}>
+        <h1 class={styles.message}>{" "}</h1>
       </div>
       <Countdown time={props.prayer.countdown} />
     </div>
   );
 };
 
-export default Adhan;
+export default Iqamah;

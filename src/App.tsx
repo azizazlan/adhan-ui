@@ -12,6 +12,7 @@ import CountdownTimer from './components/CountdownTimer';
 import Credits from './components/Credits';
 import Prayers from './components/Prayers';
 import Adhan from './components/Adhan';
+import Iqamah from './components/Iqamah';
 import { formatPrayerTime, formatCountdown, formatTime } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Hadith, HadithApiResponse } from './types/hadith';
@@ -30,7 +31,7 @@ const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&l
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 const LANGUAGE = import.meta.env.VITE_LANGUAGE;
 
-export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | 'adhan';
+export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
 
 const App: Component = () => {
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
@@ -235,7 +236,9 @@ const App: Component = () => {
   return (
     <div class={styles.App}>
       {displayMode() === 'adhan' ? (
-        <Adhan onClose={() => toggleDisplayMode('prayerTimes')} />
+        <Adhan prayer={nextPrayer()} onClose={() => toggleDisplayMode('prayerTimes')} />
+      ) : displayMode() === 'iqamah' ? (
+        <Iqamah prayer={nextPrayer()} onClose={() => toggleDisplayMode('prayerTimes')} />
       ) : (
         <>
           <Header
@@ -249,11 +252,15 @@ const App: Component = () => {
             hijriDate={hijriDate()}
           />
           <div class={styles.contents} style={{ height: `${contentsHeight()}px` }}>
-            {displayMode() === 'prayerTimes' && <Prayers prayerTimes={prayerTimes()}
-              currentPrayer={currentPrayer()}
-              nextPrayer={nextPrayer()}
-              isPrayerTimePast={isPrayerTimePast}
-              toggleDisplayMode={toggleDisplayMode} />}
+            {displayMode() === 'prayerTimes' && (
+              <Prayers
+                prayerTimes={prayerTimes()}
+                currentPrayer={currentPrayer()}
+                nextPrayer={nextPrayer()}
+                isPrayerTimePast={isPrayerTimePast}
+                toggleDisplayMode={toggleDisplayMode}
+              />
+            )}
             {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
             {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
             {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
