@@ -1,3 +1,4 @@
+import { useI18n } from 'solid-i18n';
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
 import styles from './Adhan.module.css';
 import HeaderClock from './HeaderClock';
@@ -98,9 +99,13 @@ interface AdhanProps {
   currentDateTime: Date;
   onClose: () => void;
   prayer: Prayer;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 const Adhan: Component<AdhanProps> = (props) => {
+
+  const { t } = props;
+
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
@@ -125,7 +130,7 @@ const Adhan: Component<AdhanProps> = (props) => {
   return (
     <div class={styles.adhanContainer}>
       <div class={styles.adhanHeader}>
-        <div class={styles.adhanLabel}>Azan sebentar lagi...</div>
+        <div class={styles.adhanTitle}>{t('adhan.title')}</div>
         <HeaderClock currentDateTime={props.currentDateTime} />
       </div>
       <div class={styles.adhanPrayer}>

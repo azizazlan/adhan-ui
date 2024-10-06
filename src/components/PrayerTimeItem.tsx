@@ -34,7 +34,7 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
           {props.prayer.name.split('').map((letter, index) => (
             <span class={styles.letterBox} key={index}>{letter}</span>
           ))}
-          {props.prayer.name === 'Terbit' ? <span class={styles.letterBox}>🌤</span> : null}
+          {props.prayer.name === 'Syuruk' ? <span class={styles.letterBox}>🌤</span> : null}
           {props.prayer.name === 'Sun' ? <span class={styles.letterBox}>🌤</span> : null}
         </div>
       </div>

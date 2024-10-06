@@ -1,6 +1,8 @@
-import { Component, createSignal, createEffect } from 'solid-js';
+import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource } from 'solid-js';
+import * as i18n from "@solid-primitives/i18n";
+
 import { ProgressBar } from 'solid-bootstrap';
-import { format, addDays, addMinutes, addSeconds, subHours, subMinutes, isValid, parse } from 'date-fns';
+import { format, addDays, addMinutes, addSeconds, subHours, subMinutes, subSeconds, isValid, parse } from 'date-fns';
 import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './Header';
@@ -16,6 +18,8 @@ import Iqamah from './components/Iqamah';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Hadith, HadithApiResponse } from './types/hadith';
+// import en from './translations/en.json';
+// import ms from './translations/ms.json';
 
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const SHOW_LASTTHIRD = import.meta.env.VITE_SHOW_LASTTHIRD === 'true';
@@ -35,7 +39,32 @@ const DEMO_ADHAN_MINS = Math.max(0, parseInt(import.meta.env.VITE_DEMO_ADHAN_MIN
 
 export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
 
+async function fetchDictionary(locale: Locale): Promise<Dictionary> {
+  try {
+    const module = await import(`./i18n/${locale}.ts`);
+    if (module && module.dict) {
+      const dict: RawDictionary = module.dict;
+      return i18n.flatten(dict);
+    } else {
+      console.error(`Dictionary for locale ${locale} is undefined or missing 'dict' export`);
+      return {}; // Return an empty object as fallback
+    }
+  } catch (error) {
+    console.error(`Error loading dictionary for locale ${locale}:`, error);
+    return {}; // Return an empty object as fallback
+  }
+}
+
 const App: Component = () => {
+
+  const [locale, setLocale] = createSignal<Locale>(LANGUAGE);
+
+  const [dict] = createResource(locale, fetchDictionary);
+
+  dict(); // => Dictionary | undefined
+  // (undefined when the dictionary is not loaded yet)
+
+  const t = i18n.translator(dict);
 
   const [isDemo, setIsDemo] = createSignal(false);
   const [isDemo2, setIsDemo2] = createSignal(false);
@@ -97,23 +126,27 @@ const App: Component = () => {
   };
 
   const toggleDemo2 = () => {
-    const demoDateTime = new Date(2024, 9, 5, 13, 5, 0); // October 5, 2024, 1:00 PM
+
+    const today = new Date();
+    const fajrTime = prayerTimes().find(prayer => prayer.name === getPrayerName(LANGUAGE, 'Fajr'))?.time;
+
+    const [fajrHours, fajrMinutes] = fajrTime.split(':').map(Number);
+    let demoDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), fajrHours, fajrMinutes);
+    console.log("demoDateTime", demoDateTime);
+    demoDateTime = subMinutes(demoDateTime, 1); // Set to 2 minutes before Fajr
+    demoDateTime = subSeconds(demoDateTime, 3); // then, set to 10 seconds before Fajr
     setCurrentDateTime(demoDateTime);
+
     if (!isDemo2()) {
       // Entering demo mode
       const nextPrayerInfo = nextPrayer();
       if (nextPrayerInfo && nextPrayerInfo.time) {
-        const [hours, minutes] = nextPrayerInfo.time.split(':').map(Number);
-        const now = new Date();
-        let demoTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-        demoTime = addMinutes(demoTime, -DEMO_ADHAN_MINS); // Set to 30 minutes before
-
-        setCurrentDateTime(demoTime);
+        setCurrentDateTime(demoDateTime);
         setDemoNextPrayer(nextPrayerInfo);
         setDemoSecondCounter(0);
 
         // Update current prayer based on demo time
-        const currentPrayerInfo = findCurrentPrayer(demoTime);
+        const currentPrayerInfo = findCurrentPrayer(demoDateTime);
         setCurrentPrayer(currentPrayerInfo.name);
 
         // Force an update of prayer times
@@ -219,26 +252,30 @@ const App: Component = () => {
 
       const diffMinutes = Math.floor(timeDiff / (1000 * 60));
       const diffSeconds = Math.floor(timeDiff / 1000);
+      console.log(`diffMinutes: ${diffMinutes}, diffSeconds: ${diffSeconds}`);
       // Check if it's time to show Adhan
-      if ((diffMinutes < (DEMO_ADHAN_MINS - 1)) || (diffMinutes < BEFORE_DISPLAY_ADHAN_MINS) && diffMinutes >= 0 && displayMode() !== 'adhan') {
+      if ((diffMinutes < BEFORE_DISPLAY_ADHAN_MINS) && diffMinutes >= 0 && displayMode() !== 'adhan') {
         if (displayMode() !== 'adhan') {
           toggleDisplayMode('adhan');
           console.log('show adhan screen!');
         }
       }
-      // Check if we've just passed the prayer time
-      if (!iqamahTriggerTime() && nextPrayerInfo.name !== lastTriggeredPrayer()) {
+      // Set iqamahTriggerTime when we're within VITE_ADHAN_MINS of the next prayer
+      if (!iqamahTriggerTime() && timeDiff <= VITE_ADHAN_MINS * 60 * 1000) {
         setIqamahTriggerTime(nextPrayerDate);
+        console.log('Set iqamahTriggerTime for', nextPrayerInfo.name, 'at', nextPrayerDate);
       }
 
       // Check if it's time to show Iqamah
-      if (iqamahTriggerTime() && now >= iqamahTriggerTime()!) {
+      if (iqamahTriggerTime() && now >= iqamahTriggerTime()! && now < addMinutes(iqamahTriggerTime()!, VITE_ADHAN_MINS)) {
         if (displayMode() !== 'iqamah') {
           toggleDisplayMode('iqamah');
           setLastTriggeredPrayer(nextPrayerInfo.name);
-          setIqamahTriggerTime(null);
-          console.log('show iqamah screen!');
+          console.log('show iqamah screen for', nextPrayerInfo.name);
         }
+      } else if (iqamahTriggerTime() && now >= addMinutes(iqamahTriggerTime()!, VITE_ADHAN_MINS)) {
+        // Reset iqamahTriggerTime after VITE_ADHAN_MINS have passed
+        setIqamahTriggerTime(null);
       }
     }
   };
@@ -379,50 +416,55 @@ const App: Component = () => {
   };
 
   return (
-    <div class={styles.App}>
-      {displayMode() === 'adhan' ? (
-        <Adhan prayer={nextPrayer()} currentDateTime={currentDateTime()} toggleDisplayMode={toggleDisplayMode} onClose={() => toggleDisplayMode('prayerTimes')} />
-      ) : displayMode() === 'iqamah' ? (
-        <Iqamah currentDateTime={currentDateTime()} onClose={() => toggleDisplayMode('prayerTimes')} />
-      ) : (
-        <>
-          <Header
-            toggleFullScreen={toggleFullScreen}
-            toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
-            toggleDemo={toggleDemo}
-            isDemo={isDemo()}
-            toggleDemo2={toggleDemo2}
-            isDemo2={isDemo2()}
-            location={location()}
-            formattedDate={getFormattedDate(currentDateTime())}
-            currentDateTime={currentDateTime()}
-            displayMode={displayMode()}
-            currentPrayer={currentPrayer()}
-            nextPrayer={nextPrayer()}
-            hijriDate={hijriDate()}
-          />
-          <div class={styles.contents} style={{ height: `${contentsHeight()}px` }}>
-            {displayMode() === 'prayerTimes' && (
-              <Prayers
-                prayerTimes={prayerTimes()}
+    <Suspense fallback={<div>Loading...</div>}>
+      <Show when={dict()}>
+        <div class={styles.App}>
+          {displayMode() === 'adhan' ? (
+            <Adhan t={t} prayer={nextPrayer()} currentDateTime={currentDateTime()} toggleDisplayMode={toggleDisplayMode} onClose={() => toggleDisplayMode('prayerTimes')} />
+          ) : displayMode() === 'iqamah' ? (
+            <Iqamah t={t} currentDateTime={currentDateTime()} onClose={() => toggleDisplayMode('prayerTimes')} />
+          ) : (
+            <>
+              <Header
+                toggleFullScreen={toggleFullScreen}
+                toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
+                toggleDemo={toggleDemo}
+                isDemo={isDemo()}
+                toggleDemo2={toggleDemo2}
+                isDemo2={isDemo2()}
+                location={location()}
+                formattedDate={getFormattedDate(currentDateTime())}
+                currentDateTime={currentDateTime()}
+                displayMode={displayMode()}
                 currentPrayer={currentPrayer()}
                 nextPrayer={nextPrayer()}
-                isPrayerTimePast={isPrayerTimePast}
-                toggleDisplayMode={toggleDisplayMode}
+                hijriDate={hijriDate()}
+                t={t}
               />
-            )}
-            {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
-            {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
-            {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
-          </div>
-          <Footer
-            onCreditsClick={() => toggleDisplayMode('credits')}
-            onHadithsClick={() => toggleDisplayMode('hadiths')}
-            onSettingsClick={() => toggleDisplayMode('settings')}
-          />
-        </>
-      )}
-    </div>
+              <div class={styles.contents} style={{ height: `${contentsHeight()}px` }}>
+                {displayMode() === 'prayerTimes' && (
+                  <Prayers
+                    prayerTimes={prayerTimes()}
+                    currentPrayer={currentPrayer()}
+                    nextPrayer={nextPrayer()}
+                    isPrayerTimePast={isPrayerTimePast}
+                    toggleDisplayMode={toggleDisplayMode}
+                  />
+                )}
+                {displayMode() === 'hadiths' && <Hadiths apiKey={API_KEY} onClose={() => toggleDisplayMode('prayerTimes')} />}
+                {displayMode() === 'credits' && <Credits onClose={() => toggleDisplayMode('prayerTimes')} />}
+                {displayMode() === 'settings' && <Settings onClose={() => toggleDisplayMode('prayerTimes')} />}
+              </div>
+              <Footer
+                onCreditsClick={() => toggleDisplayMode('credits')}
+                onHadithsClick={() => toggleDisplayMode('hadiths')}
+                onSettingsClick={() => toggleDisplayMode('settings')}
+              />
+            </>
+          )}
+        </div>
+      </Show>
+    </Suspense>
   );
 };
 

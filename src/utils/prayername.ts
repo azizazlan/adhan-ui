@@ -4,7 +4,7 @@ const getPrayerName = (language: string, prayerName: string) => {
       case 'Fajr':
         return 'Subuh';
       case 'Sunrise':
-        return 'Terbit';
+        return 'Syuruk';
       case 'Dhuhr':
         return 'Zohor';
       case 'Asr':

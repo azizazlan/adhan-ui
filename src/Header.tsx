@@ -1,4 +1,6 @@
 import { Component, createSignal, createEffect } from 'solid-js';
+import * as i18n from "@solid-primitives/i18n";
+
 import HeaderClock from './components/HeaderClock';
 import styles from './Header.module.css';
 import FlipClock from './components/FlipClock';
@@ -21,16 +23,9 @@ const Header = (props: {
   nextPrayer: string,
   formattedDate: string,
   hijriDate: HijriDate,
-  currentDateTime: Date
+  currentDateTime: Date,
+  t: (key: string, params?: Record<string, string | number>) => string
 }) => {
-  // const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
-
-  // createEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setCurrentDateTime(new Date());
-  //   }, 1000);
-  //   return () => clearInterval(timer);
-  // });
 
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
@@ -51,7 +46,7 @@ const Header = (props: {
       </div>
       <div class={styles.locationContainer}>
         <div class={styles.location}>{import.meta.env.VITE_MOSQUE_NAME}</div>
-        {/* Testing buttons */}
+        {props.t("test")}
         <button class={styles.testButton} onClick={() => props.toggleDisplayMode('adhan')}>Adhan</button>
         <button class={styles.testButton} onClick={() => props.toggleDisplayMode('iqamah')}>Iqamah</button>
         <button
@@ -82,7 +77,7 @@ const Header = (props: {
             {`▸${props.nextPrayer.name}`.split('').map((letter, index) => (
               <span class={styles.yellowLetterBox} key={index}>{letter.toUpperCase()}</span>
             ))}
-            {props.nextPrayer.name === 'Terbit' ? <span class={styles.letterBox}>🌤</span> : null}
+            {props.nextPrayer.name === 'Syuruk' ? <span class={styles.letterBox}>🌤</span> : null}
             {props.nextPrayer.name === 'Sun' ? <span class={styles.letterBox}>🌤</span> : null}
           </div>
           <div class={styles.prayerName}>

@@ -82,31 +82,57 @@ const Countdown: Component<CountdownProps> = (props) => {
   );
 };
 
-interface Prayer {
-  name: string;
-  time: string;
-  countdown: {
-    hours: number;
-    minutes: number;
-    seconds: number;
-  };
-}
+const IqamahMessage: Component = () => {
+  return (
+    <div class={styles.content}>
+      <h1 class={styles.message}>Solat!</h1>
+      <div class={styles.iqamahMessage}>Lurus dan rapikan saf!</div>
+    </div>
+  );
+};
+
 
 interface IqamahProps {
   onClose: () => void;
+  currentDateTime: Date;
 }
 
 const Iqamah: Component<IqamahProps> = (props) => {
+  const adhanMins = import.meta.env.VITE_ADHAN_MINS || 10;
+  const [countdownTime, setCountdownTime] = createSignal(`00:${adhanMins.toString().padStart(2, '0')}:00`);
+  const [isCountdownFinished, setIsCountdownFinished] = createSignal(false);
+
+  createEffect(() => {
+    const totalSeconds = (adhanMins * 60) - 1;
+    let remainingSeconds = totalSeconds;
+
+    const timer = setInterval(() => {
+      remainingSeconds--;
+      if (remainingSeconds <= 0) {
+        clearInterval(timer);
+        setIsCountdownFinished(true);
+      } else {
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+        setCountdownTime(`00:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  });
 
   return (
     <div class={styles.iqamahContainer}>
       <div class={styles.iqamahHeader}>
-        <div class={styles.iqamahLabel}>Iqamah</div>
+        <div class={styles.iqamahLabel}>{isCountdownFinished() ? '' : 'Iqamah'}</div>
         <HeaderClock currentDateTime={props.currentDateTime} />
       </div>
       <div class={styles.content}>
-        <h1 class={styles.message}>Salat!</h1>
-        <div class={styles.iqamahMessage}>Lurus dan rapikan saf!</div>
+        {isCountdownFinished() ? (
+          <IqamahMessage />
+        ) : (
+          <Countdown time={countdownTime()} />
+        )}
       </div>
     </div>
   );
