@@ -10,7 +10,6 @@ interface PrayersProps {
   toggleDisplayMode: (mode: DisplayMode) => void;
   currentPrayer: Prayer;
   nextPrayer: Prayer;
-  isPrayerTimePast: (prayerTime: string, prayerName: string) => boolean;
 }
 
 const Prayers = (props: PrayersProps) => {
@@ -20,9 +19,9 @@ const Prayers = (props: PrayersProps) => {
         <div class={styles.prayerTimeContainer}>
           <PrayerTimeItem
             prayer={prayer}
+            currentDateTime={props.currentDateTime}
             currentPrayer={props.currentPrayer}
             nextPrayer={props.nextPrayer}
-            isPrayerTimePast={props.isPrayerTimePast}
             formatPrayerTime={formatPrayerTime}
             toggleDisplayMode={() => props.toggleDisplayMode('hadith')}
           />

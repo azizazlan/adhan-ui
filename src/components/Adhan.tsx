@@ -1,8 +1,9 @@
-import { useI18n } from 'solid-i18n';
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
 import styles from './Adhan.module.css';
-import HeaderClock from './HeaderClock';
-import { formatPrayerTime } from '../utils/formatter';
+import HeaderDateClock from './HeaderDateClock';
+import { formatPrayerTime, getPrettyFormattedDate } from '../utils/formatter';
+import getWindowDimensions from '../utils/getWindowDimensions';
+import FooterClock from './FooterClock';
 
 interface CountdownProps {
   time: {
@@ -31,7 +32,7 @@ const Countdown: Component<CountdownProps> = (props) => {
     return { hours: hours || 0, minutes: minutes || 0, seconds: seconds || 0 };
   };
 
-  const initialTime = parseTime(props.time);
+  const initialTime = parseTime(props.time ? props.time : '00:00:00');
 
   const [hours, setHours] = createSignal(initialTime.hours);
   const [minutes, setMinutes] = createSignal(initialTime.minutes);
@@ -99,13 +100,9 @@ interface AdhanProps {
   currentDateTime: Date;
   onClose: () => void;
   prayer: Prayer;
-  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 const Adhan: Component<AdhanProps> = (props) => {
-
-  const { t } = props;
-
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
@@ -128,16 +125,17 @@ const Adhan: Component<AdhanProps> = (props) => {
 
 
   return (
-    <div class={styles.adhanContainer}>
-      <div class={styles.adhanHeader}>
-        <div class={styles.adhanTitle}>{t('adhan.title')}</div>
-        <HeaderClock currentDateTime={props.currentDateTime} />
+    <div class={styles.container} style={{ height: `${getWindowDimensions().height - 86}px` }}>
+      <HeaderDateClock isPrayerTimePassed={false} prayerName={props.prayer.name} prayerTime={props.prayer.time} currentDateTime={props.currentDateTime} />
+      <div class={styles.content}>
+        <div class={styles.center}>
+          <h1 class={styles.title}>Adhan</h1>
+          <Countdown time={props.prayer.countdown} />
+        </div>
+        <div class={styles.footer}>
+          <FooterClock currentDateTime={props.currentDateTime} />
+        </div>
       </div>
-      <div class={styles.adhanPrayer}>
-        <h1 class={styles.prayerName}>{props.prayer.name}</h1>
-        <div class={styles.prayerTime}>{formatPrayerTime(props.prayer.time).replace(/\s/g, '')}</div>
-      </div>
-      <Countdown time={props.prayer.countdown} />
     </div>
   );
 };

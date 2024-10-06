@@ -18,6 +18,7 @@ import Iqamah from './components/Iqamah';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Hadith, HadithApiResponse } from './types/hadith';
+import { isPrayerTimePast } from './utils/helper';
 // import en from './translations/en.json';
 // import ms from './translations/ms.json';
 
@@ -148,21 +149,6 @@ const App: Component = () => {
     });
 
     return currentPrayerInfo;
-  };
-
-  const isPrayerTimePast = (prayerTime: string, prayerName: string) => {
-    const now = currentDateTime();
-    const [hours, minutes] = prayerTime.split(':').map(Number);
-    let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-
-    // If it's Lastthird and the time is before the current time, assume it's for the next day
-    if (SHOW_LASTTHIRD && prayerName === 'Las3rd' && prayerDate < now) {
-      prayerDate.setDate(prayerDate.getDate() + 1);
-    }
-
-    // The prayer time has passed more than 10 minutes ago
-    const afterMinutesAgo = new Date(now.getTime() - VITE_ADHAN_MINS * 60 * 1000);
-    return prayerDate < afterMinutesAgo;
   };
 
   const updateCurrentAndNextPrayer = () => {
@@ -386,7 +372,7 @@ const App: Component = () => {
           {displayMode() === 'adhan' ? (
             <Adhan t={t} prayer={nextPrayer()} currentDateTime={currentDateTime()} toggleDisplayMode={toggleDisplayMode} onClose={() => toggleDisplayMode('prayerTimes')} />
           ) : displayMode() === 'iqamah' ? (
-            <Iqamah t={t} currentDateTime={currentDateTime()} onClose={() => toggleDisplayMode('prayerTimes')} />
+            <Iqamah t={t} prayer={nextPrayer()} currentDateTime={currentDateTime()} onClose={() => toggleDisplayMode('prayerTimes')} />
           ) : (
             <>
               <Header
@@ -407,9 +393,9 @@ const App: Component = () => {
                 {displayMode() === 'prayerTimes' && (
                   <Prayers
                     prayerTimes={prayerTimes()}
+                    currentDateTime={currentDateTime()}
                     currentPrayer={currentPrayer()}
                     nextPrayer={nextPrayer()}
-                    isPrayerTimePast={isPrayerTimePast}
                     toggleDisplayMode={toggleDisplayMode}
                   />
                 )}

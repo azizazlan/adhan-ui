@@ -7,20 +7,18 @@ const Footer: Component = (props: {
   onSettingsClick: () => void
 }) => {
   return (
-    <footer class={styles.footer}>
-      <div class={styles.container}>
-        <p class={styles.footerText}>{import.meta.env.VITE_APP_NAME} Version {import.meta.env.VITE_APP_VERSION}.
-          {" "}
-          In the name of Allah, the most gracious, the most merciful, may this app be a means of guidance and a source of blessing for all muslims worldwide.
-          {" "}
-          <button class={styles.footerLink} onClick={props.onCreditsClick}>Credits & Terms</button>
-          {" "}
-          <button class={styles.footerLink} onClick={props.onHadithsClick}>Hadiths</button>
-          {" "}
-          <button class={styles.footerLink} onClick={props.onSettingsClick}>Settings</button>
-        </p>
-      </div>
-    </footer >
+    <footer class={styles.container}>
+      <p class={styles.footerText}>{import.meta.env.VITE_APP_NAME} Version {import.meta.env.VITE_APP_VERSION}.
+        {" "}
+        In the name of Allah, the most gracious, the most merciful, may this app be a means of guidance and a source of blessing for all muslims worldwide.
+        {" "}
+        <button class={styles.footerLink} onClick={props.onCreditsClick}>Credits & Terms</button>
+        {" "}
+        <button class={styles.footerLink} onClick={props.onHadithsClick}>Hadiths</button>
+        {" "}
+        <button class={styles.footerLink} onClick={props.onSettingsClick}>Settings</button>
+      </p>
+    </footer>
   );
 };
 

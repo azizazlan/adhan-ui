@@ -1,6 +1,10 @@
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
+import HeaderDateClock from './HeaderDateClock';
 import styles from './Iqamah.module.css';
 import HeaderClock from './HeaderClock';
+import getWindowDimensions from '../utils/getWindowDimensions';
+import FooterClock from './FooterClock';
+
 interface CountdownProps {
   time: {
     hours: number;
@@ -82,11 +86,13 @@ const Countdown: Component<CountdownProps> = (props) => {
   );
 };
 
-const IqamahMessage: Component = () => {
+const SolatMessage: Component = () => {
   return (
     <div class={styles.content}>
-      <h1 class={styles.message}>Solat!</h1>
-      <div class={styles.iqamahMessage}>Lurus dan rapikan saf!</div>
+      <div class={styles.center}>
+        <h1 class={styles.solatTitle}>Solat</h1>
+        <div class={styles.iqamahMessage}>Lurus dan rapatkan saf</div>
+      </div>
     </div>
   );
 };
@@ -95,6 +101,17 @@ const IqamahMessage: Component = () => {
 interface IqamahProps {
   onClose: () => void;
   currentDateTime: Date;
+  prayer: Prayer;
+}
+
+interface Prayer {
+  name: string;
+  time: string;
+  countdown: {
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
 }
 
 const Iqamah: Component<IqamahProps> = (props) => {
@@ -122,17 +139,25 @@ const Iqamah: Component<IqamahProps> = (props) => {
   });
 
   return (
-    <div class={styles.iqamahContainer}>
-      <div class={styles.iqamahHeader}>
-        <div class={styles.iqamahLabel}>{isCountdownFinished() ? '' : 'Iqamah'}</div>
-        <HeaderClock currentDateTime={props.currentDateTime} />
-      </div>
+    <div class={styles.container} style={{ height: `${getWindowDimensions().height - 86}px` }}>
+      {!isCountdownFinished() && (
+        <HeaderDateClock isPrayerTimePassed={true} prayerName={props.prayer.name} prayerTime={props.prayer.time} currentDateTime={props.currentDateTime} />
+      )}
+
       <div class={styles.content}>
-        {isCountdownFinished() ? (
-          <IqamahMessage />
-        ) : (
-          <Countdown time={countdownTime()} />
-        )}
+        <div class={styles.center}>
+          {isCountdownFinished() ? (
+            <SolatMessage />
+          ) : (
+            <div>
+              <h1 class={styles.title}>Iqamah</h1>
+              <Countdown time={countdownTime()} />
+            </div>
+          )}
+        </div>
+        <div class={styles.footer}>
+          <FooterClock currentDateTime={props.currentDateTime} />
+        </div>
       </div>
     </div>
   );

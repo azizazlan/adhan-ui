@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  font-family: monospace;
+  font-size: 3.5rem;
+  font-weight: bold;
+}
+
+.currentDate {
+  color: silver;
+}
+
+.currentTime {
+  color: silver;
+  margin-right: 1rem;
+}

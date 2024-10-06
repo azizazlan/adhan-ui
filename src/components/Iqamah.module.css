@@ -1,37 +1,54 @@
-.iqamahContainer {
+.container {
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  height: 92vh;
+  align-items: center;
+  justify-content: center;
 }
 
 .iqamahHeader {
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: right;
   margin-top: -1.5rem;
 }
 
-.iqamahLabel {
-  font-size: 5rem;
+.solatTitle {
+  width: 100%;
+  font-family: monospace;
+  font-size: 9rem; /* Changed from 19em to 4rem */
   font-weight: bold;
-  color:white;
+  color: white;
   text-align: center;
-  color: greenyellow;
+  height: auto; /* Changed from fit-content to auto */
+  padding: 0.5rem 0; /* Added padding for better spacing */
 }
 
 .content {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-top: -7rem;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.center {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 7rem;
+  flex-grow: 1;
 }
 
-.message {
+.title {
   width: 100%;
   font-family: monospace;
   font-size: 9rem; /* Changed from 19em to 4rem */
@@ -79,7 +96,7 @@
   text-align: center;
   font-size: 12rem;
   line-height: 18rem;
-  border-radius: 0.5rem;
+  border-radius: 1.5rem;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* Subtle glow effect */
 }
 

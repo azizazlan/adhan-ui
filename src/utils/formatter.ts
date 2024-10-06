@@ -19,7 +19,7 @@ const formatPrayerTime = (timeString: string) => {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true
-  }).replace(/\s(AM|PM)/, (match) => match.toUpperCase());
+  }).replace(/\s(AM|PM)/, (match) => match.toUpperCase()).replace(/\s/g, '');
 };
 export { formatPrayerTime };
 
@@ -39,3 +39,11 @@ const getFormattedDate = (date: Date) => {
   return 'Invalid Date';
 };
 export { getFormattedDate };
+
+const getPrettyFormattedDate = (date: Date) => {
+  if (isValid(date)) {
+    return format(date, 'EEE dd MMM yyyy');
+  }
+  return 'Invalid Date';
+};
+export { getPrettyFormattedDate };

@@ -2,28 +2,22 @@ import { FaSolidAngleRight } from 'solid-icons/fa'
 import { Prayer } from './types';
 import styles from './PrayerTimeItem.module.css';
 import FlipClock from './FlipClock';
+import { isPrayerTimePast, isCurrentPrayer } from '../utils/helper';
 
 interface PrayerTimeItemProps {
   prayer: Prayer;
   currentPrayer: string;
   nextPrayer: string;
-  isPrayerTimePast: (prayerTime: string) => boolean;
   formatPrayerTime: (time: string) => string;
 }
 
 const PrayerTimeItem = (props: PrayerTimeItemProps) => {
   const getItemClass = () => {
-    if (props.isPrayerTimePast(props.prayer.time, props.prayer.name) && props.prayer.name == props.currentPrayer) return styles.currentlyPassed;
+    if (isPrayerTimePast(props.currentDateTime, props.prayer.time, props.prayer.name) && props.prayer.name == props.currentPrayer) return styles.currentlyPassed;
     if (props.prayer.name === props.nextPrayer.name) return styles.next;
-    if (props.isPrayerTimePast(props.prayer.time, props.prayer.name)) return styles.past;
+    if (isPrayerTimePast(props.currentDateTime, props.prayer.time, props.prayer.name)) return styles.past;
     if (props.prayer.name === props.currentPrayer) return styles.current;
     return '';
-  };
-
-  const isCurrentPrayer = () => props.prayer.name === props.currentPrayer;
-
-  const isPrayerTimePast = () => {
-    return props.isPrayerTimePast(props.prayer.time, props.prayer.name);
   };
 
   return (
@@ -40,9 +34,8 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
       </div>
       <FlipClock
         time={props.formatPrayerTime(props.prayer.time)}
-        isCurrentPrayer={isCurrentPrayer()}
+        isCurrentPrayer={isCurrentPrayer(props.prayer.name, props.currentPrayer)}
         isCountdown={false}
-        isPrayerTimePast={isPrayerTimePast()}
       />
     </div>
   );
