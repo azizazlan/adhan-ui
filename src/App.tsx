@@ -66,7 +66,7 @@ const App: Component = () => {
 
   const t = i18n.translator(dict);
 
-  const [isDemo, setIsDemo] = createSignal(false);
+  // const [isDemo, setIsDemo] = createSignal(false);
   const [isDemo2, setIsDemo2] = createSignal(false);
   const [demoNextPrayer, setDemoNextPrayer] = createSignal(null);
   const [currentDateTime, setCurrentDateTime] = createSignal(new Date());
@@ -87,42 +87,6 @@ const App: Component = () => {
 
   const toggleDisplayMode = (mode: DisplayMode) => {
     setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
-  };
-
-  const toggleDemo = () => {
-    if (!isDemo()) {
-      // Entering demo mode
-      const nextPrayerInfo = nextPrayer();
-      if (nextPrayerInfo && nextPrayerInfo.time) {
-        const [hours, minutes] = nextPrayerInfo.time.split(':').map(Number);
-        const now = new Date();
-        let demoTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-        demoTime = addMinutes(demoTime, -DEMO_ADHAN_MINS); // Set to 30 minutes before
-
-        setCurrentDateTime(demoTime);
-        setDemoNextPrayer(nextPrayerInfo);
-        setDemoSecondCounter(0);
-
-        // Update current prayer based on demo time
-        const currentPrayerInfo = findCurrentPrayer(demoTime);
-        setCurrentPrayer(currentPrayerInfo.name);
-
-        // Force an update of prayer times
-        updateCurrentAndNextPrayer();
-      }
-    } else {
-      // Exiting demo mode
-      setCurrentDateTime(new Date());
-      setDemoNextPrayer(null);
-
-      // Reset current prayer based on actual time
-      const currentPrayerInfo = findCurrentPrayer(new Date());
-      setCurrentPrayer(currentPrayerInfo.name);
-
-      // Force an update of prayer times
-      updateCurrentAndNextPrayer();
-    }
-    setIsDemo(!isDemo());
   };
 
   const toggleDemo2 = () => {
@@ -206,23 +170,23 @@ const App: Component = () => {
     let currentPrayerInfo = findCurrentPrayer(now);
     let nextPrayerInfo = { name: '', time: '' };
 
-    if (isDemo() && demoNextPrayer()) {
-      nextPrayerInfo = demoNextPrayer();
-    } else {
-      // Find next prayer
-      prayerTimes().forEach(prayer => {
-        const [hours, minutes] = prayer.time.split(':').map(Number);
-        let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+    // if (isDemo() && demoNextPrayer()) {
+    //   nextPrayerInfo = demoNextPrayer();
+    // } else {
+    // Find next prayer
+    prayerTimes().forEach(prayer => {
+      const [hours, minutes] = prayer.time.split(':').map(Number);
+      let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
 
-        if (prayer.name === 'Las3rd' && prayerDate < now) {
-          prayerDate.setDate(prayerDate.getDate() + 1);
-        }
+      if (prayer.name === 'Las3rd' && prayerDate < now) {
+        prayerDate.setDate(prayerDate.getDate() + 1);
+      }
 
-        if (prayerDate > now && (nextPrayerInfo.name === '' || prayerDate < new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...nextPrayerInfo.time.split(':').map(Number)))) {
-          nextPrayerInfo = prayer;
-        }
-      });
-    }
+      if (prayerDate > now && (nextPrayerInfo.name === '' || prayerDate < new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...nextPrayerInfo.time.split(':').map(Number)))) {
+        nextPrayerInfo = prayer;
+      }
+    });
+    // }
 
     if (SHOW_LASTTHIRD && currentPrayerInfo.name === 'Isha' && nextPrayerInfo.name !== 'Las3rd') {
       const las3rdPrayer = prayerTimes().find(p => p.name === 'Las3rd');
@@ -368,7 +332,7 @@ const App: Component = () => {
     fetchHijriDate(new Date());
 
     const timer = setInterval(() => {
-      if (!isDemo() && !isDemo2()) {
+      if (!isDemo2()) {
         setCurrentDateTime(new Date());
       } else {
         setCurrentDateTime(prevTime => {
@@ -428,8 +392,6 @@ const App: Component = () => {
               <Header
                 toggleFullScreen={toggleFullScreen}
                 toggleDisplayMode={(mode: DisplayMode) => toggleDisplayMode(mode)}
-                toggleDemo={toggleDemo}
-                isDemo={isDemo()}
                 toggleDemo2={toggleDemo2}
                 isDemo2={isDemo2()}
                 location={location()}

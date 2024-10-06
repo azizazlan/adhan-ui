@@ -13,8 +13,6 @@ const IS_DEMO = import.meta.env.VITE_DEMO === 'true';
 const Header = (props: {
   toggleFullScreen: () => void,
   toggleDisplayMode: (mode: DisplayMode) => void,
-  toggleDemo: () => void,
-  isDemo: boolean,
   toggleDemo2: () => void,
   isDemo2: boolean,
   location: string,
@@ -49,16 +47,6 @@ const Header = (props: {
         {props.t("test")}
         <button class={styles.testButton} onClick={() => props.toggleDisplayMode('adhan')}>Adhan</button>
         <button class={styles.testButton} onClick={() => props.toggleDisplayMode('iqamah')}>Iqamah</button>
-        <button
-          class={styles.demoButton}
-          onClick={props.toggleDemo}
-          style={{
-            color: props.isDemo ? 'red' : 'inherit',
-            fontWeight: props.isDemo ? 'bold' : 'normal'
-          }}
-        >
-          {props.isDemo ? 'Exit Demo' : 'Enter Demo'}
-        </button>
         <span style={{ width: '7px' }}></span>
         <button
           class={styles.demoButton}
@@ -68,7 +56,7 @@ const Header = (props: {
             fontWeight: props.isDemo2 ? 'bold' : 'normal'
           }}
         >
-          {props.isDemo2 ? 'Exit Demo 2' : 'Enter Demo 2'}
+          {props.isDemo2 ? 'Quit Demo' : 'Demo'}
         </button>
       </div>
       {props.displayMode === 'hadiths' &&
