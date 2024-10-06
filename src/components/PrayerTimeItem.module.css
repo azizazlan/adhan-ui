@@ -66,3 +66,36 @@
   font-weight: 700;
   padding-top: 7px;
 }
+
+@media screen and (min-width: 1280px) and (max-width: 1440px) {
+  .letterBox {
+    font-weight: bold;
+    font-size: 2.7rem;
+    font-family: monospace;
+    color: #fff;
+    background-color: #333;
+    width: 45px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    margin: 0 4px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .nextPrayerLabel {
+    font-size: 2.3rem;
+    color: goldenrod;
+    text-align: left;
+    padding: 0px 0px 0px 0px;
+    font-weight: 700;
+    padding-top: 0px;
+  }
+}
+
+@media screen and (min-width: 2560px) and (max-width: 3840px) {
+
+}

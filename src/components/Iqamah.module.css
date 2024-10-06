@@ -165,3 +165,24 @@
   0% { transform: rotateX(0deg); }
   100% { transform: rotateX(-180deg); }
 }
+
+@media screen and (min-width: 1280px) and (max-width: 1440px) {
+  .title {
+    width: 100%;
+    font-family: monospace;
+    font-size: 6rem; /* Reduced from 7rem to 6rem for better fit */
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    height: auto;
+    padding: 0.5rem 0;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-top: -2rem; /* Reduced from -3rem to -2rem for less overlap */
+  }
+
+}

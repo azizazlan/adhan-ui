@@ -200,15 +200,16 @@
 
 
 .demoButton {
+  background-color: #222323;
   color: #ffffff;
   border: none;
   cursor: pointer;
-  width: 127px;
   height: 17px;
   font-size: 12px;
+  width: 127px;
 }
 
-.demoButtonActive {
-  color: red;
-  font-weight: bold;
+@media screen and (min-width: 1280px) and (max-width: 1440px) {
+
+
 }

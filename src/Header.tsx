@@ -44,9 +44,9 @@ const Header = (props: {
       </div>
       <div class={styles.locationContainer}>
         <div class={styles.location}>{import.meta.env.VITE_MOSQUE_NAME}</div>
-        {props.t("test")}
         <button class={styles.testButton} onClick={() => props.toggleDisplayMode('adhan')}>Adhan</button>
         <button class={styles.testButton} onClick={() => props.toggleDisplayMode('iqamah')}>Iqamah</button>
+        <button class={styles.testButton} onClick={() => props.toggleDisplayMode('adhan')}>{props.t("test")}</button>
         <span style={{ width: '7px' }}></span>
         <button
           class={styles.demoButton}
