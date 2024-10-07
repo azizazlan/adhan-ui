@@ -1,5 +1,5 @@
 import { getPrettyFormattedDate } from '../utils/formatter';
-import styles from './FooterClock.module.css';
+import styles from './FooterClock.module.scss';
 
 interface FooterClockProps {
   currentDateTime: Date;

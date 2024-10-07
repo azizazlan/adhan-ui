@@ -1,18 +1,17 @@
 import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource } from 'solid-js';
 import * as i18n from "@solid-primitives/i18n";
-
 import { ProgressBar } from 'solid-bootstrap';
-import { format, addDays, addMinutes, addSeconds, subHours, subMinutes, subSeconds, isValid, parse } from 'date-fns';
-import styles from './App.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { format, addDays, addMinutes, addSeconds, subHours, subMinutes, subSeconds, isValid, parse } from 'date-fns';
+import styles from './App.module.scss';
 import Header from './Header';
 import FlipClock from './components/FlipClock';
 import Footer from './components/Footer';
 import Hadiths from './components/Hadiths';
-import Settings from './components/Settings';
+import Settings from './components/settings';
 import CountdownTimer from './components/CountdownTimer';
 import Credits from './components/Credits';
-import Prayers from './components/Prayers';
+import Prayers from './components/prayers';
 import Adhan from './components/Adhan';
 import Iqamah from './components/Iqamah';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
@@ -156,10 +155,6 @@ const App: Component = () => {
     let currentPrayerInfo = findCurrentPrayer(now);
     let nextPrayerInfo = { name: '', time: '' };
 
-    // if (isDemo() && demoNextPrayer()) {
-    //   nextPrayerInfo = demoNextPrayer();
-    // } else {
-    // Find next prayer
     prayerTimes().forEach(prayer => {
       const [hours, minutes] = prayer.time.split(':').map(Number);
       let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
@@ -202,18 +197,15 @@ const App: Component = () => {
 
       const diffMinutes = Math.floor(timeDiff / (1000 * 60));
       const diffSeconds = Math.floor(timeDiff / 1000);
-      console.log(`diffMinutes: ${diffMinutes}, diffSeconds: ${diffSeconds}`);
       // Check if it's time to show Adhan
       if ((diffMinutes < BEFORE_DISPLAY_ADHAN_MINS) && diffMinutes >= 0 && displayMode() !== 'adhan') {
         if (displayMode() !== 'adhan') {
           toggleDisplayMode('adhan');
-          console.log('show adhan screen!');
         }
       }
       // Set iqamahTriggerTime when we're within VITE_ADHAN_MINS of the next prayer
       if (!iqamahTriggerTime() && timeDiff <= VITE_ADHAN_MINS * 60 * 1000) {
         setIqamahTriggerTime(nextPrayerDate);
-        console.log('Set iqamahTriggerTime for', nextPrayerInfo.name, 'at', nextPrayerDate);
       }
 
       // Check if it's time to show Iqamah
@@ -221,7 +213,6 @@ const App: Component = () => {
         if (displayMode() !== 'iqamah') {
           toggleDisplayMode('iqamah');
           setLastTriggeredPrayer(nextPrayerInfo.name);
-          console.log('show iqamah screen for', nextPrayerInfo.name);
         }
       } else if (iqamahTriggerTime() && now >= addMinutes(iqamahTriggerTime()!, VITE_ADHAN_MINS)) {
         // Reset iqamahTriggerTime after VITE_ADHAN_MINS have passed

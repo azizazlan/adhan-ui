@@ -1,9 +1,10 @@
 import { Component } from 'solid-js';
 import { IoCloseCircleOutline } from 'solid-icons/io'
+import { Tab, Tabs } from 'solid-bootstrap';
 import styles from './Settings.module.css';
+import PTimesAdjustment from './PTimesAdjustment';
 
-const Settings: Component = (props: { onClose: () => void }) => {
-
+const EnvVariables = () => {
   const envVariables = {
     'VITE_LOCATION': import.meta.env.VITE_LOCATION,
     'VITE_LATITUDE': import.meta.env.VITE_LATITUDE,
@@ -17,6 +18,21 @@ const Settings: Component = (props: { onClose: () => void }) => {
     'VITE_SHOW_NEXT_HADITH_INTERVAL_MS': import.meta.env.VITE_SHOW_NEXT_HADITH_INTERVAL_MS,
     'VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS': import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS,
   };
+  return <div className={styles.envVariables}>
+    {Object.entries(envVariables).map(([key, value]) => (
+      <div key={key} className={styles.envVariable}>
+        <span className={styles.envKey}>{key}=</span>
+        <span className={styles.envValue}>{value}</span>
+      </div>
+    ))}
+  </div>;
+};
+
+const Sonnet = () => {
+  return <div>Sonnet</div>;
+};
+
+const Settings: Component = (props: { onClose: () => void }) => {
 
   return (
     <div class={styles.settingsDisplay}>
@@ -25,14 +41,23 @@ const Settings: Component = (props: { onClose: () => void }) => {
           <IoCloseCircleOutline class={styles.closeIconButton} />
         </button>
       </div>
-      <div className={styles.envVariables}>
-        {Object.entries(envVariables).map(([key, value]) => (
-          <div key={key} className={styles.envVariable}>
-            <span className={styles.envKey}>{key}=</span>
-            <span className={styles.envValue}>{value}</span>
-          </div>
-        ))}
-      </div>
+      <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" class="mb-3 custom-tabs">
+        <Tab
+          eventKey="home"
+          title={<span class="custom-tab-title">Home</span>}
+        >
+          <div>Home content</div>
+        </Tab>
+        <Tab eventKey="env_variables" title="Environment Variables">
+          <EnvVariables />
+        </Tab>
+        <Tab eventKey="prayer_times_adjustment" title="Prayer Times Adjustment">
+          <PTimesAdjustment />
+        </Tab>
+        <Tab eventKey="contact" title="Contact" disabled>
+          <Sonnet />
+        </Tab>
+      </Tabs>
     </div>
   );
 };

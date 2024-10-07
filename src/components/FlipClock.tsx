@@ -1,6 +1,6 @@
 import { createSignal, onCleanup, For } from 'solid-js';
 import { OcStopwatch2 } from 'solid-icons/oc'
-import styles from './FlipClock.module.css';
+import styles from './FlipClock.module.scss';
 
 const DigitBox = (props: { digit: string; index: number; isCurrentPrayer: boolean, isPrayerTimePast: boolean }) => (
   <div class={`${styles.digitBox} ${props.isCurrentPrayer ? styles.currentPrayer : ''} ${props.isPrayerTimePast ? styles.past : ''}`} style={{ "--index": props.index }}>

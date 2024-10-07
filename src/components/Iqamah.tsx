@@ -1,6 +1,6 @@
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
 import HeaderDateClock from './HeaderDateClock';
-import styles from './Iqamah.module.css';
+import styles from './Iqamah.module.scss';
 import HeaderClock from './HeaderClock';
 import getWindowDimensions from '../utils/getWindowDimensions';
 import FooterClock from './FooterClock';

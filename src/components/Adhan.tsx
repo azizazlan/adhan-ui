@@ -1,5 +1,5 @@
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
-import styles from './Adhan.module.css';
+import styles from './Adhan.module.scss';
 import HeaderDateClock from './HeaderDateClock';
 import { formatPrayerTime, getPrettyFormattedDate } from '../utils/formatter';
 import getWindowDimensions from '../utils/getWindowDimensions';

@@ -1,8 +1,8 @@
 import { FaSolidAngleRight } from 'solid-icons/fa'
-import { Prayer } from './types';
-import styles from './PrayerTimeItem.module.css';
-import FlipClock from './FlipClock';
-import { isPrayerTimePast, isCurrentPrayer } from '../utils/helper';
+import { Prayer } from '../../types';
+import styles from './PrayerTimeItem.module.scss';
+import FlipClock from '../FlipClock';
+import { isPrayerTimePast, isCurrentPrayer } from '../../utils/helper';
 
 interface PrayerTimeItemProps {
   prayer: Prayer;

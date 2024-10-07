@@ -1,5 +1,7 @@
 .App {
   background-color: rgb(19, 19, 19);
+  background-size: cover;
+  background-position: center;
   display: flex;
   flex-direction: column;
   padding: 2.7rem;
@@ -14,6 +16,8 @@
 @media screen and (min-width: 1280px) and (max-width: 1440px) {
   .App {
     background-color: rgb(19, 19, 19);
+    background-size: cover;
+    background-position: center;
     display: flex;
     flex-direction: column;
     padding: 2.5rem;

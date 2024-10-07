@@ -1,9 +1,9 @@
 import { createSignal } from 'solid-js';
-import CountdownTimer from './CountdownTimer';
-import styles from './Prayers.module.css';
+import CountdownTimer from '../CountdownTimer';
+import styles from './Prayers.module.scss';
 import PrayerTimeItem from './PrayerTimeItem';
 import { DisplayMode } from '../App';
-import { formatPrayerTime } from '../utils/formatter';
+import { formatPrayerTime } from '../../utils/formatter';
 
 interface PrayersProps {
   prayerTimes: Prayer[];

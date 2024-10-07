@@ -2,7 +2,7 @@ import { Component, createSignal, createEffect } from 'solid-js';
 import * as i18n from "@solid-primitives/i18n";
 
 import HeaderClock from './components/HeaderClock';
-import styles from './Header.module.css';
+import styles from './Header.module.scss';
 import FlipClock from './components/FlipClock';
 import { HijriDate } from './types/hijri';
 import { DisplayMode } from './App';

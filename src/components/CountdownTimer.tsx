@@ -1,5 +1,5 @@
 import { Component } from 'solid-js';
-import styles from './CountdownTimer.module.css';
+import styles from './CountdownTimer.module.scss';
 
 const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS || '60', 10);
 

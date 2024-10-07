@@ -1,5 +1,5 @@
 import { Component } from 'solid-js';
-import styles from './Footer.module.css';
+import styles from './Footer.module.scss';
 
 const Footer: Component = (props: {
   onCreditsClick: () => void,

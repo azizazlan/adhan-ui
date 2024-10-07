@@ -1,6 +1,6 @@
 import { Component } from 'solid-js';
 import { getPrettyFormattedDate, formatPrayerTime } from '../utils/formatter';
-import styles from './HeaderDateClock.module.css';
+import styles from './HeaderDateClock.module.scss';
 
 interface HeaderDateClockProps {
   currentDateTime: Date;

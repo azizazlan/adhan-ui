@@ -1,6 +1,6 @@
 import { Component } from 'solid-js';
 import { IoCloseCircleOutline } from 'solid-icons/io'
-import styles from './Credits.module.css';
+import styles from './Credits.module.scss';
 
 const Credits: Component = (props: { onClose: () => void }) => {
 

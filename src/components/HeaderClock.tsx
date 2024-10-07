@@ -1,6 +1,6 @@
 import { createSignal, createEffect, onCleanup } from 'solid-js';
 import { addSeconds } from 'date-fns';
-import styles from './HeaderClock.module.css';
+import styles from './HeaderClock.module.scss';
 
 const padNumber = (num: number): string => num.toString().padStart(2, '0');
 
