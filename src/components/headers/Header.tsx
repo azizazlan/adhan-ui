@@ -1,10 +1,10 @@
 import { Component, createSignal, createEffect } from 'solid-js';
 import * as i18n from "@solid-primitives/i18n";
 
-import HeaderClock from './components/HeaderClock';
+import HeaderClock from './HeaderClock';
 import styles from './Header.module.scss';
-import FlipClock from './components/FlipClock';
-import { HijriDate } from './types/hijri';
+import FlipClock from '../FlipClock';
+import { HijriDate } from '../../types/hijri';
 import { DisplayMode } from './App';
 
 const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS || '60', 10);

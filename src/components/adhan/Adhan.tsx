@@ -1,9 +1,9 @@
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
-import HeaderDateClock from './HeaderDateClock';
-import styles from './Iqamah.module.scss';
-import HeaderClock from './HeaderClock';
-import getWindowDimensions from '../utils/getWindowDimensions';
-import FooterClock from './FooterClock';
+import styles from './Adhan.module.scss';
+import { HeaderDateClock } from '../headers';
+import { formatPrayerTime, getPrettyFormattedDate } from '../../utils/formatter';
+import getWindowDimensions from '../../utils/getWindowDimensions';
+import { FooterClock } from '../footers';
 
 interface CountdownProps {
   time: {
@@ -32,7 +32,7 @@ const Countdown: Component<CountdownProps> = (props) => {
     return { hours: hours || 0, minutes: minutes || 0, seconds: seconds || 0 };
   };
 
-  const initialTime = parseTime(props.time);
+  const initialTime = parseTime(props.time ? props.time : '00:00:00');
 
   const [hours, setHours] = createSignal(initialTime.hours);
   const [minutes, setMinutes] = createSignal(initialTime.minutes);
@@ -86,24 +86,6 @@ const Countdown: Component<CountdownProps> = (props) => {
   );
 };
 
-const SolatMessage: Component = () => {
-  return (
-    <div class={styles.content}>
-      <div class={styles.center}>
-        <h1 class={styles.solatTitle}>Solat</h1>
-        <div class={styles.iqamahMessage}>Lurus dan rapatkan saf</div>
-      </div>
-    </div>
-  );
-};
-
-
-interface IqamahProps {
-  onClose: () => void;
-  currentDateTime: Date;
-  prayer: Prayer;
-}
-
 interface Prayer {
   name: string;
   time: string;
@@ -114,46 +96,41 @@ interface Prayer {
   };
 }
 
-const Iqamah: Component<IqamahProps> = (props) => {
-  const adhanMins = import.meta.env.VITE_ADHAN_MINS || 10;
-  const [countdownTime, setCountdownTime] = createSignal(`00:${adhanMins.toString().padStart(2, '0')}:00`);
-  const [isCountdownFinished, setIsCountdownFinished] = createSignal(false);
+interface AdhanProps {
+  currentDateTime: Date;
+  onClose: () => void;
+  prayer: Prayer;
+}
 
-  createEffect(() => {
-    const totalSeconds = (adhanMins * 60) - 1;
-    let remainingSeconds = totalSeconds;
+const Adhan: Component<AdhanProps> = (props) => {
+  const isCountdownUnderThreshold = (countdown: string) => {
+    const [hours, minutes] = countdown.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    return totalMinutes < REMINDER_BEFORE_PRAYER_MINS;
+  };
 
-    const timer = setInterval(() => {
-      remainingSeconds--;
-      if (remainingSeconds <= 0) {
-        clearInterval(timer);
-        setIsCountdownFinished(true);
-      } else {
-        const minutes = Math.floor(remainingSeconds / 60);
-        const seconds = remainingSeconds % 60;
-        setCountdownTime(`00:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-      }
-    }, 1000);
+  const parseCountdown = (countdownString: string) => {
+    const [hours, minutes, seconds] = countdownString.split(':').map(Number);
+    return { hours, minutes, seconds };
+  };
 
-    return () => clearInterval(timer);
-  });
+  const countdownTime = parseCountdown(props.prayer.countdown);
+
+  const [startAdhan, setStartAdhan] = createSignal(false);
+
+  const handleDemoStartAdhan = () => {
+    setStartAdhan(prev => !prev);
+    props.toggleDisplayMode('iqamah');
+  };
+
 
   return (
     <div class={styles.container} style={{ height: `${getWindowDimensions().height - 86}px` }}>
-      {!isCountdownFinished() && (
-        <HeaderDateClock isPrayerTimePassed={true} prayerName={props.prayer.name} prayerTime={props.prayer.time} currentDateTime={props.currentDateTime} />
-      )}
-
+      <HeaderDateClock isPrayerTimePassed={false} prayerName={props.prayer.name} prayerTime={props.prayer.time} currentDateTime={props.currentDateTime} />
       <div class={styles.content}>
         <div class={styles.center}>
-          {isCountdownFinished() ? (
-            <SolatMessage />
-          ) : (
-            <div>
-              <h1 class={styles.title}>Iqamah</h1>
-              <Countdown time={countdownTime()} />
-            </div>
-          )}
+          <h1 class={styles.title}>Adhan</h1>
+          <Countdown time={props.prayer.countdown} />
         </div>
         <div class={styles.footer}>
           <FooterClock currentDateTime={props.currentDateTime} />
@@ -163,4 +140,4 @@ const Iqamah: Component<IqamahProps> = (props) => {
   );
 };
 
-export default Iqamah;
+export default Adhan;

@@ -1,25 +1,21 @@
 import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource } from 'solid-js';
 import * as i18n from "@solid-primitives/i18n";
-import { ProgressBar } from 'solid-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { format, addDays, addMinutes, addSeconds, subHours, subMinutes, subSeconds, isValid, parse } from 'date-fns';
 import styles from './App.module.scss';
-import Header from './Header';
-import FlipClock from './components/FlipClock';
-import Footer from './components/Footer';
-import Hadiths from './components/Hadiths';
+import { Header } from './components/headers';
+import { Footer } from './components/footers';
+import Hadiths from './components/hadiths';
 import Settings from './components/settings';
-import CountdownTimer from './components/CountdownTimer';
-import Credits from './components/Credits';
+import { Credits } from './components/legal';
 import Prayers from './components/prayers';
-import Adhan from './components/Adhan';
-import Iqamah from './components/Iqamah';
+import Adhan from './components/adhan';
+import Iqamah from './components/iqamah';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Hadith, HadithApiResponse } from './types/hadith';
 import { isPrayerTimePast } from './utils/helper';
-// import en from './translations/en.json';
-// import ms from './translations/ms.json';
+import getWindowDimensions from './utils/getWindowDimensions';
 
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const SHOW_LASTTHIRD = import.meta.env.VITE_SHOW_LASTTHIRD === 'true';
@@ -35,7 +31,6 @@ const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 const LANGUAGE = import.meta.env.VITE_LANGUAGE;
-const DEMO_ADHAN_MINS = Math.max(0, parseInt(import.meta.env.VITE_DEMO_ADHAN_MINS || '30', 10));
 
 export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
 
@@ -79,7 +74,6 @@ const App: Component = () => {
   const [showPrayerTimes, setShowPrayerTimes] = createSignal(true);
   const [hijriDate, setHijriDate] = createSignal<HijriDate | null>(null);
   const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerTimes');
-  const [contentsHeight, setContentsHeight] = createSignal(700);
   const [demoSecondCounter, setDemoSecondCounter] = createSignal(0);
   const [lastTriggeredPrayer, setLastTriggeredPrayer] = createSignal('');
   const [iqamahTriggerTime, setIqamahTriggerTime] = createSignal<Date | null>(null);
@@ -292,19 +286,6 @@ const App: Component = () => {
   };
 
   createEffect(() => {
-    const logBrowserDimensions = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      console.log(`Browser dimensions: ${width}px x ${height}px`);
-      setContentsHeight(height - 275); // value 275 is by trials and erros
-    };
-
-    logBrowserDimensions();
-    window.addEventListener('resize', logBrowserDimensions);
-    return () => window.removeEventListener('resize', logBrowserDimensions);
-  }, []);
-
-  createEffect(() => {
     fetchPrayerTimes();
     fetchHijriDate(new Date());
 
@@ -380,7 +361,7 @@ const App: Component = () => {
                 hijriDate={hijriDate()}
                 t={t}
               />
-              <div class={styles.contents} style={{ height: `${contentsHeight()}px` }}>
+              <div class={styles.contents} style={{ height: `${getWindowDimensions().height - 275}px` }}>
                 {displayMode() === 'prayerTimes' && (
                   <Prayers
                     prayerTimes={prayerTimes()}

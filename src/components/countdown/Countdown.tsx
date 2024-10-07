@@ -1,9 +1,9 @@
 import { Component } from 'solid-js';
-import styles from './CountdownTimer.module.scss';
+import styles from './Countdown.module.scss';
 
 const REMINDER_BEFORE_PRAYER_MINS = parseInt(import.meta.env.VITE_REMINDER_BEFORE_PRAYER_MINS || '60', 10);
 
-const CountdownTimer: Component = (props: { onClose: () => void }) => {
+const Countdown: Component = (props: { onClose: () => void }) => {
 
   const isCountdownUnderThreshold = (countdown: string) => {
     const [hours, minutes] = countdown.split(':').map(Number);
@@ -28,4 +28,4 @@ const CountdownTimer: Component = (props: { onClose: () => void }) => {
   );
 };
 
-export default CountdownTimer;
+export default Countdown;

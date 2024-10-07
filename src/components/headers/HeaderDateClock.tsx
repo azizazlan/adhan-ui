@@ -1,5 +1,5 @@
 import { Component } from 'solid-js';
-import { getPrettyFormattedDate, formatPrayerTime } from '../utils/formatter';
+import { getPrettyFormattedDate, formatPrayerTime } from '../../utils/formatter';
 import styles from './HeaderDateClock.module.scss';
 
 interface HeaderDateClockProps {

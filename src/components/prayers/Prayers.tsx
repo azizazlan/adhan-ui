@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import CountdownTimer from '../CountdownTimer';
+import Countdown from '../countdown';
 import styles from './Prayers.module.scss';
 import PrayerTimeItem from './PrayerTimeItem';
 import { DisplayMode } from '../App';
@@ -26,8 +26,8 @@ const Prayers = (props: PrayersProps) => {
             toggleDisplayMode={() => props.toggleDisplayMode('hadith')}
           />
           {prayer.name === props.nextPrayer.name && (
-            <div class={styles.countdownTimerContainer}>
-              <CountdownTimer nextPrayer={props.nextPrayer} />
+            <div class={styles.countdownContainer}>
+              <Countdown nextPrayer={props.nextPrayer} />
             </div>
           )}
         </div>
