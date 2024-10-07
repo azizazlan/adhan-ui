@@ -1,99 +1,24 @@
-.prayerTimeItem {
+.container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
   width: 100%;
+  font-size: 3.5rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.prayerName {
-  display: flex;
+.name {
+  font-size: 3.5rem;
 }
 
-.letterBox {
-  font-weight: bold;
-  font-size: 4.5rem;
-  font-family: monospace;
-  color: #fff;
-  background-color: #333;
-  width: 60px;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 7px;
-  margin: 0 4px;
-  text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
-}
-
-.letterBox::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 5px;
-  background-color: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1);
-}
-
-.current .letterBox {
-  color: goldenrod !important;
-}
-
-.currentlyPassed .letterBox {
-  color: goldenrod !important;
-  opacity: 0.5 !important;
-}
-
-
-.next .letterBox {
-  color: goldenrod!important;
-}
-
-.past .letterBox {
-  opacity: 0.5 !important;
-}
-
-.nextPrayerLabel {
-  font-size: 2.9rem;
-  color: goldenrod;
-  text-align: left;
-  padding: 0px 0px 0px 0px;
-  font-weight: 700;
-  padding-top: 7px;
+.time {
+  font-size: 3.5rem;
+  font-weight: 600;
 }
 
 @media screen and (min-width: 1280px) and (max-width: 1440px) {
-  .letterBox {
-    font-weight: bold;
-    font-size: 2.7rem;
-    font-family: monospace;
-    color: #fff;
-    background-color: #333;
-    width: 45px;
-    height: 55px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 7px;
-    margin: 0 4px;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .nextPrayerLabel {
-    font-size: 2.3rem;
-    color: goldenrod;
-    text-align: left;
-    padding: 0px 0px 0px 0px;
-    font-weight: 700;
-    padding-top: 0px;
-  }
+
 }
 
 @media screen and (min-width: 2560px) and (max-width: 3840px) {
