@@ -4,17 +4,17 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  font-size: 3.5rem;
   border-bottom: 1px solid #e0e0e0;
 }
 
 .name {
-  font-size: 3.5rem;
+  font-size: 4.3rem;
+  font-weight: 700;
 }
 
 .time {
-  font-size: 3.5rem;
-  font-weight: 600;
+  font-size: 4.3rem;
+  font-weight: 700;
 }
 
 @media screen and (min-width: 1280px) and (max-width: 1440px) {

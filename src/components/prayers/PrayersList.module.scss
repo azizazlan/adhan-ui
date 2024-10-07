@@ -6,6 +6,16 @@
   padding: 1rem;
 }
 
+.cards {
+  display: flex;
+  justify-content: space-around;
+  flex-shrink: 0; /* Prevents the cards from shrinking */
+}
+
+.card {
+  margin: 0.5rem;
+}
+
 @media screen and (min-width: 1280px) and (max-width: 1440px) {
 }
 

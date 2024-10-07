@@ -1,14 +1,14 @@
-import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource } from 'solid-js';
+import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource, onCleanup } from 'solid-js';
 import * as i18n from "@solid-primitives/i18n";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { format, addDays, addMinutes, addSeconds, subHours, subMinutes, subSeconds, isValid, parse } from 'date-fns';
 import styles from './App.module.scss';
-import { Header } from './components/headers';
+import Header from './components/headers';
 import { Footer } from './components/footers';
 import Hadiths from './components/hadiths';
 import Settings from './components/settings';
 import { Credits } from './components/legal';
-import Prayers from './components/prayers';
+import PrayersList from './components/prayers';
 import Adhan from './components/adhan';
 import Iqamah from './components/iqamah';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
@@ -32,7 +32,7 @@ const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&l
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 const LANGUAGE = import.meta.env.VITE_LANGUAGE;
 
-export type DisplayMode = 'prayerTimes' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
+export type DisplayMode = 'prayerslist' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
 
 async function fetchDictionary(locale: Locale): Promise<Dictionary> {
   try {
@@ -53,33 +53,37 @@ async function fetchDictionary(locale: Locale): Promise<Dictionary> {
 const App: Component = () => {
 
   const [locale, setLocale] = createSignal<Locale>(LANGUAGE);
-
   const [dict] = createResource(locale, fetchDictionary);
-
   dict(); // => Dictionary | undefined
-  // (undefined when the dictionary is not loaded yet)
 
   const t = i18n.translator(dict);
-
   const [isDemo, setIsDemo] = createSignal(false);
-  const [prayerTimes, setPrayerTimes] = createSignal([]);
+  const [time, setTime] = createSignal(new Date());
+  const [prayers, setPrayers] = createSignal([]);
   const [location] = createSignal(LOCATION);
-  const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerTimes');
+  const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerslist');
+
+  createEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  });
 
   const toggleDisplayMode = (mode: DisplayMode) => {
     setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
   };
 
-  const toggleDemo = () => {
+  const toggleTestSubuh = () => {
   };
 
-  const fetchPrayerTimes = async () => {
+  const fetchPrayers = async () => {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
       const timings = data.data.timings;
       if (SHOW_LASTTHIRD) {
-        setPrayerTimes([
+        setPrayers([
           { name: getPrayerName(LANGUAGE, 'Fajr'), time: timings.Fajr },
           { name: getPrayerName(LANGUAGE, 'Sunrise'), time: timings.Sunrise },
           { name: getPrayerName(LANGUAGE, 'Dhuhr'), time: timings.Dhuhr },
@@ -89,7 +93,7 @@ const App: Component = () => {
           { name: getPrayerName(LANGUAGE, 'Las3rd'), time: timings.Lastthird },
         ]);
       } else {
-        setPrayerTimes([
+        setPrayers([
           { name: getPrayerName(LANGUAGE, 'Fajr'), time: timings.Fajr },
           { name: getPrayerName(LANGUAGE, 'Sunrise'), time: timings.Sunrise },
           { name: getPrayerName(LANGUAGE, 'Dhuhr'), time: timings.Dhuhr },
@@ -103,13 +107,6 @@ const App: Component = () => {
     }
   };
 
-
-  createEffect(() => {
-    fetchPrayerTimes();
-    return () => {
-    };
-  });
-
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch((e) => {
@@ -122,19 +119,43 @@ const App: Component = () => {
     }
   };
 
+  createEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    onCleanup(() => clearInterval(timer));
+  });
+
+  createEffect(() => {
+    fetchPrayers();
+  });
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Show when={dict() && prayerTimes().length > 0} fallback={<div>Loading...</div>}>
-        <div class={styles.App}>
-          <div class={styles.contents} style={{ height: `${getWindowDimensions().height}px` }}>
-            <Prayers
+    <Show when={dict() && prayers().length > 0} fallback={<div>Loading...</div>}>
+      <div class={styles.App}>
+        <Header time={time()} t={t} toggleDisplayMode={toggleDisplayMode} toggleTestSubuh={toggleTestSubuh} />
+        <div class={styles.contents} style={{ height: `${getWindowDimensions().height - 169}px` }}>
+          {displayMode() === 'prayerslist' ? (
+            <PrayersList
               t={t}
-              prayerTimes={prayerTimes()}
+              prayers={prayers()}
+              toggleDisplayMode={toggleDisplayMode}
             />
-          </div>
+          ) : displayMode() === 'adhan' ? (
+            <Adhan prayers={prayers()} />
+          ) : displayMode() === 'iqamah' ? (
+            <Iqamah prayers={prayers()} />
+          ) : (
+            <PrayersList
+              t={t}
+              prayers={prayers()}
+              toggleDisplayMode={toggleDisplayMode}
+            />
+          )}
         </div>
-      </Show>
-    </Suspense>
+      </div>
+    </Show>
   );
 };
 

@@ -14,7 +14,7 @@ const PrayerTimeItem = (props: PrayerTimeItemProps) => {
   return (
     <div class={styles.container}>
       <div class={styles.name}>{name}</div>
-      <div class={styles.time}>{format(parse(time, 'HH:mm', new Date()), 'h:mm a')}</div>
+      <div class={styles.time}>{format(parse(time, 'HH:mm', new Date()), 'h:mma')}</div>
     </div>
   );
 }

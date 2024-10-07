@@ -1,4 +1,4 @@
 
 
-import Prayers from "./Prayers";
-export default Prayers;
+import PrayersList from "./PrayersList";
+export default PrayersList;

@@ -18,7 +18,7 @@ const Datecomp: Component = () => {
       }
       const data = await response.json();
 
-      setFormattedDate(`${dayOfWeek}, ${gregorianDate} ${data.data.hijri.date} ${data.data.hijri.month.en}`);
+      setFormattedDate(`${dayOfWeek},${gregorianDate}. ${data.data.hijri.date} ${data.data.hijri.month.en}`);
     } catch (error) {
       console.error('Error fetching hijri date:', error);
       setFormattedDate('Error fetching date');

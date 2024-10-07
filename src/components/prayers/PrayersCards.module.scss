@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.cards {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.card {
+  margin: 0.5rem;
+}
+
+.cardHeader {
+  font-size: 2.1rem;
+  font-weight: bold;
+}
+
+.activeCardHeader {
+  background-color: rgb(23, 138, 85) !important;
+  color: white !important;
+  font-size: 2.1rem;
+  font-weight: bold;
+}
+
+.time {
+  font-size: 3.1rem;
+  font-weight: bold;
+}

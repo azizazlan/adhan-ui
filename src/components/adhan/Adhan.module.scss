@@ -1,162 +1,24 @@
 .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  margin: 1rem;
 }
 
-.title {
-  width: 100%;
-  font-family: monospace;
-  font-size: 12rem; /* Changed from 19em to 4rem */
+.message {
+  display: flex;
+  align-items: center;
+  font-size: 6.7rem;
   font-weight: bold;
-  color: white;
-  text-align: center;
-  height: auto; /* Changed from fit-content to auto */
-  padding: 0.5rem 0; /* Added padding for better spacing */
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  margin-top: -7rem;
-}
-
-.center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
-}
-
-.footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  // border: 1px solid #006266;
 }
 
 .countdown {
+  flex-grow: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-family: monospace;
-  font-weight: bold;
-}
-
-.countdownUnit {
-  margin: 0 0.5rem;
-}
-
-.countdownCard {
-  position: relative;
-  display: inline-block;
-  width: 17rem;  /* Increased width to accommodate larger font */
-  height: 18rem; /* Increased height */
-  perspective: 1000px;
-  margin: 0 0.3rem;
-}
-
-.countdownCardFace {
-  position: absolute;
-  width: 100%;
-  height: 50%;
-  overflow: hidden;
-  background: #343434; /* Slightly lighter than black for contrast */
-  color: #fff;
-  text-align: center;
-  font-size: 12rem;
-  line-height: 18rem;
-  border-radius: 1.5rem;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* Subtle glow effect */
-}
-
-.countdownCardTop {
-  top: 0;
-  transform-origin: bottom;
-  border-bottom: 1px solid #333; /* Visible separator */
-}
-
-.countdownCardBottom {
-  bottom: 0;
-  transform-origin: top;
-  line-height: 0;
-  border-top: 1px solid #333; /* Visible separator */
-}
-
-/* Add this new style for the card inner shadow */
-.countdownCardTop::after,
-.countdownCardBottom::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
-}
-
-.countdownCardTop::after {
-  bottom: 0;
-}
-
-.countdownCardBottom::after {
-  top: 0;
-  transform: rotate(180deg);
-}
-
-.countdownSeparator {
-  font-size: 12rem;
-  color: #fff;
-  line-height: 16rem;
-  margin: 0 1rem;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Glow effect for separator */
-}
-
-.countdownCardFlip .countdownCardTop {
-  animation: flipTop 0.2s ease-in;
-}
-
-.countdownCardFlip .countdownCardBottom {
-  animation: flipBottom 0.3s ease-out 0.9s;
-}
-
-@keyframes flipTop {
-  0% { transform: rotateX(0deg); }
-  50% { transform: rotateX(-30deg); }
-  100% { transform: rotateX(-90deg); }
-}
-
-@keyframes flipBottom {
-  0% { transform: rotateX(90deg); }
-  50% { transform: rotateX(-40deg); }
-  100% { transform: rotateX(0deg); }
-}
-
-@keyframes flipAnimation {
-  0% { transform: rotateX(0deg); }
-  100% { transform: rotateX(-180deg); }
-}
-
-@media screen and (min-width: 1280px) and (max-width: 1440px) {
-  .title {
-    width: 100%;
-    font-family: monospace;
-    font-size: 6rem; /* Reduced from 7rem to 6rem for better fit */
-    font-weight: bold;
-    color: white;
-    text-align: center;
-    height: auto;
-    padding: 0.5rem 0;
-  }
-  
-  .content {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    margin-top: -2rem; /* Reduced from -3rem to -2rem for less overlap */
-  }
-
+  justify-content: center;
+  margin-top: -5rem;
 }

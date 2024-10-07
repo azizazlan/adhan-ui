@@ -1,22 +1,21 @@
 import { createSignal } from 'solid-js';
 import Countdown from '../countdown';
-import styles from './Prayers.module.scss';
+import styles from './PrayersList.module.scss';
 import PrayerTimeItem from './PrayerTimeItem';
 import { DisplayMode } from '../App';
 import { formatPrayerTime } from '../../utils/formatter';
-import Header from '../headers/Header';
 
 interface PrayersProps {
-  prayerTimes: Prayer[];
+  prayers: Prayer[];
   t: i18n.TranslateFunction;
+  toggleDisplayMode: (mode: DisplayMode) => void;
 }
 
-const Prayers = (props: PrayersProps) => {
-  const { t, prayerTimes } = props;
+const PrayersList = (props: PrayersProps) => {
+  const { t, prayers, toggleDisplayMode } = props;
   return (
     <div class={styles.container}>
-      <Header t={t} />
-      {prayerTimes.map((prayer) => (
+      {prayers.map((prayer) => (
         <PrayerTimeItem
           prayer={prayer}
         />
@@ -25,4 +24,4 @@ const Prayers = (props: PrayersProps) => {
   );
 };
 
-export default Prayers;
+export default PrayersList;
