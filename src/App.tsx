@@ -1,7 +1,7 @@
 import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource, onCleanup, onMount } from 'solid-js';
 import * as i18n from "@solid-primitives/i18n";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { addDays, setHours, setMinutes, isAfter, isBefore, startOfDay, parse } from 'date-fns';
+import { format, addDays, addSeconds, setHours, setMinutes, isAfter, isBefore, startOfDay, parse, set, subMinutes } from 'date-fns';
 import styles from './App.module.scss';
 import Header from './components/headers';
 import { Footer } from './components/footers';
@@ -60,27 +60,14 @@ const App: Component = () => {
   const t = i18n.translator(dict);
   const [isDemo, setIsDemo] = createSignal(false);
   const [location] = createSignal(LOCATION);
-  const [time, setTime] = createSignal(new Date());
   const [currentTime, setCurrentTime] = createSignal(new Date());
   const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerslist');
   const [prayers, setPrayers] = createSignal<Prayer[]>([]);
   const [lastFetchDate, setLastFetchDate] = createSignal<Date>(new Date());
 
-  createEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
 
-    const updateModesInterval = setInterval(() => {
-      console.log('Updating prayer modes');
-      updatedPrayers();
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-      clearInterval(updateModesInterval);
-    };
-  });
+  const [isTestMode, setIsTestMode] = createSignal(false);
+  const [testStartTime, setTestStartTime] = createSignal<Date | null>(null);
 
   const checkAndFetchPrayers = () => {
     const now = new Date();
@@ -103,7 +90,11 @@ const App: Component = () => {
     const dailyCheckInterval = setInterval(checkAndFetchPrayers, 60000);
 
     const updateTimeInterval = setInterval(() => {
-      setCurrentTime(new Date());
+      if (isTestMode()) {
+        setCurrentTime(prevTime => addSeconds(prevTime, 1));
+      } else {
+        setCurrentTime(new Date());
+      }
     }, 1000);
 
     onCleanup(() => {
@@ -128,7 +119,41 @@ const App: Component = () => {
     setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
   };
 
+
   const toggleTestSubuh = () => {
+    const newTestMode = !isTestMode();
+    setIsTestMode(newTestMode);
+
+    if (newTestMode) {
+      const subuhPrayer = prayers().find(prayer => prayer.name === 'Fajr' || prayer.name === 'Subuh');
+
+      if (subuhPrayer) {
+        const now = new Date();
+        const [hours, minutes] = subuhPrayer.time.split(':').map(Number);
+
+        let subuhTime = set(now, { hours, minutes, seconds: 0, milliseconds: 0 });
+
+        if (subuhTime < now) {
+          subuhTime = set(subuhTime, { date: subuhTime.getDate() + 1 });
+        }
+
+        const oneMinuteBeforeSubuh = subMinutes(subuhTime, 1);
+
+        setTestStartTime(oneMinuteBeforeSubuh);
+        setCurrentTime(oneMinuteBeforeSubuh);
+
+        setPrayers(prev => updatedPrayers());
+
+        console.log('Test mode activated. Current time set to:', oneMinuteBeforeSubuh.toLocaleString());
+      } else {
+        console.error('Subuh prayer not found');
+        setIsTestMode(false);
+      }
+    } else {
+      setCurrentTime(new Date());
+      setTestStartTime(null);
+      console.log('Test mode deactivated. Returned to current time.');
+    }
   };
 
   const fetchPrayers = async () => {
@@ -153,6 +178,7 @@ const App: Component = () => {
 
   const updatedPrayers = createMemo(() => {
     const now = currentTime();
+    console.log('Updating prayers. Current time:', format(now, 'HH:mm:ss'));
     let activeIndex = -1;
 
     // Find the active prayer
@@ -167,6 +193,7 @@ const App: Component = () => {
 
       if (isAfter(now, prayerTime) && isBefore(now, nextPrayerTime)) {
         activeIndex = i;
+        console.log(`Active prayer found: ${prayer.name}`);
         break;
       }
     }
@@ -176,13 +203,15 @@ const App: Component = () => {
       let mode;
       if (index === activeIndex) {
         mode = PrayerMode.ACTIVE;
-      } else if (index > activeIndex || (activeIndex === -1 && index === 0)) {
+      } else if (index === (activeIndex + 1) % prayers().length) {
+        mode = PrayerMode.IMMEDIATE_NEXT;
+      } else if (index > activeIndex || (activeIndex === -1 && index < prayers().length - 1)) {
         mode = PrayerMode.NEXT;
       } else {
         mode = PrayerMode.INACTIVE;
       }
 
-      console.log(prayer.name, mode); // Log for debugging
+      console.log(`${prayer.name}: ${mode}`);
       return { ...prayer, mode };
     });
   });
@@ -190,7 +219,7 @@ const App: Component = () => {
   return (
     <Show when={dict() && prayers().length > 0} fallback={<div>Loading...</div>}>
       <div class={styles.App}>
-        <Header time={time()} t={t} toggleDisplayMode={toggleDisplayMode} toggleTestSubuh={toggleTestSubuh} />
+        <Header time={currentTime()} t={t} toggleDisplayMode={toggleDisplayMode} toggleTestSubuh={toggleTestSubuh} />
         <div class={styles.contents} style={{ height: `${getWindowDimensions().height - 169}px` }}>
           {displayMode() === 'prayerslist' ? (
             <PrayersList

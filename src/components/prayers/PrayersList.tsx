@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { createEffect } from 'solid-js';
 import Countdown from '../countdown';
 import styles from './PrayersList.module.scss';
 import PrayerTimeItem from './PrayerTimeItem';
@@ -7,19 +7,20 @@ import { formatPrayerTime } from '../../utils/formatter';
 
 interface PrayersProps {
   prayers: Prayer[];
-  activePrayer: Prayer;
-  nextPrayer: Prayer;
 }
 
 const PrayersList = (props: PrayersProps) => {
-  const { prayers, activePrayer, nextPrayer } = props;
+  createEffect(() => {
+    console.log('PrayersList received updated prayers:', props.prayers);
+  });
+
   return (
     <div class={styles.container}>
-      {prayers.map((prayer) => (
-        <PrayerTimeItem
-          prayer={prayer}
-        />
-      ))}
+      <For each={props.prayers}>
+        {(prayer) => (
+          <PrayerTimeItem prayer={prayer} />
+        )}
+      </For>
     </div>
   );
 };

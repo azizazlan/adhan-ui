@@ -1,27 +1,39 @@
+import { createMemo } from 'solid-js';
 import { format, parse } from 'date-fns';
 import { Prayer } from '../../types';
 import styles from './PrayerTimeItem.module.scss';
 import { PrayerMode } from '../../types/prayer';
 
-interface PrayerTimeItemProps {
-  prayer: Prayer;
-}
-
 const PrayerTimeItem = (props: PrayerTimeItemProps) => {
-  const { name, time, mode } = props.prayer;
+  const prayer = createMemo(() => props.prayer);
+
   return (
     <div class={styles.container}>
       <div
-        class={mode === PrayerMode.ACTIVE ? styles.activeName : mode === PrayerMode.NEXT ? styles.nextName : styles.inactiveName}>{name}</div>
+        class={
+          prayer().mode === PrayerMode.ACTIVE ? styles.activeName :
+            prayer().mode === PrayerMode.IMMEDIATE_NEXT ? styles.immediateNextName :
+              prayer().mode === PrayerMode.NEXT ? styles.nextName :
+                styles.inactiveName
+        }
+      >
+        {prayer().name}
+      </div>
       {import.meta.env.VITE_DEV_MODE === 'true' &&
-        <div>{mode}</div>
+        <div>{prayer().mode}</div>
       }
       <div
-        class={mode === PrayerMode.ACTIVE ? styles.activeTime : mode === PrayerMode.NEXT ? styles.nextTime : styles.inactiveTime}
+        class={
+          prayer().mode === PrayerMode.ACTIVE ? styles.activeTime :
+            prayer().mode === PrayerMode.IMMEDIATE_NEXT ? styles.immediateNextTime :
+              prayer().mode === PrayerMode.NEXT ? styles.nextTime :
+                styles.inactiveTime
+        }
       >
-
-        {format(parse(time, 'HH:mm', new Date()), 'h:mma')}</div>
+        {format(parse(prayer().time, 'HH:mm', new Date()), 'h:mma')}
+      </div>
     </div>
   );
-}
+};
+
 export default PrayerTimeItem;
