@@ -3,17 +3,9 @@ import * as i18n from "@solid-primitives/i18n";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { differenceInMinutes, differenceInSeconds, format, addDays, addSeconds, setHours, setMinutes, isAfter, isBefore, startOfDay, parse, set, subMinutes, subSeconds } from 'date-fns';
 import styles from './App.module.scss';
-import Header from './components/headers';
-import { Footer } from './components/footers';
-import Hadiths from './components/hadiths';
-import Settings from './components/settings';
-import { Credits } from './components/legal';
-import PrayersList from './components/prayers';
-import Adhan from './components/adhan';
-import Iqamah from './components/iqamah';
+import DefaultLayout from './components/layouts/DefaultLayout';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
-import { Hadith, HadithApiResponse } from './types/hadith';
 import { Prayer, PrayerMode } from './types/prayer';
 import { isPrayerTimePast } from './utils/helper';
 import getWindowDimensions from './utils/getWindowDimensions';
@@ -239,25 +231,13 @@ const App: Component = () => {
   return (
     <Show when={dict() && prayers().length > 0} fallback={<div>Loading...</div>}>
       <div class={styles.App}>
-        <Header time={currentTime()} t={t} toggleDisplayMode={toggleDisplayMode} toggleTestSubuh={toggleTestSubuh} />
-        <div class={styles.contents} style={{ height: `${getWindowDimensions().height - 169}px` }}>
-          {displayMode() === 'prayerslist' ? (
-            <PrayersList
-              t={t}
-              prayers={updatedPrayers()}
-              toggleDisplayMode={toggleDisplayMode}
-            />
-          ) : displayMode() === 'adhan' ? (
-            <Adhan prayers={updatedPrayers()} leadPrayer={getLeadPrayer()} currentTime={currentTime()} />
-          ) : displayMode() === 'iqamah' ? (
-            <Iqamah prayers={updatedPrayers()} />
-          ) : (
-            <PrayersList
-              t={t}
-              prayers={updatedPrayers()}
-              toggleDisplayMode={toggleDisplayMode}
-            />
-          )}
+        <div class={styles.contents} style={{ height: `${getWindowDimensions().height}px` }}>
+          <DefaultLayout
+            prayers={updatedPrayers()}
+            currentTime={currentTime}
+            toggleDisplayMode={toggleDisplayMode}
+            toggleTestSubuh={toggleTestSubuh}
+          />
         </div>
       </div>
     </Show>

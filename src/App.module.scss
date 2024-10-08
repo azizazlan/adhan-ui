@@ -7,27 +7,6 @@
 
 .contents {
   flex-grow: 1;
-}
-
-@media screen and (min-width: 1280px) and (max-width: 1440px) {
-  .App {
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    flex-direction: column;
-  }
-  .contents {
-    flex-grow: 1;
-  }
-}
-
-@media screen and (min-width: 2560px) {
-  .App {
-    display: flex;
-    flex-direction: column;
-  }
-  .contents {
-    flex-grow: 1;
-    border: 1px solid red !important;
-  }
+  height: 100%;
+  overflow-y: auto;
 }
