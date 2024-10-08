@@ -11,7 +11,7 @@ interface PrayersProps {
 
 const PrayersList = (props: PrayersProps) => {
   createEffect(() => {
-    console.log('PrayersList received updated prayers:', props.prayers);
+    // console.log('PrayersList received updated prayers:', props.prayers);
   });
 
   return (

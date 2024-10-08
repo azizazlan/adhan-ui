@@ -20,9 +20,9 @@ const Header = (props: HeaderProps) => {
         {import.meta.env.VITE_DEV_MODE === 'true' && (
           <div>
             <button class={styles.testBtn} onClick={() => toggleDisplayMode('prayerslist')}>Home</button>
-            <button class={styles.testBtn} onClick={() => toggleDisplayMode('adhan')}>Test display adhan</button>
-            <button class={styles.testBtn} onClick={() => toggleDisplayMode('iqamah')}>Test display iqamah</button>
-            <button class={styles.testBtn} onClick={() => toggleTestSubuh()}>Test display Subuh</button>
+            <button class={styles.testBtn} onClick={() => toggleDisplayMode('adhan')}>Display adhan</button>
+            <button class={styles.testBtn} onClick={() => toggleDisplayMode('iqamah')}>Display iqamah</button>
+            <button class={styles.testBtn} onClick={() => toggleTestSubuh()}>Adhan Lead {import.meta.env.VITE_ADHAN_LEAD_MINS}mins</button>
           </div>
         )}
       </div>

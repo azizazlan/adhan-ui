@@ -9,11 +9,11 @@ interface ClockProps {
 const Clock: Component<ClockProps> = (props) => {
 
   const format12Hour = (date: Date) => {
-    return format(date, 'hh:mm:ssa');
+    return format(date, 'hh:mm:ssa ');
   };
 
   const format24Hour = (date: Date) => {
-    return format(date, 'HH:mm:ss');
+    return format(date, 'HH:mm:ss ');
   };
 
   return (

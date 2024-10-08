@@ -1,7 +1,7 @@
 import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource, onCleanup, onMount } from 'solid-js';
 import * as i18n from "@solid-primitives/i18n";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { format, addDays, addSeconds, setHours, setMinutes, isAfter, isBefore, startOfDay, parse, set, subMinutes } from 'date-fns';
+import { differenceInMinutes, differenceInSeconds, format, addDays, addSeconds, setHours, setMinutes, isAfter, isBefore, startOfDay, parse, set, subMinutes, subSeconds } from 'date-fns';
 import styles from './App.module.scss';
 import Header from './components/headers';
 import { Footer } from './components/footers';
@@ -19,19 +19,15 @@ import { isPrayerTimePast } from './utils/helper';
 import getWindowDimensions from './utils/getWindowDimensions';
 
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
-const SHOW_LASTTHIRD = import.meta.env.VITE_SHOW_LASTTHIRD === 'true';
-const ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS = Math.max(0, parseInt(import.meta.env.VITE_ROTATE_BETWEEN_PRAYERTIMES_HADITHS_INTERVAL_MS || '10000', 10));
-const BEFORE_DISPLAY_ADHAN_MINS = Math.max(0, parseInt(import.meta.env.VITE_BEFORE_DISPLAY_ADHAN_MINS || '15', 10));
-const BETWEEN_ADHAN_IQAMAH_MINS = Math.max(0, parseInt(import.meta.env.VITE_BETWEEN_ADHAN_IQAMAH_MINS || '10', 10));
 const LOCATION = import.meta.env.VITE_LOCATION;
 const LATITUDE = import.meta.env.VITE_LATITUDE;
 const LONGITUDE = import.meta.env.VITE_LONGITUDE;
 const TIMEZONE = import.meta.env.VITE_TIMEZONE;
 const TUNE = import.meta.env.VITE_TUNE;
-const DISPLAY_HADITH: boolean = import.meta.env.VITE_DISPLAY_HADITH === 'true';
 const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 const LANGUAGE = import.meta.env.VITE_LANGUAGE;
+const ADHAN_LEAD_MINS = parseInt(import.meta.env.VITE_ADHAN_LEAD_MINS || '1', 10);
 
 export type DisplayMode = 'prayerslist' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
 
@@ -64,7 +60,7 @@ const App: Component = () => {
   const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerslist');
   const [prayers, setPrayers] = createSignal<Prayer[]>([]);
   const [lastFetchDate, setLastFetchDate] = createSignal<Date>(new Date());
-
+  const [secondsLeft, setSecondsLeft] = createSignal<number>(0);
 
   const [isTestMode, setIsTestMode] = createSignal(false);
   const [testStartTime, setTestStartTime] = createSignal<Date | null>(null);
@@ -73,6 +69,30 @@ const App: Component = () => {
     const now = new Date();
     if (isAfter(now, startOfDay(addDays(lastFetchDate(), 1)))) {
       fetchPrayers();
+    }
+  };
+
+  const getLeadPrayer = () => {
+    return prayers().find(prayer => prayer.mode === PrayerMode.IMMEDIATE_NEXT);
+  };
+
+  const checkPrayerProgress = () => {
+    // console.log('checkPrayerProgress');
+    // Get the prayer where mode is PrayerMode.IMMEDIATE_NEXT
+    const leadPrayer = getLeadPrayer();
+    if (leadPrayer) {
+      const leadPrayerTime = parse(leadPrayer.time, 'HH:mm', currentTime());
+      const secLeft = differenceInSeconds(leadPrayerTime, currentTime());
+      setSecondsLeft(secLeft);
+      console.log(secLeft);
+      // console.log(differenceInMinutes(leadPrayerTime, currentTime()))
+      if (displayMode() !== 'adhan' && ADHAN_LEAD_MINS === differenceInMinutes(leadPrayerTime, currentTime()) + 1) {
+        console.log('toggleDisplayMode - adhan', leadPrayer.name);
+        toggleDisplayMode('adhan');
+      }
+      if (displayMode() === 'adhan' && secondsLeft() === 0) {
+        toggleDisplayMode('iqamah');
+      }
     }
   };
 
@@ -97,9 +117,14 @@ const App: Component = () => {
       }
     }, 1000);
 
+    const checkPrayerProgIntval = setInterval(() => {
+      checkPrayerProgress();
+    }, 1000);
+
     onCleanup(() => {
       clearInterval(dailyCheckInterval);
       clearInterval(updateTimeInterval);
+      clearInterval(checkPrayerProgIntval);
     });
   });
 
@@ -136,15 +161,12 @@ const App: Component = () => {
         if (subuhTime < now) {
           subuhTime = set(subuhTime, { date: subuhTime.getDate() + 1 });
         }
-
-        const oneMinuteBeforeSubuh = subMinutes(subuhTime, 1);
-
-        setTestStartTime(oneMinuteBeforeSubuh);
-        setCurrentTime(oneMinuteBeforeSubuh);
-
+        let nMinuteBeforeSubuh = subMinutes(subuhTime, ADHAN_LEAD_MINS);
+        nMinuteBeforeSubuh = subSeconds(nMinuteBeforeSubuh, 5);
+        setTestStartTime(nMinuteBeforeSubuh);
+        setCurrentTime(nMinuteBeforeSubuh);
         setPrayers(prev => updatedPrayers());
-
-        console.log('Test mode activated. Current time set to:', oneMinuteBeforeSubuh.toLocaleString());
+        // console.log('Test mode activated. Current time set to:', oneMinuteBeforeSubuh.toLocaleString());
       } else {
         console.error('Subuh prayer not found');
         setIsTestMode(false);
@@ -178,7 +200,7 @@ const App: Component = () => {
 
   const updatedPrayers = createMemo(() => {
     const now = currentTime();
-    console.log('Updating prayers. Current time:', format(now, 'HH:mm:ss'));
+    // console.log('Updating prayers. Current time:', format(now, 'HH:mm:ss'));
     let activeIndex = -1;
 
     // Find the active prayer
@@ -193,7 +215,7 @@ const App: Component = () => {
 
       if (isAfter(now, prayerTime) && isBefore(now, nextPrayerTime)) {
         activeIndex = i;
-        console.log(`Active prayer found: ${prayer.name}`);
+        // console.log(`Active prayer found: ${prayer.name}`);
         break;
       }
     }
@@ -210,8 +232,6 @@ const App: Component = () => {
       } else {
         mode = PrayerMode.INACTIVE;
       }
-
-      console.log(`${prayer.name}: ${mode}`);
       return { ...prayer, mode };
     });
   });
@@ -228,7 +248,7 @@ const App: Component = () => {
               toggleDisplayMode={toggleDisplayMode}
             />
           ) : displayMode() === 'adhan' ? (
-            <Adhan prayers={updatedPrayers()} />
+            <Adhan prayers={updatedPrayers()} leadPrayer={getLeadPrayer()} currentTime={currentTime()} />
           ) : displayMode() === 'iqamah' ? (
             <Iqamah prayers={updatedPrayers()} />
           ) : (

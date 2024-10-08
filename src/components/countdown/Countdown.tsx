@@ -2,10 +2,15 @@ import { createSignal, createEffect, onCleanup } from 'solid-js';
 import { format } from 'date-fns';
 import styles from './Countdown.module.scss';
 
-const IQAMAH_INTERVAL_MINS = parseInt(import.meta.env.VITE_IQAMAH_INTERVAL_MINS || '10', 10);
+const IQAMAH_INTERVAL_MINS = parseInt(import.meta.env.VITE_IQAMAH_INTERVAL_MINS || '12', 10);
 
-const Countdown: Component = () => {
-  const [timeLeft, setTimeLeft] = createSignal(IQAMAH_INTERVAL_MINS * 60); // Convert minutes to seconds
+interface CountdownProps {
+  secondsLeft: number;
+}
+
+const Countdown: Component = (props: CountdownProps) => {
+  const { secondsLeft } = props;
+  const [timeLeft, setTimeLeft] = createSignal(secondsLeft); // Convert minutes to seconds
 
   createEffect(() => {
     const timer = setInterval(() => {

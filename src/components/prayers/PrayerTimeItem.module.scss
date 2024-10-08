@@ -5,62 +5,63 @@
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #e0e0e0;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .name {
-  font-size: 4.3rem;
+  font-size: 5.5rem;
   font-weight: 700;
 }
 
 .inactiveName {
-  font-size: 4.3rem;
+  font-size: 5.5rem;
   font-weight: 700;
   color: silver;
 }
 
 .activeName {
-  font-size: 4.3rem;
+  font-size: 5.5rem;
   font-weight: 700;
   color: grey;
 }
 
 .nextName {
-  font-size: 4.3rem;
+  font-size: 5.5rem;
   font-weight: 700;
 }
 
 .immediateNextName {
   /* Add your styling for IMMEDIATE_NEXT time here */
-  color: #ff9800; /* Example: orange color for immediate next */
-  font-size: 4.3rem;
+  color:green !important;
+  font-size: 5.5rem;
   font-weight: 700;
 }
 
 .time {
-  font-size: 4.3rem;
+  font-size: 5.5rem;
   font-weight: 700;
 }
 
 .inactiveTime {
-  font-size: 4.3rem;
+  font-size: 5.5rem;
   font-weight: 700;
   color: silver;
 }
 
 .activeTime {
-  font-size: 4.3rem;
+  font-size: 5.5rem;
   font-weight: 700;
   color: grey;
 }
 
 .nextTime {
-  font-size: 4.3rem;
+  font-size: 5.5rem;
   font-weight: 700;
 }
 
 .immediateNextTime {
   /* Add your styling for IMMEDIATE_NEXT time here */
-  color: #ff9800; /* Example: orange color for immediate next */
-  font-size: 4.3rem;
+  color: green; /* Example: orange color for immediate next */
+  font-size: 5.5rem;
   font-weight: 700;
 }

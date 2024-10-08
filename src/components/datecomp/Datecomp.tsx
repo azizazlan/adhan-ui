@@ -33,9 +33,10 @@ const Datecomp: Component = () => {
 
       // Extract Hijri date components
       const hijriDay = data.data.hijri.day;
-      const hijriMonth = data.data.hijri.month.en;
+      const hijriMonth = data.data.hijri.month.number.toString().padStart(2, '0');
+      const hijriMonthName = data.data.hijri.month.en;
       const hijriYear = data.data.hijri.year;
-      const formattedHijriDate = `${hijriDay} ${hijriMonth} (${hijriDay}) ${hijriYear}`;
+      const formattedHijriDate = `${hijriDay}-${hijriMonth}(${hijriMonthName})-${hijriYear}`;
 
 
       setGregorianDate(`${malaysianDayName}, ${gregorianDate}.`);
