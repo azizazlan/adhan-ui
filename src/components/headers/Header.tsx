@@ -17,10 +17,14 @@ const Header = (props: HeaderProps) => {
       <Clock time={props.time} />
       <div>
         <Datecomp />
-        <button class={styles.testBtn} onClick={() => toggleDisplayMode('prayerslist')}>Home</button>
-        <button class={styles.testBtn} onClick={() => toggleDisplayMode('adhan')}>Test display adhan</button>
-        <button class={styles.testBtn} onClick={() => toggleDisplayMode('iqamah')}>Test display iqamah</button>
-        <button class={styles.testBtn} onClick={() => toggleTestSubuh()}>Test display Subuh</button>
+        {import.meta.env.VITE_DEV_MODE === 'true' && (
+          <div>
+            <button class={styles.testBtn} onClick={() => toggleDisplayMode('prayerslist')}>Home</button>
+            <button class={styles.testBtn} onClick={() => toggleDisplayMode('adhan')}>Test display adhan</button>
+            <button class={styles.testBtn} onClick={() => toggleDisplayMode('iqamah')}>Test display iqamah</button>
+            <button class={styles.testBtn} onClick={() => toggleTestSubuh()}>Test display Subuh</button>
+          </div>
+        )}
       </div>
     </div>
   )

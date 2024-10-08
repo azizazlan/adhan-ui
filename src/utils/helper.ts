@@ -1,21 +1,25 @@
 
-const SHOW_LASTTHIRD = import.meta.env.VITE_SHOW_LASTTHIRD === 'true';
 const VITE_ADHAN_MINS = Math.max(0, parseInt(import.meta.env.VITE_ADHAN_MINS || '10', 10));
 
-const isPrayerTimePast = (now: Date, prayerTime: string, prayerName: string) => {
-  // const now = currentDateTime();
-  const [hours, minutes] = prayerTime.split(':').map(Number);
-  let prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+import { parse, isAfter, subMinutes, setHours, setMinutes } from 'date-fns';
 
-  // If it's Lastthird and the time is before the current time, assume it's for the next day
-  if (SHOW_LASTTHIRD && prayerName === 'Las3rd' && prayerDate < now) {
-    prayerDate.setDate(prayerDate.getDate() + 1);
+const isPrayerTimePast = (now: Date, prayerTime: string | Date, prayerName: string) => {
+  let prayerDate: Date;
+
+  if (typeof prayerTime === 'string') {
+    const [hours, minutes] = prayerTime.split(':').map(Number);
+    prayerDate = setMinutes(setHours(new Date(now), hours), minutes);
+  } else if (prayerTime instanceof Date) {
+    prayerDate = new Date(prayerTime);
+  } else {
+    console.error(`Invalid prayer time for ${prayerName}: ${prayerTime}`);
+    return false; // Return false if prayerTime is neither string nor Date
   }
-
-  // The prayer time has passed more than 10 minutes ago
-  const afterMinutesAgo = new Date(now.getTime() - VITE_ADHAN_MINS * 60 * 1000);
-  return prayerDate < afterMinutesAgo;
+  // The prayer time has passed more than VITE_ADHAN_MINS minutes ago
+  const afterMinutesAgo = subMinutes(now, VITE_ADHAN_MINS);
+  return isAfter(afterMinutesAgo, prayerDate);
 };
+
 export { isPrayerTimePast };
 
 const isCurrentPrayer = (prayerName: string, currentPrayer: string) => prayerName === currentPrayer;

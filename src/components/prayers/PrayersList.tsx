@@ -7,12 +7,12 @@ import { formatPrayerTime } from '../../utils/formatter';
 
 interface PrayersProps {
   prayers: Prayer[];
-  t: i18n.TranslateFunction;
-  toggleDisplayMode: (mode: DisplayMode) => void;
+  activePrayer: Prayer;
+  nextPrayer: Prayer;
 }
 
 const PrayersList = (props: PrayersProps) => {
-  const { t, prayers, toggleDisplayMode } = props;
+  const { prayers, activePrayer, nextPrayer } = props;
   return (
     <div class={styles.container}>
       {prayers.map((prayer) => (

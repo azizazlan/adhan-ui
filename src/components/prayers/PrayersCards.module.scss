@@ -15,18 +15,43 @@
 }
 
 .cardHeader {
-  font-size: 2.1rem;
+  font-size: 2.9rem;
   font-weight: bold;
+  color: #666666;
 }
 
 .activeCardHeader {
-  background-color: rgb(23, 138, 85) !important;
+  background-color:#2ecc71;
   color: white !important;
-  font-size: 2.1rem;
+  font-size: 3rem;
   font-weight: bold;
+  min-height: 5.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: heartbeat 1.3s ease-in-out infinite;
+}
+
+.activeBody {
+  background-color:#edfbe3;
 }
 
 .time {
   font-size: 3.1rem;
   font-weight: bold;
+  color: #666666;
+}
+
+.activeTime {
+  font-size: 3.1rem;
+  font-weight: bold;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
 }

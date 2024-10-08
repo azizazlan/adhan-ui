@@ -14,7 +14,7 @@ const Iqamah: Component<AdhanProps> = (props) => {
   return (
     <div class={styles.container}>
       <div class={styles.message}>
-        <Badge bg="success" text="white">Iqamah</Badge>
+        <Badge class={styles.badge} text="white">Iqamah</Badge>
       </div>
       <div class={styles.countdown}>
         <Countdown />

@@ -13,7 +13,7 @@ const Adhan: Component<AdhanProps> = (props) => {
   return (
     <div class={styles.container}>
       <div class={styles.message}>
-        <Badge bg="success" text="white">Adhan</Badge>
+        <Badge class={styles.badge} text="white">Adhan</Badge>
       </div>
       <div class={styles.countdown}>
         <Countdown />

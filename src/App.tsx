@@ -1,7 +1,7 @@
-import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource, onCleanup } from 'solid-js';
+import { Component, createSignal, createEffect, createMemo, Suspense, Show, createResource, onCleanup, onMount } from 'solid-js';
 import * as i18n from "@solid-primitives/i18n";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { format, addDays, addMinutes, addSeconds, subHours, subMinutes, subSeconds, isValid, parse } from 'date-fns';
+import { addDays, setHours, setMinutes, isAfter, isBefore, startOfDay, parse } from 'date-fns';
 import styles from './App.module.scss';
 import Header from './components/headers';
 import { Footer } from './components/footers';
@@ -14,6 +14,7 @@ import Iqamah from './components/iqamah';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Hadith, HadithApiResponse } from './types/hadith';
+import { Prayer, PrayerMode } from './types/prayer';
 import { isPrayerTimePast } from './utils/helper';
 import getWindowDimensions from './utils/getWindowDimensions';
 
@@ -58,54 +59,58 @@ const App: Component = () => {
 
   const t = i18n.translator(dict);
   const [isDemo, setIsDemo] = createSignal(false);
-  const [time, setTime] = createSignal(new Date());
-  const [prayers, setPrayers] = createSignal([]);
   const [location] = createSignal(LOCATION);
+  const [time, setTime] = createSignal(new Date());
+  const [currentTime, setCurrentTime] = createSignal(new Date());
   const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerslist');
+  const [prayers, setPrayers] = createSignal<Prayer[]>([]);
+  const [lastFetchDate, setLastFetchDate] = createSignal<Date>(new Date());
 
   createEffect(() => {
     const timer = setInterval(() => {
       setTime(new Date());
     }, 1000);
-    return () => clearInterval(timer);
+
+    const updateModesInterval = setInterval(() => {
+      console.log('Updating prayer modes');
+      updatedPrayers();
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(updateModesInterval);
+    };
   });
 
-  const toggleDisplayMode = (mode: DisplayMode) => {
-    setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
-  };
-
-  const toggleTestSubuh = () => {
-  };
-
-  const fetchPrayers = async () => {
-    try {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      const timings = data.data.timings;
-      if (SHOW_LASTTHIRD) {
-        setPrayers([
-          { name: getPrayerName(LANGUAGE, 'Fajr'), time: timings.Fajr },
-          { name: getPrayerName(LANGUAGE, 'Sunrise'), time: timings.Sunrise },
-          { name: getPrayerName(LANGUAGE, 'Dhuhr'), time: timings.Dhuhr },
-          { name: getPrayerName(LANGUAGE, 'Asr'), time: timings.Asr },
-          { name: getPrayerName(LANGUAGE, 'Maghrib'), time: timings.Maghrib },
-          { name: getPrayerName(LANGUAGE, 'Isha'), time: timings.Isha },
-          { name: getPrayerName(LANGUAGE, 'Las3rd'), time: timings.Lastthird },
-        ]);
-      } else {
-        setPrayers([
-          { name: getPrayerName(LANGUAGE, 'Fajr'), time: timings.Fajr },
-          { name: getPrayerName(LANGUAGE, 'Sunrise'), time: timings.Sunrise },
-          { name: getPrayerName(LANGUAGE, 'Dhuhr'), time: timings.Dhuhr },
-          { name: getPrayerName(LANGUAGE, 'Asr'), time: timings.Asr },
-          { name: getPrayerName(LANGUAGE, 'Maghrib'), time: timings.Maghrib },
-          { name: getPrayerName(LANGUAGE, 'Isha'), time: timings.Isha },
-        ]);
-      }
-    } catch (error) {
-      console.error('Error fetching prayer times:', error);
+  const checkAndFetchPrayers = () => {
+    const now = new Date();
+    if (isAfter(now, startOfDay(addDays(lastFetchDate(), 1)))) {
+      fetchPrayers();
     }
   };
+
+  createEffect(() => {
+    // Initial fetch
+    fetchPrayers();
+    // Set up interval to check and fetch prayers daily
+    const dailyCheckInterval = setInterval(checkAndFetchPrayers, 60000); // Check every minute
+
+  });
+
+  onMount(() => {
+    fetchPrayers();
+
+    const dailyCheckInterval = setInterval(checkAndFetchPrayers, 60000);
+
+    const updateTimeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    onCleanup(() => {
+      clearInterval(dailyCheckInterval);
+      clearInterval(updateTimeInterval);
+    });
+  });
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -119,16 +124,67 @@ const App: Component = () => {
     }
   };
 
-  createEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
+  const toggleDisplayMode = (mode: DisplayMode) => {
+    setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
+  };
 
-    onCleanup(() => clearInterval(timer));
-  });
+  const toggleTestSubuh = () => {
+  };
 
-  createEffect(() => {
-    fetchPrayers();
+  const fetchPrayers = async () => {
+    console.log('fetchPrayers')
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      const timings = data.data.timings;
+      setPrayers([
+        { name: getPrayerName(LANGUAGE, 'Fajr'), time: timings.Fajr, mode: PrayerMode.INACTIVE },
+        { name: getPrayerName(LANGUAGE, 'Sunrise'), time: timings.Sunrise, mode: PrayerMode.INACTIVE },
+        { name: getPrayerName(LANGUAGE, 'Dhuhr'), time: timings.Dhuhr, mode: PrayerMode.INACTIVE },
+        { name: getPrayerName(LANGUAGE, 'Asr'), time: timings.Asr, mode: PrayerMode.INACTIVE },
+        { name: getPrayerName(LANGUAGE, 'Maghrib'), time: timings.Maghrib, mode: PrayerMode.INACTIVE },
+        { name: getPrayerName(LANGUAGE, 'Isha'), time: timings.Isha, mode: PrayerMode.INACTIVE },
+      ]);
+      setLastFetchDate(new Date());
+    } catch (error) {
+      console.error('Error fetching prayer times:', error);
+    }
+  };
+
+  const updatedPrayers = createMemo(() => {
+    const now = currentTime();
+    let activeIndex = -1;
+
+    // Find the active prayer
+    for (let i = 0; i < prayers().length; i++) {
+      const prayer = prayers()[i];
+      const nextPrayer = prayers()[(i + 1) % prayers().length];
+
+      const prayerTime = parse(prayer.time, 'HH:mm', now);
+      const nextPrayerTime = parse(nextPrayer.time, 'HH:mm',
+        i === prayers().length - 1 ? addDays(now, 1) : now
+      );
+
+      if (isAfter(now, prayerTime) && isBefore(now, nextPrayerTime)) {
+        activeIndex = i;
+        break;
+      }
+    }
+
+    // Update prayer modes
+    return prayers().map((prayer, index) => {
+      let mode;
+      if (index === activeIndex) {
+        mode = PrayerMode.ACTIVE;
+      } else if (index > activeIndex || (activeIndex === -1 && index === 0)) {
+        mode = PrayerMode.NEXT;
+      } else {
+        mode = PrayerMode.INACTIVE;
+      }
+
+      console.log(prayer.name, mode); // Log for debugging
+      return { ...prayer, mode };
+    });
   });
 
   return (
@@ -139,17 +195,17 @@ const App: Component = () => {
           {displayMode() === 'prayerslist' ? (
             <PrayersList
               t={t}
-              prayers={prayers()}
+              prayers={updatedPrayers()}
               toggleDisplayMode={toggleDisplayMode}
             />
           ) : displayMode() === 'adhan' ? (
-            <Adhan prayers={prayers()} />
+            <Adhan prayers={updatedPrayers()} />
           ) : displayMode() === 'iqamah' ? (
-            <Iqamah prayers={prayers()} />
+            <Iqamah prayers={updatedPrayers()} />
           ) : (
             <PrayersList
               t={t}
-              prayers={prayers()}
+              prayers={updatedPrayers()}
               toggleDisplayMode={toggleDisplayMode}
             />
           )}

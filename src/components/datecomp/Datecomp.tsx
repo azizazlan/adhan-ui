@@ -5,12 +5,25 @@ import styles from './Datecomp.module.scss'; // Assuming you have a CSS module f
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 
 const Datecomp: Component = () => {
-  const [formattedDate, setFormattedDate] = createSignal<string | null>(null);
+  const [gregorianDate, setGregorianDate] = createSignal<string | null>(null);
+  const [hijriDate, setHijriDate] = createSignal<string | null>(null);
 
   const fetchHijriDate = async (today: Date) => {
     try {
       const gregorianDate = format(today, 'dd-MM-yyyy');
-      const dayOfWeek = format(today, 'EEE');
+      const dayOfWeekEn = format(today, 'EEEE');
+
+      const malaysianDayNames: { [key: string]: string } = {
+        'Sunday': 'Ahad',
+        'Monday': 'Isnin',
+        'Tuesday': 'Selasa',
+        'Wednesday': 'Rabu',
+        'Thursday': 'Khamis',
+        'Friday': 'Jumaat',
+        'Saturday': 'Sabtu'
+      };
+
+      const malaysianDayName = malaysianDayNames[dayOfWeekEn];
 
       const response = await fetch(API_HIJRI + gregorianDate);
       if (!response.ok) {
@@ -18,10 +31,19 @@ const Datecomp: Component = () => {
       }
       const data = await response.json();
 
-      setFormattedDate(`${dayOfWeek},${gregorianDate}. ${data.data.hijri.date} ${data.data.hijri.month.en}`);
+      // Extract Hijri date components
+      const hijriDay = data.data.hijri.day;
+      const hijriMonth = data.data.hijri.month.en;
+      const hijriYear = data.data.hijri.year;
+      const formattedHijriDate = `${hijriDay} ${hijriMonth} (${hijriDay}) ${hijriYear}`;
+
+
+      setGregorianDate(`${malaysianDayName}, ${gregorianDate}.`);
+      setHijriDate(formattedHijriDate);
     } catch (error) {
       console.error('Error fetching hijri date:', error);
-      setFormattedDate('Error fetching date');
+      setGregorianDate('Error fetching date');
+      setHijriDate(null);
     }
   };
 
@@ -30,9 +52,9 @@ const Datecomp: Component = () => {
   });
 
   return (
-    <Show when={formattedDate()} fallback={<div class={styles.container}>Loading...</div>}>
+    <Show when={hijriDate()} fallback={<div class={styles.container}>Loading...</div>}>
       <div class={styles.container}>
-        {formattedDate()}
+        {gregorianDate()} <span class={styles.hijriDate}>{hijriDate()}</span>
       </div>
     </Show>
   );

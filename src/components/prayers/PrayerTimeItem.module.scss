@@ -12,15 +12,41 @@
   font-weight: 700;
 }
 
+.inactiveName {
+  font-size: 4.3rem;
+  font-weight: 700;
+  color: silver;
+}
+
+.activeName {
+  font-size: 4.3rem;
+  font-weight: 700;
+  color: grey;
+}
+
+.nextName {
+  font-size: 4.3rem;
+  font-weight: 700;
+}
+
 .time {
   font-size: 4.3rem;
   font-weight: 700;
 }
 
-@media screen and (min-width: 1280px) and (max-width: 1440px) {
-
+.inactiveTime {
+  font-size: 4.3rem;
+  font-weight: 700;
+  color: silver;
 }
 
-@media screen and (min-width: 2560px) and (max-width: 3840px) {
+.activeTime {
+  font-size: 4.3rem;
+  font-weight: 700;
+  color: grey;
+}
 
+.nextTime {
+  font-size: 4.3rem;
+  font-weight: 700;
 }
