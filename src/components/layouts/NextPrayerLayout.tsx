@@ -1,16 +1,21 @@
 import { createEffect, createMemo } from 'solid-js';
+import { format } from 'date-fns';
 import styles from './NextPrayerLayout.module.scss';
 import { Clock } from '../clock';
 import { PrayerBox } from '../prayer';
 import star from '../../assets/images/star.png';
 import { Prayer } from '../../types/Prayer';
+import { DisplayMode } from '../../types/displaymode';
 import Adhan from '../Adhan';
 
 interface NextPrayerLayoutProps {
   prayers: Prayer[];
   leadPrayer: Prayer;
   currentTime: Date;
+  displayMode: DisplayMode;
   toggleTestSubuh: () => void;
+  lastApiTimestamp: number;
+  toggleRefetch: () => void;
 }
 
 const BottomContainer = (props: NextPrayerLayoutProps) => {
@@ -32,20 +37,53 @@ const BottomContainer = (props: NextPrayerLayoutProps) => {
 };
 
 const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
+
+  const currentTime = createMemo(() => props.currentTime);
+  const displayMode = createMemo(() => props.displayMode);
+  const lastApiTimestamp = createMemo(() => props.lastApiTimestamp);
+  console.log('displayMode', displayMode());
+
   createEffect(() => {
     // console.log('PrayersList received updated prayers:', props.prayers);
   });
 
+  const renderMainArea = () => {
+    switch (displayMode()) {
+      case DisplayMode.ADHAN:
+        return (
+          <>
+            <Adhan leadPrayer={props.leadPrayer} currentTime={props.currentTime} />
+            <button class={styles.testButton} onClick={() => props.toggleTestSubuh()}>Test Subuh</button>
+          </>
+        );
+      case DisplayMode.PRAYER_TIME:
+        return (
+          <div class={styles.prayerTimeMessage}>It's prayer time!</div>
+        );
+      case DisplayMode.IQAMAH:
+        return <div class={styles.iqamahMessage}>Iqamah</div>
+      default:
+        return <div class={styles.devModeContainer}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <button class={styles.testButton} onClick={() => props.toggleTestSubuh()}>Test Subuh</button>
+            <button class={styles.testButton} onClick={() => props.toggleRefetch()}>Refetch</button>
+          </div>
+          <div>Last fetch api timestamp: {lastApiTimestamp()}</div>
+          <div>Formatted: {format(lastApiTimestamp() * 1000, 'dd/MM/yyyy')}</div>
+        </div>
+    }
+  };
+
   return (
     <div class={styles.container}>
       <div class={styles.mainArea}>
-        <Adhan leadPrayer={props.leadPrayer} currentTime={props.currentTime} />
-        <button class={styles.testButton} onClick={() => props.toggleTestSubuh()}>Test Subuh</button>
+        {renderMainArea()}
       </div>
       <div class={styles.starsBorder}></div>
       <BottomContainer prayers={props.prayers} currentTime={props.currentTime} />
     </div>
   );
+
 };
 
 export default NextPrayerLayout;

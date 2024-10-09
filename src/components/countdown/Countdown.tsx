@@ -37,6 +37,12 @@ const Countdown: Component<CountdownProps> = (props) => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  if (timeLeft() <= 0) {
+    return (
+      <div class={styles.container} />
+    );
+  }
+
   return (
     <div class={styles.container}>
       <div class={styles.countdown}>

@@ -6,10 +6,10 @@ import styles from './App.module.scss';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Prayer, PrayerMode } from './types/prayer';
+import { DisplayMode } from './types/displaymode';
 import { isPrayerTimePast } from './utils/helper';
 import getWindowDimensions from './utils/getWindowDimensions';
 import { NextPrayerLayout } from './components/layouts';
-
 
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const LOCATION = import.meta.env.VITE_LOCATION;
@@ -21,8 +21,6 @@ const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&l
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 const LANGUAGE = import.meta.env.VITE_LANGUAGE;
 const ADHAN_LEAD_MINS = parseInt(import.meta.env.VITE_ADHAN_LEAD_MINS || '1', 10);
-
-export type DisplayMode = 'prayerslist' | 'hadiths' | 'credits' | 'settings' | 'adhan' | 'iqamah';
 
 async function fetchDictionary(locale: Locale): Promise<Dictionary> {
   try {
@@ -51,10 +49,16 @@ const App: Component = () => {
   const [location] = createSignal(LOCATION);
   const [currentTime, setCurrentTime] = createSignal(new Date());
   const memoizedCurrentTime = createMemo(() => currentTime());
-  const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerslist');
+
+  const [displayMode, setDisplayMode] = createSignal<DisplayMode>(DisplayMode.DEFAULT);
+  const memoizedDisplayMode = createMemo(() => displayMode());
+
   const [prayers, setPrayers] = createSignal<Prayer[]>([]);
   const [leadPrayer, setLeadPrayer] = createSignal<Prayer | null>(null);
   const memoizedLeadPrayer = createMemo(() => leadPrayer());
+
+  const [lastApiTimestamp, setLastApiTimestamp] = createSignal<number>(0);
+  const memoizedLastApiTimestamp = createMemo(() => lastApiTimestamp());
 
   const [lastFetchDate, setLastFetchDate] = createSignal<Date>(new Date());
   const [secondsLeft, setSecondsLeft] = createSignal<number>(0);
@@ -72,7 +76,7 @@ const App: Component = () => {
   const checkPrayerProgress = () => {
     // console.log('checkPrayerProgress');
     // Get the prayer where mode is PrayerMode.IMMEDIATE_NEXT
-    const leadPrayer = prayers().find(prayer => prayer.mode === PrayerMode.IMMEDIATE_NEXT);
+    const leadPrayer = prayers().find(prayer => prayer.mode === PrayerMode.IMMEDIATE_NEXT && prayer.name !== 'Syuruk');
     if (leadPrayer) {
       setLeadPrayer(leadPrayer);
       const leadPrayerTime = parse(leadPrayer.time, 'HH:mm', currentTime());
@@ -80,12 +84,16 @@ const App: Component = () => {
       setSecondsLeft(secLeft);
       // console.log(secLeft);
       // console.log(differenceInMinutes(leadPrayerTime, currentTime()))
-      if (displayMode() !== 'adhan' && ADHAN_LEAD_MINS === differenceInMinutes(leadPrayerTime, currentTime()) + 1) {
+      if (displayMode() !== 'iqamah' && displayMode() !== 'adhan' && ADHAN_LEAD_MINS === differenceInMinutes(leadPrayerTime, currentTime()) + 1) {
         console.log('toggleDisplayMode - adhan', leadPrayer.name);
-        toggleDisplayMode('adhan');
+        setDisplayMode(DisplayMode.ADHAN);
       }
       if (displayMode() === 'adhan' && secondsLeft() === 0) {
-        toggleDisplayMode('iqamah');
+        console.log('toggleDisplayMode - iqamah', leadPrayer.name);
+        setDisplayMode(DisplayMode.IQAMAH);
+      }
+      if (secLeft() <= 0) {
+        setDisplayMode(DisplayMode.DEFAULT);
       }
     }
   };
@@ -101,6 +109,7 @@ const App: Component = () => {
   createEffect(() => {
     memoizedLeadPrayer()
     memoizedCurrentTime();
+    memoizedLastApiTimestamp();
   });
 
   onMount(() => {
@@ -139,11 +148,6 @@ const App: Component = () => {
     }
   };
 
-  const toggleDisplayMode = (mode: DisplayMode) => {
-    setDisplayMode(prev => prev === mode ? 'prayerTimes' : mode);
-  };
-
-
   const toggleTestSubuh = () => {
     const newTestMode = !isTestMode();
     setIsTestMode(newTestMode);
@@ -161,7 +165,7 @@ const App: Component = () => {
           subuhTime = set(subuhTime, { date: subuhTime.getDate() + 1 });
         }
         let nMinuteBeforeSubuh = subMinutes(subuhTime, ADHAN_LEAD_MINS);
-        nMinuteBeforeSubuh = subSeconds(nMinuteBeforeSubuh, 5);
+        nMinuteBeforeSubuh = addSeconds(nMinuteBeforeSubuh, 55);
         setTestStartTime(nMinuteBeforeSubuh);
         setCurrentTime(nMinuteBeforeSubuh);
         setPrayers(prev => updatedPrayers());
@@ -192,9 +196,17 @@ const App: Component = () => {
         { name: getPrayerName(LANGUAGE, 'Isha'), time: timings.Isha, mode: PrayerMode.INACTIVE },
       ]);
       setLastFetchDate(new Date());
+      const timestamp = parseInt(data.data.date.timestamp, 10);
+      console.log(`timestamp: ${timestamp}`);
+      setLastApiTimestamp(timestamp);
     } catch (error) {
       console.error('Error fetching prayer times:', error);
     }
+  };
+
+  const toggleRefetch = () => {
+    console.log('toggleRefetch');
+    fetchPrayers();
   };
 
   const updatedPrayers = createMemo(() => {
@@ -224,7 +236,7 @@ const App: Component = () => {
       let mode;
       if (index === activeIndex) {
         mode = PrayerMode.ACTIVE;
-      } else if (index === (activeIndex + 1) % prayers().length) {
+      } else if (index === (activeIndex + 1) % prayers().length && prayer.name !== 'Syuruk') {
         setLeadPrayer(prayer);
         mode = PrayerMode.IMMEDIATE_NEXT;
       } else if (index > activeIndex || (activeIndex === -1 && index < prayers().length - 1)) {
@@ -241,11 +253,13 @@ const App: Component = () => {
       <div class={styles.App}>
         <div class={styles.contents} style={{ height: `${getWindowDimensions().height}px` }}>
           <NextPrayerLayout
+            displayMode={memoizedDisplayMode()}
             prayers={updatedPrayers()}
             leadPrayer={memoizedLeadPrayer()}
             currentTime={memoizedCurrentTime()}
-            toggleDisplayMode={toggleDisplayMode}
+            lastApiTimestamp={memoizedLastApiTimestamp()}
             toggleTestSubuh={toggleTestSubuh}
+            toggleRefetch={toggleRefetch}
           />
         </div>
       </div>
