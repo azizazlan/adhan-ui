@@ -1,4 +1,4 @@
-import { Component, createMemo } from 'solid-js';
+import { Component, createMemo, createEffect } from 'solid-js';
 import { differenceInSeconds, parse } from 'date-fns';
 import styles from './Adhan.module.scss';
 import PrayersCards from '../prayers/PrayersCards';
@@ -12,16 +12,23 @@ interface AdhanProps {
 const Adhan: Component<AdhanProps> = (props) => {
   const currentTime = createMemo(() => props.currentTime);
   const leadPrayer = createMemo(() => props.leadPrayer);
-  const leadPrayerTime = parse(leadPrayer().time, 'HH:mm', currentTime());
-  const secondsLeft = differenceInSeconds(leadPrayerTime, currentTime());
-  console.log(`secondsLeft: ${secondsLeft}`);
+
+  const secondsLeft = createMemo(() => {
+    const leadPrayerTime = parse(leadPrayer().time, 'HH:mm', currentTime());
+    return differenceInSeconds(leadPrayerTime, currentTime());
+  });
+
+  createEffect(() => {
+    console.log(`secondsLeft: ${secondsLeft()}`);
+  });
+
   return (
     <div class={styles.container}>
       <div class={styles.message}>
         ADHAN {leadPrayer().name.toUpperCase()} SEBENTAR LAGI
       </div>
       <div class={styles.countdown}>
-        <Countdown secondsLeft={secondsLeft} />
+        <Countdown secondsLeft={secondsLeft()} />
       </div>
     </div>
   );

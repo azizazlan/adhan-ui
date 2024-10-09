@@ -78,7 +78,7 @@ const App: Component = () => {
       const leadPrayerTime = parse(leadPrayer.time, 'HH:mm', currentTime());
       const secLeft = differenceInSeconds(leadPrayerTime, currentTime());
       setSecondsLeft(secLeft);
-      console.log(secLeft);
+      // console.log(secLeft);
       // console.log(differenceInMinutes(leadPrayerTime, currentTime()))
       if (displayMode() !== 'adhan' && ADHAN_LEAD_MINS === differenceInMinutes(leadPrayerTime, currentTime()) + 1) {
         console.log('toggleDisplayMode - adhan', leadPrayer.name);
@@ -99,7 +99,7 @@ const App: Component = () => {
   });
 
   createEffect(() => {
-    console.log("Lead prayer updated:", memoizedLeadPrayer());
+    memoizedLeadPrayer()
     memoizedCurrentTime();
   });
 

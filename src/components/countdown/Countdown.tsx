@@ -8,11 +8,14 @@ interface CountdownProps {
   secondsLeft: number;
 }
 
-const Countdown: Component = (props: CountdownProps) => {
+const Countdown: Component<CountdownProps> = (props) => {
   const secondsLeft = createMemo(() => props.secondsLeft);
-  const [timeLeft, setTimeLeft] = createSignal(secondsLeft()); // Convert minutes to seconds
+  const [timeLeft, setTimeLeft] = createSignal(secondsLeft());
 
   createEffect(() => {
+    // Update timeLeft when secondsLeft changes
+    setTimeLeft(secondsLeft());
+
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 0) {
@@ -39,6 +42,7 @@ const Countdown: Component = (props: CountdownProps) => {
       <div class={styles.countdown}>
         {formatTime(timeLeft())}
       </div>
+      <div>{timeLeft()}</div>
     </div>
   );
 };
