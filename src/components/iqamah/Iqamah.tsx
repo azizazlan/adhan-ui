@@ -2,8 +2,8 @@ import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
 import { Badge, Card } from 'solid-bootstrap';
 import styles from './Iqamah.module.scss';
 import { Countdown } from '../countdown';
-
-const IQAMAH_INTERVAL_MINS = parseInt(import.meta.env.VITE_IQAMAH_INTERVAL_MINS || '12', 10);
+// 720000 MS = 12 mins
+const IQAMAH_INTERVAL_MS = parseInt(import.meta.env.VITE_IQAMAH_INTERVAL_MS || '720000', 10);
 
 interface IqamahProps {
   prayers: Prayer[];
@@ -12,7 +12,7 @@ interface IqamahProps {
 const Iqamah: Component<AdhanProps> = (props) => {
   const { prayers } = props;
 
-  const [timeLeft, setTimeLeft] = createSignal(IQAMAH_INTERVAL_MINS * 60);
+  const [timeLeft, setTimeLeft] = createSignal(IQAMAH_INTERVAL_MS / 1000);
   const [beginPrayer, setBeginPrayer] = createSignal(false);
 
   createEffect(() => {
@@ -35,6 +35,7 @@ const Iqamah: Component<AdhanProps> = (props) => {
     <div class={styles.container}>
       {beginPrayer() ? (
         <div class={styles.beginPrayerContainer}>
+          <div class={styles.safTitle}>الصلاة</div>
           <div class={styles.message}>LURUS DAN RAPATKAN SAF</div>
         </div>
       ) :
