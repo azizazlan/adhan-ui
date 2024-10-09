@@ -13,7 +13,7 @@ const Iqamah: Component<AdhanProps> = (props) => {
   const { prayers } = props;
 
   const [timeLeft, setTimeLeft] = createSignal(IQAMAH_INTERVAL_MINS * 60);
-  const [beginPrayer, setBeginPrayer] = createSignal(true);
+  const [beginPrayer, setBeginPrayer] = createSignal(false);
 
   createEffect(() => {
     const timer = setInterval(() => {
@@ -23,6 +23,7 @@ const Iqamah: Component<AdhanProps> = (props) => {
           setBeginPrayer(true);
           return 0;
         }
+        console.log('timeLeft', prev);
         return prev - 1;
       });
     }, 1000);
@@ -34,13 +35,12 @@ const Iqamah: Component<AdhanProps> = (props) => {
     <div class={styles.container}>
       {beginPrayer() ? (
         <div class={styles.beginPrayerContainer}>
-          <div class={styles.messageHeader}>Saf</div>
-          <div class={styles.message}>Saf</div>
+          <div class={styles.message}>LURUS DAN RAPATKAN SAF</div>
         </div>
       ) :
         <div class={styles.iqamahContainer}>
-          <div class={styles.message}>
-            <Badge class={styles.badge} text="white">Iqamah</Badge>
+          <div class={styles.iqamahMessage}>
+            IQAMAH SEBENTAR LAGI
           </div>
           <div class={styles.countdown}>
             <Countdown secondsLeft={timeLeft()} />

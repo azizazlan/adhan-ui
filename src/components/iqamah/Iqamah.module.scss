@@ -5,26 +5,28 @@
   justify-content: center;
   height: 100%;
   margin: 1rem;
+  color: white;
 }
 
-.badge {
- background-color:green !important;
-}
-
-.messageHeader {
+.iqamahContainer {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  font-size: 6.7rem;
-  font-weight: bold;
-  // border: 1px solid #006266;
+  justify-content: center;
+  height: 100%;
 }
 
 .message {
   display: flex;
   align-items: center;
-  font-size: 5.7rem;
-  font-weight: bold;
-  // border: 1px solid #006266;
+  font-size: 3.0rem;
+}
+
+.iqamahMessage {
+  padding-top: 9rem;
+  display: flex;
+  align-items: center;
+  font-size: 3.0rem;
 }
 
 .countdown {
@@ -33,19 +35,4 @@
   align-items: center;
   justify-content: center;
   margin-top: -5rem;
-}
-
-.beginPrayerContainer {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.iqamahContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }

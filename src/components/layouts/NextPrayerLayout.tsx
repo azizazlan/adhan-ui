@@ -7,7 +7,7 @@ import star from '../../assets/images/star.png';
 import { Prayer } from '../../types/Prayer';
 import { DisplayMode } from '../../types/displaymode';
 import Adhan from '../Adhan';
-
+import Iqamah from '../iqamah/Iqamah';
 interface NextPrayerLayoutProps {
   prayers: Prayer[];
   leadPrayer: Prayer;
@@ -16,6 +16,7 @@ interface NextPrayerLayoutProps {
   toggleTestSubuh: () => void;
   lastApiTimestamp: number;
   toggleRefetch: () => void;
+  toggleTestScreenIqamah: () => void;
 }
 
 const BottomContainer = (props: NextPrayerLayoutProps) => {
@@ -50,21 +51,17 @@ const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
   const renderMainArea = () => {
     switch (displayMode()) {
       case DisplayMode.ADHAN:
-        return (
-          <>
-            <Adhan leadPrayer={props.leadPrayer} currentTime={props.currentTime} />
-            <button class={styles.testButton} onClick={() => props.toggleTestSubuh()}>Test Subuh</button>
-          </>
-        );
+        return <Adhan leadPrayer={props.leadPrayer} currentTime={props.currentTime} />
       case DisplayMode.PRAYER_TIME:
         return (
           <div class={styles.prayerTimeMessage}>It's prayer time!</div>
         );
       case DisplayMode.IQAMAH:
-        return <div class={styles.iqamahMessage}>Iqamah</div>
+        return <Iqamah />
       default:
         return <div class={styles.devModeContainer}>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center' }}>
+            <button class={styles.testButton} onClick={() => props.toggleTestScreenIqamah()}>Iqamah Screen</button>
             <button class={styles.testButton} onClick={() => props.toggleTestSubuh()}>Test Subuh</button>
             <button class={styles.testButton} onClick={() => props.toggleRefetch()}>Refetch</button>
           </div>

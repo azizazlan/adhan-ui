@@ -66,6 +66,10 @@ const App: Component = () => {
   const [isTestMode, setIsTestMode] = createSignal(false);
   const [testStartTime, setTestStartTime] = createSignal<Date | null>(null);
 
+  const toggleTestScreenIqamah = () => {
+    setDisplayMode(DisplayMode.IQAMAH);
+  };
+
   const checkAndFetchPrayers = () => {
     const now = new Date();
     if (isAfter(now, startOfDay(addDays(lastFetchDate(), 1)))) {
@@ -84,16 +88,17 @@ const App: Component = () => {
       setSecondsLeft(secLeft);
       // console.log(secLeft);
       // console.log(differenceInMinutes(leadPrayerTime, currentTime()))
-      if (displayMode() !== 'iqamah' && displayMode() !== 'adhan' && ADHAN_LEAD_MINS === differenceInMinutes(leadPrayerTime, currentTime()) + 1) {
+      if (displayMode() !== DisplayMode.IQAMAH && displayMode() !== DisplayMode.ADHAN && ADHAN_LEAD_MINS === differenceInMinutes(leadPrayerTime, currentTime()) + 1) {
         console.log('toggleDisplayMode - adhan', leadPrayer.name);
         setDisplayMode(DisplayMode.ADHAN);
       }
-      if (displayMode() === 'adhan' && secondsLeft() === 0) {
+      if (displayMode() === DisplayMode.ADHAN && secondsLeft() === 0) {
         console.log('toggleDisplayMode - iqamah', leadPrayer.name);
         setDisplayMode(DisplayMode.IQAMAH);
       }
-      if (secLeft() <= 0) {
-        setDisplayMode(DisplayMode.DEFAULT);
+      if (secLeft <= 0 && displayMode() !== DisplayMode.IQAMAH) {
+        console.log('toggleDisplayMode - iqamah', leadPrayer.name);
+        setDisplayMode(DisplayMode.IQAMAH);
       }
     }
   };
@@ -260,6 +265,7 @@ const App: Component = () => {
             lastApiTimestamp={memoizedLastApiTimestamp()}
             toggleTestSubuh={toggleTestSubuh}
             toggleRefetch={toggleRefetch}
+            toggleTestScreenIqamah={toggleTestScreenIqamah}
           />
         </div>
       </div>
