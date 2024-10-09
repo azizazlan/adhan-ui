@@ -3,12 +3,13 @@ import * as i18n from "@solid-primitives/i18n";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { differenceInMinutes, differenceInSeconds, format, addDays, addSeconds, setHours, setMinutes, isAfter, isBefore, startOfDay, parse, set, subMinutes, subSeconds } from 'date-fns';
 import styles from './App.module.scss';
-import DefaultLayout from './components/layouts/DefaultLayout';
 import { formatPrayerTime, formatCountdown, formatTime, getFormattedDate } from './utils/formatter';
 import { getPrayerName } from './utils/prayername';
 import { Prayer, PrayerMode } from './types/prayer';
 import { isPrayerTimePast } from './utils/helper';
 import getWindowDimensions from './utils/getWindowDimensions';
+import { NextPrayerLayout } from './components/layouts';
+
 
 const API_KEY = import.meta.env.VITE_HADITH_API_KEY;
 const LOCATION = import.meta.env.VITE_LOCATION;
@@ -49,8 +50,12 @@ const App: Component = () => {
   const [isDemo, setIsDemo] = createSignal(false);
   const [location] = createSignal(LOCATION);
   const [currentTime, setCurrentTime] = createSignal(new Date());
+  const memoizedCurrentTime = createMemo(() => currentTime());
   const [displayMode, setDisplayMode] = createSignal<DisplayMode>('prayerslist');
   const [prayers, setPrayers] = createSignal<Prayer[]>([]);
+  const [leadPrayer, setLeadPrayer] = createSignal<Prayer | null>(null);
+  const memoizedLeadPrayer = createMemo(() => leadPrayer());
+
   const [lastFetchDate, setLastFetchDate] = createSignal<Date>(new Date());
   const [secondsLeft, setSecondsLeft] = createSignal<number>(0);
 
@@ -64,15 +69,12 @@ const App: Component = () => {
     }
   };
 
-  const getLeadPrayer = () => {
-    return prayers().find(prayer => prayer.mode === PrayerMode.IMMEDIATE_NEXT);
-  };
-
   const checkPrayerProgress = () => {
     // console.log('checkPrayerProgress');
     // Get the prayer where mode is PrayerMode.IMMEDIATE_NEXT
-    const leadPrayer = getLeadPrayer();
+    const leadPrayer = prayers().find(prayer => prayer.mode === PrayerMode.IMMEDIATE_NEXT);
     if (leadPrayer) {
+      setLeadPrayer(leadPrayer);
       const leadPrayerTime = parse(leadPrayer.time, 'HH:mm', currentTime());
       const secLeft = differenceInSeconds(leadPrayerTime, currentTime());
       setSecondsLeft(secLeft);
@@ -94,6 +96,11 @@ const App: Component = () => {
     // Set up interval to check and fetch prayers daily
     const dailyCheckInterval = setInterval(checkAndFetchPrayers, 60000); // Check every minute
 
+  });
+
+  createEffect(() => {
+    console.log("Lead prayer updated:", memoizedLeadPrayer());
+    memoizedCurrentTime();
   });
 
   onMount(() => {
@@ -218,6 +225,7 @@ const App: Component = () => {
       if (index === activeIndex) {
         mode = PrayerMode.ACTIVE;
       } else if (index === (activeIndex + 1) % prayers().length) {
+        setLeadPrayer(prayer);
         mode = PrayerMode.IMMEDIATE_NEXT;
       } else if (index > activeIndex || (activeIndex === -1 && index < prayers().length - 1)) {
         mode = PrayerMode.NEXT;
@@ -232,9 +240,10 @@ const App: Component = () => {
     <Show when={dict() && prayers().length > 0} fallback={<div>Loading...</div>}>
       <div class={styles.App}>
         <div class={styles.contents} style={{ height: `${getWindowDimensions().height}px` }}>
-          <DefaultLayout
+          <NextPrayerLayout
             prayers={updatedPrayers()}
-            currentTime={currentTime}
+            leadPrayer={memoizedLeadPrayer()}
+            currentTime={memoizedCurrentTime()}
             toggleDisplayMode={toggleDisplayMode}
             toggleTestSubuh={toggleTestSubuh}
           />

@@ -5,8 +5,20 @@
   justify-content: center;
   font-family: 'Oswald', sans-serif;
   padding: 1.0rem;
-  color: #0097e6;
+  color: #0984e3;
   font-size: 2.7rem;
   font-weight: 400;
   height: 195px;
+}
+
+.container.active {
+  border: 1px solid #0984e3;
+  border-radius: 10px;
+  background-color: #0984e3;
+  color: #fff;
+}
+
+.time {
+  font-size: 4.5rem;
+  font-weight: 500;
 }

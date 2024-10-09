@@ -5,18 +5,14 @@
   justify-content: center;
   height: 100%;
   margin: 1rem;
-}
-
-.badge {
-  background-color:green !important;
+  color: white;
 }
 
 .message {
+  padding-top: 10rem;
   display: flex;
   align-items: center;
-  font-size: 5.7rem;
-  font-weight: bold;
-  // border: 1px solid #006266;
+  font-size: 3.0rem;
 }
 
 .countdown {

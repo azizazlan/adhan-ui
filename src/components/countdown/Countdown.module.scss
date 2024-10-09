@@ -1,5 +1,15 @@
 .container {
-  padding-left: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 1rem;
+  color: white;
+}
+
+.countdown {
+  text-align: center;
   font-size: 17rem;
   font-weight: bold;
   min-width: 870px;

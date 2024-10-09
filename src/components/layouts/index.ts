@@ -1,4 +1,5 @@
+import NextPrayerLayout from './NextPrayerLayout';
 
-
-import PrayersList from "./PrayersList";
-export default PrayersList;
+export {
+  NextPrayerLayout,
+};

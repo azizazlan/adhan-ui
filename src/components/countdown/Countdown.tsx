@@ -1,4 +1,4 @@
-import { createSignal, createEffect, onCleanup } from 'solid-js';
+import { createSignal, createMemo, createEffect, onCleanup } from 'solid-js';
 import { format } from 'date-fns';
 import styles from './Countdown.module.scss';
 
@@ -9,8 +9,8 @@ interface CountdownProps {
 }
 
 const Countdown: Component = (props: CountdownProps) => {
-  const { secondsLeft } = props;
-  const [timeLeft, setTimeLeft] = createSignal(secondsLeft); // Convert minutes to seconds
+  const secondsLeft = createMemo(() => props.secondsLeft);
+  const [timeLeft, setTimeLeft] = createSignal(secondsLeft()); // Convert minutes to seconds
 
   createEffect(() => {
     const timer = setInterval(() => {
@@ -27,14 +27,18 @@ const Countdown: Component = (props: CountdownProps) => {
   });
 
   const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   return (
     <div class={styles.container}>
-      {formatTime(timeLeft())}
+      <div class={styles.countdown}>
+        {formatTime(timeLeft())}
+      </div>
     </div>
   );
 };

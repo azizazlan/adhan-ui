@@ -1,25 +1,30 @@
-import { createSignal, onCleanup, Component } from 'solid-js';
+import { createSignal, onCleanup, Component, createMemo } from 'solid-js';
 import { format } from 'date-fns';
 import styles from './Clock.module.scss';
 
 interface ClockProps {
-  time: () => Date,
+  time: Date,
 }
 
 const Clock: Component<ClockProps> = (props) => {
-
-  const format12Hour = (date: Date) => {
-    return format(date, 'hh:mm:ssa ');
-  };
+  const time = createMemo(() => props.time);
 
   const format24Hour = (date: Date) => {
-    return format(date, 'HH:mm:ss ');
+    return format(date, 'HH:mm');
+  };
+
+  const formatDate = (date: Date) => {
+    return format(date, 'EEE dd MMM yyyy');
   };
 
   return (
     <div class={styles.clock}>
-      {format12Hour(props.time)}
-      {/* <p>{format24Hour(time)}</p> */}
+      <div class={styles.time}>
+        {format24Hour(time())}
+      </div>
+      <div class={styles.date}>
+        {formatDate(time())}
+      </div>
     </div>
   );
 };
