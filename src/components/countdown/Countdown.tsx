@@ -42,7 +42,6 @@ const Countdown: Component<CountdownProps> = (props) => {
       <div class={styles.countdown}>
         {formatTime(timeLeft())}
       </div>
-      <div>{timeLeft()}</div>
     </div>
   );
 };
