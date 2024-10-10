@@ -68,6 +68,10 @@ const App: Component = () => {
   const memoizedIsTestMode = createMemo(() => isTestMode());
   const [testStartTime, setTestStartTime] = createSignal<Date | null>(null);
 
+  const toggleDisplayMode = (mode: DisplayMode) => {
+    setDisplayMode(mode);
+  };
+
   const toggleTestScreenIqamah = () => {
     setDisplayMode(DisplayMode.IQAMAH);
   };
@@ -299,6 +303,7 @@ const App: Component = () => {
             toggleTestSyuruk={toggleTestSyuruk}
             toggleRefetch={toggleRefetch}
             toggleTestScreenIqamah={toggleTestScreenIqamah}
+            toggleDisplayMode={toggleDisplayMode}
           />
         </div>
       </div>

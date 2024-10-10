@@ -9,6 +9,7 @@ import { DisplayMode } from '../../types/displaymode';
 import Adhan from '../Adhan';
 import Iqamah from '../iqamah/Iqamah';
 import Devmode from '../devmode/Devmode';
+import PrayerTimes from '../prayer/PrayerTimes';
 
 interface NextPrayerLayoutProps {
   isTestMode: boolean;
@@ -21,6 +22,7 @@ interface NextPrayerLayoutProps {
   lastApiTimestamp: number;
   toggleRefetch: () => void;
   toggleTestScreenIqamah: () => void;
+  toggleDisplayMode: (mode: DisplayMode) => void;
 }
 
 const BottomContainer = (props: NextPrayerLayoutProps) => {
@@ -43,6 +45,7 @@ const BottomContainer = (props: NextPrayerLayoutProps) => {
 
 const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
 
+  const prayers = createMemo(() => props.prayers);
   const currentTime = createMemo(() => props.currentTime);
   const displayMode = createMemo(() => props.displayMode);
   const lastApiTimestamp = createMemo(() => props.lastApiTimestamp);
@@ -63,6 +66,8 @@ const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
         );
       case DisplayMode.IQAMAH:
         return <Iqamah />
+      case DisplayMode.PRAYER_TIMES:
+        return <PrayerTimes prayers={prayers()} />
       default:
         if (import.meta.env.VITE_DEV_MODE === 'true') {
           return <Devmode
@@ -71,6 +76,7 @@ const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
             toggleTestSyuruk={props.toggleTestSyuruk}
             toggleRefetch={props.toggleRefetch}
             lastApiTimestamp={lastApiTimestamp()}
+            toggleDisplayMode={props.toggleDisplayMode}
           />
         }
         return <div>Default</div>
@@ -82,7 +88,7 @@ const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
       <div class={styles.mainArea}>
         {renderMainArea()}
       </div>
-      <div class={styles.starsBorder}></div>
+      {import.meta.env.VITE_DEV_MODE !== 'true' && <div class={styles.starsBorder}></div>}
       <BottomContainer prayers={props.prayers} currentTime={props.currentTime} isTestMode={isTestMode()} />
     </div>
   );

@@ -1,5 +1,6 @@
 import { createMemo } from 'solid-js';
 import { format } from 'date-fns';
+import { DisplayMode } from '../../types/displaymode';
 import styles from './Devmode.module.scss';
 
 interface DevmodeProps {
@@ -15,11 +16,6 @@ const Devmode = (props: DevmodeProps) => {
   const lastApiTimestamp = createMemo(() => props.lastApiTimestamp);
   return (
     <div class={styles.container}>
-      <button class={styles.testButton} onClick={() => props.toggleTestScreenIqamah()}>Iqamah Screen</button>
-      <button class={styles.testButton} onClick={() => props.toggleTestScreenPrayers()}>Prayers Screen</button>
-      <button class={styles.testButton} onClick={() => props.toggleTestSubuh()}>Test Subuh</button>
-      <button class={styles.testButton} onClick={() => props.toggleTestSyuruk()}>Test Syuruk</button>
-      <button class={styles.testButton} onClick={() => props.toggleRefetch()}>Refetch</button>
       <div class={styles.paramsContainer}>
         <h4>Production params</h4>
         <div>VITE_ADHAN_LEAD_MINS: {import.meta.env.VITE_ADHAN_LEAD_MINS}</div>
@@ -34,6 +30,13 @@ const Devmode = (props: DevmodeProps) => {
         <hr />
         <div>Last fetch api timestamp: {lastApiTimestamp()}</div>
         <div>Formatted: {format(lastApiTimestamp() * 1000, 'dd/MM/yyyy')}</div>
+      </div>
+      <div class={styles.testButtonsContainer}>
+        <button class={styles.testButton} onClick={() => props.toggleTestScreenIqamah()}>Iqamah Screen</button>
+        <button class={styles.testButton} onClick={() => props.toggleDisplayMode(DisplayMode.PRAYER_TIMES)}>Prayers Screen</button>
+        <button class={styles.testButton} onClick={() => props.toggleTestSubuh()}>Test Subuh</button>
+        <button class={styles.testButton} onClick={() => props.toggleTestSyuruk()}>Test Syuruk</button>
+        <button class={styles.testButton} onClick={() => props.toggleRefetch()}>Refetch</button>
       </div>
     </div>
   );
