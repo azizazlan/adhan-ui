@@ -17,6 +17,7 @@ interface NextPrayerLayoutProps {
   currentTime: Date;
   displayMode: DisplayMode;
   toggleTestSubuh: () => void;
+  toggleTestSyuruk: () => void;
   lastApiTimestamp: number;
   toggleRefetch: () => void;
   toggleTestScreenIqamah: () => void;
@@ -67,6 +68,7 @@ const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
           return <Devmode
             toggleTestScreenIqamah={props.toggleTestScreenIqamah}
             toggleTestSubuh={props.toggleTestSubuh}
+            toggleTestSyuruk={props.toggleTestSyuruk}
             toggleRefetch={props.toggleRefetch}
             lastApiTimestamp={lastApiTimestamp()}
           />

@@ -159,7 +159,6 @@ const App: Component = () => {
 
     if (newTestMode) {
       const subuhPrayer = prayers().find(prayer => prayer.name === 'Fajr' || prayer.name === 'Subuh');
-
       if (subuhPrayer) {
         const now = new Date();
         const [hours, minutes] = subuhPrayer.time.split(':').map(Number);
@@ -177,6 +176,37 @@ const App: Component = () => {
         // console.log('Test mode activated. Current time set to:', oneMinuteBeforeSubuh.toLocaleString());
       } else {
         console.error('Subuh prayer not found');
+        setIsTestMode(false);
+      }
+    } else {
+      setCurrentTime(new Date());
+      setTestStartTime(null);
+      console.log('Test mode deactivated. Returned to current time.');
+    }
+  };
+
+  const toggleTestSyuruk = () => {
+    const newTestMode = !isTestMode();
+    setIsTestMode(newTestMode);
+    if (newTestMode) {
+      const syurukPrayer = prayers().find(prayer => prayer.name === 'Syuruk');
+      if (syurukPrayer) {
+        const now = new Date();
+        const [hours, minutes] = syurukPrayer.time.split(':').map(Number);
+
+        let syurukTime = set(now, { hours, minutes, seconds: 0, milliseconds: 0 });
+
+        if (syurukTime < now) {
+          syurukTime = set(syurukTime, { date: syurukTime.getDate() + 1 });
+        }
+
+        let nMinuteBeforeTiming = subMinutes(syurukTime, ADHAN_LEAD_MINS_TEST);
+        nMinuteBeforeTiming = addSeconds(nMinuteBeforeTiming, 55); // Make it quicker I can't wait one minute!
+        setTestStartTime(nMinuteBeforeTiming);
+        setCurrentTime(nMinuteBeforeTiming);
+        setPrayers(prev => updatedPrayers());
+      } else {
+        console.error('Syuruk prayer not found');
         setIsTestMode(false);
       }
     } else {
@@ -266,6 +296,7 @@ const App: Component = () => {
             currentTime={memoizedCurrentTime()}
             lastApiTimestamp={memoizedLastApiTimestamp()}
             toggleTestSubuh={toggleTestSubuh}
+            toggleTestSyuruk={toggleTestSyuruk}
             toggleRefetch={toggleRefetch}
             toggleTestScreenIqamah={toggleTestScreenIqamah}
           />
