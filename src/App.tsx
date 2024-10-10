@@ -20,7 +20,8 @@ const TUNE = import.meta.env.VITE_TUNE;
 const API_URL = `https://api.aladhan.com/v1/timings/today?latitude=${LATITUDE}&longitude=${LONGITUDE}&method=17&timezonestring=${TIMEZONE}&tune=${TUNE}`;
 const API_HIJRI = "https://api.aladhan.com/v1/gToH/";
 const LANGUAGE = import.meta.env.VITE_LANGUAGE;
-const ADHAN_LEAD_MINS = parseInt(import.meta.env.VITE_ADHAN_LEAD_MINS || '1', 10);
+const ADHAN_LEAD_MINS = parseInt(import.meta.env.VITE_ADHAN_LEAD_MINS || '30', 10);
+const ADHAN_LEAD_MINS_TEST = parseInt(import.meta.env.VITE_ADHAN_LEAD_MINS_TEST || '1', 10);
 
 async function fetchDictionary(locale: Locale): Promise<Dictionary> {
   try {
@@ -64,6 +65,7 @@ const App: Component = () => {
   const [secondsLeft, setSecondsLeft] = createSignal<number>(0);
 
   const [isTestMode, setIsTestMode] = createSignal(false);
+  const memoizedIsTestMode = createMemo(() => isTestMode());
   const [testStartTime, setTestStartTime] = createSignal<Date | null>(null);
 
   const toggleTestScreenIqamah = () => {
@@ -78,17 +80,15 @@ const App: Component = () => {
   };
 
   const checkPrayerProgress = () => {
-    // console.log('checkPrayerProgress');
-    // Get the prayer where mode is PrayerMode.IMMEDIATE_NEXT
     const leadPrayer = prayers().find(prayer => prayer.mode === PrayerMode.IMMEDIATE_NEXT && prayer.name !== 'Syuruk');
     if (leadPrayer) {
       setLeadPrayer(leadPrayer);
       const leadPrayerTime = parse(leadPrayer.time, 'HH:mm', currentTime());
       const secLeft = differenceInSeconds(leadPrayerTime, currentTime());
       setSecondsLeft(secLeft);
-      // console.log(secLeft);
-      // console.log(differenceInMinutes(leadPrayerTime, currentTime()))
-      if (displayMode() !== DisplayMode.IQAMAH && displayMode() !== DisplayMode.ADHAN && ADHAN_LEAD_MINS === differenceInMinutes(leadPrayerTime, currentTime()) + 1) {
+
+      const leadMins = isTestMode() ? ADHAN_LEAD_MINS_TEST : ADHAN_LEAD_MINS;
+      if (displayMode() !== DisplayMode.IQAMAH && displayMode() !== DisplayMode.ADHAN && leadMins === differenceInMinutes(leadPrayerTime, currentTime()) + 1) {
         console.log('toggleDisplayMode - adhan', leadPrayer.name);
         setDisplayMode(DisplayMode.ADHAN);
       }
@@ -108,13 +108,13 @@ const App: Component = () => {
     fetchPrayers();
     // Set up interval to check and fetch prayers daily
     const dailyCheckInterval = setInterval(checkAndFetchPrayers, 60000); // Check every minute
-
   });
 
   createEffect(() => {
     memoizedLeadPrayer()
     memoizedCurrentTime();
     memoizedLastApiTimestamp();
+    memoizedIsTestMode();
   });
 
   onMount(() => {
@@ -169,8 +169,8 @@ const App: Component = () => {
         if (subuhTime < now) {
           subuhTime = set(subuhTime, { date: subuhTime.getDate() + 1 });
         }
-        let nMinuteBeforeSubuh = subMinutes(subuhTime, ADHAN_LEAD_MINS);
-        nMinuteBeforeSubuh = addSeconds(nMinuteBeforeSubuh, 55);
+        let nMinuteBeforeSubuh = subMinutes(subuhTime, ADHAN_LEAD_MINS_TEST);
+        nMinuteBeforeSubuh = addSeconds(nMinuteBeforeSubuh, 55); // Make it quicker I can't wait one minute!
         setTestStartTime(nMinuteBeforeSubuh);
         setCurrentTime(nMinuteBeforeSubuh);
         setPrayers(prev => updatedPrayers());
@@ -191,6 +191,7 @@ const App: Component = () => {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
+      console.log(data);
       const timings = data.data.timings;
       setPrayers([
         { name: getPrayerName(LANGUAGE, 'Fajr'), time: timings.Fajr, mode: PrayerMode.INACTIVE },
@@ -258,6 +259,7 @@ const App: Component = () => {
       <div class={styles.App}>
         <div class={styles.contents} style={{ height: `${getWindowDimensions().height}px` }}>
           <NextPrayerLayout
+            isTestMode={memoizedIsTestMode()}
             displayMode={memoizedDisplayMode()}
             prayers={updatedPrayers()}
             leadPrayer={memoizedLeadPrayer()}

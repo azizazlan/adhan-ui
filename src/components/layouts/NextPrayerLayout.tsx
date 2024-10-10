@@ -8,7 +8,10 @@ import { Prayer } from '../../types/Prayer';
 import { DisplayMode } from '../../types/displaymode';
 import Adhan from '../Adhan';
 import Iqamah from '../iqamah/Iqamah';
+import Devmode from '../devmode/Devmode';
+
 interface NextPrayerLayoutProps {
+  isTestMode: boolean;
   prayers: Prayer[];
   leadPrayer: Prayer;
   currentTime: Date;
@@ -23,7 +26,7 @@ const BottomContainer = (props: NextPrayerLayoutProps) => {
   const currentTime = createMemo(() => props.currentTime);
   return (
     <div class={styles.btmContainer}>
-      <Clock time={currentTime()} />
+      <Clock isTestMode={props.isTestMode} time={currentTime()} />
       <div class={styles.prayersWrapper}>
         <For each={props.prayers}>
           {(prayer, index) => (
@@ -42,6 +45,7 @@ const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
   const currentTime = createMemo(() => props.currentTime);
   const displayMode = createMemo(() => props.displayMode);
   const lastApiTimestamp = createMemo(() => props.lastApiTimestamp);
+  const isTestMode = createMemo(() => props.isTestMode);
   console.log('displayMode', displayMode());
 
   createEffect(() => {
@@ -59,15 +63,15 @@ const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
       case DisplayMode.IQAMAH:
         return <Iqamah />
       default:
-        return <div class={styles.devModeContainer}>
-          <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center' }}>
-            <button class={styles.testButton} onClick={() => props.toggleTestScreenIqamah()}>Iqamah Screen</button>
-            <button class={styles.testButton} onClick={() => props.toggleTestSubuh()}>Test Subuh</button>
-            <button class={styles.testButton} onClick={() => props.toggleRefetch()}>Refetch</button>
-          </div>
-          <div>Last fetch api timestamp: {lastApiTimestamp()}</div>
-          <div>Formatted: {format(lastApiTimestamp() * 1000, 'dd/MM/yyyy')}</div>
-        </div>
+        if (import.meta.env.VITE_DEV_MODE === 'true') {
+          return <Devmode
+            toggleTestScreenIqamah={props.toggleTestScreenIqamah}
+            toggleTestSubuh={props.toggleTestSubuh}
+            toggleRefetch={props.toggleRefetch}
+            lastApiTimestamp={lastApiTimestamp()}
+          />
+        }
+        return <div>Default</div>
     }
   };
 
@@ -77,7 +81,7 @@ const NextPrayerLayout = (props: NextPrayerLayoutProps) => {
         {renderMainArea()}
       </div>
       <div class={styles.starsBorder}></div>
-      <BottomContainer prayers={props.prayers} currentTime={props.currentTime} />
+      <BottomContainer prayers={props.prayers} currentTime={props.currentTime} isTestMode={isTestMode()} />
     </div>
   );
 
